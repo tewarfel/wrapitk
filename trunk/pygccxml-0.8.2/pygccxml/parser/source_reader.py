@@ -107,7 +107,7 @@ class source_reader_t:
                 else:
                     msg = 'gccxml_path("%s") should exists or to be a valid file name.' \
                           % self.__config.gccxml_path
-                    raise RuntimeError( msg )
+                    # raise RuntimeError( msg )
         if not os.path.isdir( self.__config.working_directory ):
             msg = 'working_directory("%s") should exists or to be a valid directory name.' \
                   % self.__config.working_directory
