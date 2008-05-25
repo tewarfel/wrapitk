@@ -86,6 +86,9 @@ class source_reader_t:
             self.__decl_factory = decl_factory_t()
 
     def __raise_on_wrong_settings(self):
+        # won't raise anything
+        return
+        
         if not os.path.isfile( self.__config.gccxml_path ):
             if sys.platform == 'win32':
                 gccxml_name = 'gccxml' + '.exe'
