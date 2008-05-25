@@ -1,13 +1,17 @@
 #SUBDIRS(Tests)
 
 ###############################################################################
+
+SET(WRAP_ITK_JAVA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "java source dir")
+SET(WRAP_ITK_JAVA_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "java binary dir")
+
 # java stuff
 FIND_PACKAGE(JAVA)
 FIND_PACKAGE(JNI)
 INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
 
 # create the java directory in the classindex dir
-MAKE_DIRECTORY(${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
+FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
 
 #!
 SET(WRAP_ITK_JAVA_OUT_DIR ${PROJECT_BINARY_DIR}/Proxies/Java CACHE INTERNAL "")
@@ -19,23 +23,31 @@ SET(WRAP_ITK_JAVA_JAR_DIR ${WRAP_ITK_JAVA_OUT_DIR}/jar CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_NAME "org.itk" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_PATH "org/itk" CACHE INTERNAL "") #TODO: this should be automated
 
+#!
+#SET(GCCXML "I:/dev/itk/CableSwig-ITK-3.6.0-bin-windows/bin/release/gccxml.exe")
+
+###############################################################################
+MACRO(INIT_WRAP_LIBRARY_JAVA)
+  CREATE_JAVA_DIRECTORY_STRUCTURE(WRAP_ITK_MODULES)
+ENDMACRO(INIT_WRAP_LIBRARY_JAVA)
+
 
 ###############################################################################
 MACRO(CREATE_JAVA_DIRECTORY_STRUCTURE modules_list)
 
   MESSAGE(STATUS "Creating wrapping Java packages directories.")
   
-  MAKE_DIRECTORY(${WRAP_ITK_JAVA_OUT_DIR})
-  MAKE_DIRECTORY(${WRAP_ITK_JAVA_SRC_DIR})
-  MAKE_DIRECTORY(${WRAP_ITK_JAVA_BIN_DIR})
-  MAKE_DIRECTORY(${WRAP_ITK_JAVA_JAR_DIR})
+  FILE(MAKE_DIRECTORY ${WRAP_ITK_JAVA_OUT_DIR})
+  FILE(MAKE_DIRECTORY ${WRAP_ITK_JAVA_SRC_DIR})
+  FILE(MAKE_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR})
+  FILE(MAKE_DIRECTORY ${WRAP_ITK_JAVA_JAR_DIR})
 
   # Packages output directory
-  MAKE_DIRECTORY(${WRAP_ITK_JAVA_SRC_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_PATH})
+  FILE(MAKE_DIRECTORY ${WRAP_ITK_JAVA_SRC_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_PATH})
   # Create the sub-package directories
   FOREACH(module ${${modules_list}})
     STRING(TOLOWER ${module} java_package_name)
-    MAKE_DIRECTORY(${WRAP_ITK_JAVA_SRC_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${java_package_name})
+    FILE(MAKE_DIRECTORY ${WRAP_ITK_JAVA_SRC_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${java_package_name})
   ENDFOREACH(module ${${modules_list}})
 
 ENDMACRO(CREATE_JAVA_DIRECTORY_STRUCTURE modules_list)
@@ -55,9 +67,9 @@ ENDMACRO(WRAP_LIBRARY_JAVA)
 ###############################################################################
 MACRO(END_WRAP_LIBRARY_JAVA)
 
-  CREATE_JAVA_DIRECTORY_STRUCTURE(WRAP_ITK_MODULES) #! this gets called more than once, it shouldn't.
+  INIT_WRAP_LIBRARY_JAVA() #! gets called more than once
 
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module_ext.i.in"
+  CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${WRAPPER_LIBRARY_NAME}_ext.i"
     @ONLY IMMEDIATE)
 
@@ -148,8 +160,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     COMMENT "Generating Java wrap files for class ${java_package_name}.${group_name}"
   )
     
-  # MESSAGE("${WRAP_ITK_JAVA_SWIG_EXT}")
-  CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
+   CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i"
     @ONLY IMMEDIATE)
 
