@@ -30,19 +30,9 @@
 	  super(cPtr, cMemoryOwn);
   }
 %}
-*/
 // more compact alternative
 SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
-
+*/
 
 %ignore New();
 %ignore Delete();
-
-/*
-%extend itkLightObject {
-  public itkLightObject() {
-  }
-}
-*/
-
-%feature("notabstract") itkLightObject;
