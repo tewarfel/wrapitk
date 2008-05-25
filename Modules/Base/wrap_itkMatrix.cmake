@@ -1,0 +1,6 @@
+WRAP_CLASS("itk::Matrix")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    WRAP_TEMPLATE("${ITKM_F}${d}${d}" "${ITKT_F},${d},${d}")
+    WRAP_TEMPLATE("${ITKM_D}${d}${d}" "${ITKT_D},${d},${d}")
+  ENDFOREACH(d)
+END_WRAP_CLASS()
