@@ -1,0 +1,7 @@
+WRAP_CLASS("itk::MapContainer" POINTER)
+  FOREACH(d ${WRAP_ITK_DIMS})
+    WRAP_TEMPLATE("${ITKM_UL}${ITKM_VD${d}}"    "${ITKT_UL},${ITKT_VD${d}}")
+    WRAP_TEMPLATE("${ITKM_UL}${ITKM_PD${d}}"    "${ITKT_UL},${ITKT_PD${d}}")
+  ENDFOREACH(d)
+  WRAP_TEMPLATE("${ITKM_UL}${ITKM_D}"    "${ITKT_UL},${ITKT_D}")
+END_WRAP_CLASS()

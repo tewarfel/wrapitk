@@ -1,0 +1,70 @@
+Index: Code/Common/itkImageRegionConstIterator.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIterator.h,v
+retrieving revision 1.20
+diff -u -r1.20 itkImageRegionConstIterator.h
+--- Code/Common/itkImageRegionConstIterator.h	31 Jan 2006 00:48:40 -0000	1.20
++++ Code/Common/itkImageRegionConstIterator.h	15 Jul 2006 14:40:48 -0000
+@@ -281,6 +281,16 @@
+     return *this;
+   }
+ 
++  // rename some operators for wrapping
++  void increment()
++  {
++    this->operator++();
++  }
++  void decrement()
++  {
++    this->operator--();
++  }
++  
+ private:
+   void Increment(); // advance in a direction other than the fastest moving
+   void Decrement(); // go back in a direction other than the fastest moving
+Index: Code/Common/itkImageRegionConstIteratorWithIndex.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkImageRegionConstIteratorWithIndex.h,v
+retrieving revision 1.10
+diff -u -r1.10 itkImageRegionConstIteratorWithIndex.h
+--- Code/Common/itkImageRegionConstIteratorWithIndex.h	16 Aug 2005 18:04:33 -0000	1.10
++++ Code/Common/itkImageRegionConstIteratorWithIndex.h	15 Jul 2006 14:40:48 -0000
+@@ -186,6 +186,16 @@
+    * will be set to be one pixel past the beginning of the region.
+    * \sa operator++ */
+   Self & operator--();
++
++  // rename some operators for wrapping
++  void increment()
++  {
++    this->operator++();
++  }
++  void decrement()
++  {
++    this->operator--();
++  }
+ };
+ 
+ /** \example itkImageIteratorTest.cpp */
+Index: Code/Common/itkMatrix.h
+===================================================================
+RCS file: /cvsroot/Insight/Insight/Code/Common/itkMatrix.h,v
+retrieving revision 1.20
+diff -u -r1.20 itkMatrix.h
+--- Code/Common/itkMatrix.h	18 Jul 2005 15:12:10 -0000	1.20
++++ Code/Common/itkMatrix.h	15 Jul 2006 14:40:48 -0000
+@@ -160,6 +160,14 @@
+   /** Copy constructor. */
+   Matrix(const Self & matrix) : m_Matrix( matrix.m_Matrix ) {};
+  
++ // Rename some operators for wrapping
++  inline T& Get( unsigned int row, unsigned int col )
++    { return m_Matrix(row,col); }
++
++  inline void Set( unsigned int row, unsigned int col, T value )
++    { m_Matrix(row,col) = value; }
++  
++  
+ private:
+   InternalMatrixType     m_Matrix;
+ 
