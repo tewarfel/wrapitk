@@ -44,5 +44,7 @@
 	}
 
 	%ignore class_name::~class_name;
+	
+	%ignore class_name##_Pointer;
      
 %enddef
