@@ -95,7 +95,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     SET(deps_includes "${deps_includes}#include \"${dep}.includes\"\n")
   ENDFOREACH(dep)
   SET(SWIG_INTERFACE_INCLUDES "${deps_includes}#include \"${WRAPPER_LIBRARY_NAME}.includes\"")
-  SET(CONFIG_MODULE_INTERFACE_CONTENT "${deps_imports}${SWIG_INTERFACE_MODULE_CONTENT}")  
+  SET(CONFIG_MODULE_INTERFACE_CONTENT "${deps_imports}${SWIG_INTERFACE_MODULE_CONTENT}")
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.i.in" "${module_interface_file}"
     @ONLY IMMEDIATE )
   SET(WRAP_ITK_FILE_CONTENT )
@@ -222,7 +222,7 @@ MACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE wrap_method wrap_class swig_name)
 
   IF("${wrap_method}" MATCHES "POINTER")
     # add a pointer typedef if we are so asked
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
+#    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
   ENDIF("${wrap_method}" MATCHES "POINTER")
 
 ENDMACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE)

@@ -171,9 +171,9 @@ INCLUDE("${WRAP_ITK_CMAKE_DIR}/TypedefMacros.cmake")
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateGccXMLInputs.cmake")
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateGenericSwigInterface.cmake")
 
-ADD_SUBDIRECTORY("${WRAP_ITK_CMAKE_DIR}/Languages")
+ADD_SUBDIRECTORY("${LANGUAGES_SRC_DIR}")
 # get the porperties from the languages dirs - there should be others than this one
-GET_DIRECTORY_PROPERTY(inc DIRECTORY "${WRAP_ITK_CMAKE_DIR}/Languages" INCLUDE_DIRECTORIES)
+GET_DIRECTORY_PROPERTY(inc DIRECTORY "${LANGUAGES_SRC_DIR}" INCLUDE_DIRECTORIES)
 INCLUDE_DIRECTORIES(${inc})
 
 
