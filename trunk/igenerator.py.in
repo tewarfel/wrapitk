@@ -404,7 +404,6 @@ print >> outputFile
 print >> outputFile
 
 # add the swig includes
-print >> outputFile, "%include @LANGUAGES_SRC_DIR@/itk.i"
 for f in options.swig_includes:
   print >> outputFile, "%%include %s" % f
 print >> outputFile
