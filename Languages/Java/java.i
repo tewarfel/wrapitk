@@ -5,7 +5,7 @@
 // The ignore list
 
 %ignore New();
-%ignore CreateAnother();
+//%ignore CreateAnother();
 %ignore Delete();
 %ignore Register();
 %ignore UnRegister();
@@ -77,10 +77,11 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 //%unrefobject itkLightObject "$this->UnRegister();"
 
 
-
+// TODO: always tell swig we're the owner
 %define DECLARE_REF_COUNT_CLASS_JAVA(itkClass)
 
-	// Extend the itk classtype defined for wrapping to simulate a smart pointer in SWIG 
+	// Extend the itk classtype defined for wrapping to simulate a smart pointer in SWIG.
+	// Also, make the ctor public to make the 'new' operator available in java
 	%extend itkClass {
 		public:
 		itkClass() {
@@ -94,7 +95,19 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 		};
 	}
 
-     
+	%typemap(out) itkClass##_Pointer, itkClass##_Pointer *, itkClass##_Pointer & {
+		itkClass* ptrRaw = $1.GetPointer();
+		if (ptrRaw) {
+			ptrRaw->Register();
+		}
+		*(itkClass **)&$result = ptrRaw;
+	}
+/*	
+	%typemap(in) itkClass##_Pointer, itkClass##_Pointer *, itkClass##_Pointer & {
+	}
+*/
+	// Do not wrap the corresponding itkSmartPointer
+	%ignore itkClass##_Pointer;     
 %enddef
 
 DECLARE_REF_COUNT_CLASS_JAVA(itkLightObject)

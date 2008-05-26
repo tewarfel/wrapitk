@@ -4,15 +4,18 @@
 // The ignore list
 
 // win32
+// TODO: this would be wrapped between #ifdefs 
 %ignore itkLightObject::operator new(size_t n);
 %ignore itkLightObject::operator new[](size_t n);
 %ignore itkLightObject::operator delete(void* m);
 %ignore itkLightObject::operator delete[](void* m, size_t);
 
 
+// TODO: This macro is not for all languages, it works for python.
+// Maybe should be moved to python.i and renamed to DECLARE_REF_COUNT_CLASS_PYTHON.
 //######################################################################
 // This macro replaces the use of itk::SmartPointer.
-// class_name is class name without namespace qualifiers, whereas qual_name includes them.
+// class_name is class name without namespace qualifiers.
 // Reference: http://www.nabble.com/attachment/16653644/0/SwigRefCount.i
 %define DECLARE_REF_COUNT_CLASS(class_name)
 
