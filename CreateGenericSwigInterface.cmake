@@ -62,6 +62,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
       OUTPUT ${interface_file}
       COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/igenerator.py
         ${opts}
+        --swig-include "${LANGUAGES_SRC_DIR}/itk.i"
         --mdx ${mdx_file}
         --take-includes ${includes_file}
   #       --import ${module_interface_file}
