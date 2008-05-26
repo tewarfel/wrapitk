@@ -3,12 +3,6 @@
 //######################################################################
 // The ignore list
 
-%ignore New();
-%ignore CreateAnother();
-%ignore Delete();
-%ignore Register();
-%ignore UnRegister();
-
 // win32
 %ignore itkLightObject::operator new(size_t n);
 %ignore itkLightObject::operator new[](size_t n);
