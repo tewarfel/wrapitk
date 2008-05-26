@@ -465,4 +465,4 @@ if args[1] != '-':
   f.write( outputFile.getvalue() )
 
 # Stop process time measurement
-print time.clock() - t0, "seconds i-generation time."
+info("%s seconds i-generation time." % (time.clock() - t0))
