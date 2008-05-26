@@ -466,33 +466,27 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     SET(text "${text}  }\n")
     SET(text "${text}}\n")
     SET(text "${text}\n\n")
-#    
-# A bug in swig currently prevent to use %extend on superclasses of smart pointed classes,
-# without redefining the method in the subclasses, so implement the __str__ method in all
-# the smart pointed classes (see below) (bug #1607365)
-#    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
   ENDIF("${swig_name}" STREQUAL "itkLightObject")
   
   IF("${wrap_class}" MATCHES "SmartPointer$")
     STRING(REGEX REPLACE "_Pointer$" "" smart_pointed "${swig_name}")
     ADD_PYTHON_POINTER_TYPEMAP("${smart_pointed}")
+  ENDIF("${wrap_class}" MATCHES "SmartPointer$")
 
-    SET(text "\n\n")
-    SET(text "${text}%extend ${smart_pointed} {\n")
-    SET(text "${text}  std::string __str__() {\n")
+  IF("${cpp_name}" STREQUAL "itk::ImageRegion")
+    SET(text "${text}%extend ${swig_name} {\n")
+    SET(text "${text}  std::string __repr__() {\n")
     SET(text "${text}    itk::OStringStream msg;\n")
-    SET(text "${text}    self->Print( msg );\n")
+    SET(text "${text}    msg << \"${swig_name}(\" << self->GetIndex() << \", \" << self->GetSize()  << \")\";\n")
     SET(text "${text}    return msg.str();\n")
     SET(text "${text}  }\n")
     SET(text "${text}}\n")
-    SET(text "${text}\n\n")
-#
-# can't get it work neither - some protected methods of superclasses
-# are exposed in the smart pointer. There must be somthing nasty with
-# smart pointers and %extend
-#    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
-  ENDIF("${wrap_class}" MATCHES "SmartPointer$")
 
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  ENDIF("${cpp_name}" STREQUAL "itk::ImageRegion")
+  
   IF("${cpp_name}" STREQUAL "itk::Index")
     ADD_PYTHON_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Index")
@@ -887,10 +881,10 @@ ENDMACRO(ADD_PYTHON_VARIABLE_LENGHT_SEQ_TYPEMAP)
 
 
 MACRO(ADD_PYTHON_POINTER_TYPEMAP template_params)
-  SET(text "\n\n")
-  SET(text "${text} // Python typemaps for Smart Pointers to ${template_params} class. \n\n")
-  SET(text "${text}%ignore ${template_params}_Pointer;\n")
-  SET(text "${text}DECLARE_REF_COUNT_CLASS(${template_params})\n")
+  SET(text "DECLARE_REF_COUNT_CLASS(${template_params})\n")
+
+# SET(text "\n\n")
+# SET(text "${text} // Python typemaps for Smart Pointers to ${template_params} class. \n\n")
 #	SET(text "${text}// pointers and references\n")
 #	SET(text "${text}%typemap(out) ${template_params} *, ${template_params} & {\n")
 #	SET(text "${text}	// always tell SWIG_NewPointerObj we're the owner\n")
@@ -899,8 +893,8 @@ MACRO(ADD_PYTHON_POINTER_TYPEMAP template_params)
 #	SET(text "${text}		\$1->Register();\n")
 #	SET(text "${text}	}\n")
 #	SET(text "${text}}\n")
-#  SET(text "${text}\n")
-#  SET(text "${text}// transform smart pointers in raw pointers\n")
+# SET(text "${text}\n")
+# SET(text "${text}// transform smart pointers in raw pointers\n")
 #	SET(text "${text}%typemap(out) ${template_params}_Pointer {\n")
 #	SET(text "${text}  // get the raw pointer from the smart pointer\n")
 #	SET(text "${text}  ${template_params} * ptr = \$1.GetPointer();\n")
@@ -917,10 +911,11 @@ MACRO(ADD_PYTHON_POINTER_TYPEMAP template_params)
 #	SET(text "${text}	public:\n")
 #	SET(text "${text}	~${template_params}() {self->UnRegister();};\n")
 #	SET(text "${text}}\n")
-#  SET(text "${text}\n")
+# SET(text "${text}\n")
 #	SET(text "${text}%ignore ${template_params}::~${template_params};\n")
-     
-  SET(text "${text}\n\n")
+# SET(text "${text}\n")
+# SET(text "${text}%ignore ${template_params}_Pointer;\n")
+# SET(text "${text}\n\n")
   
   SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
 ENDMACRO(ADD_PYTHON_POINTER_TYPEMAP)
