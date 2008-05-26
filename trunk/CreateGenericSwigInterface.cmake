@@ -223,7 +223,7 @@ MACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE wrap_method wrap_class swig_name)
 
   IF("${wrap_method}" MATCHES "POINTER")
     # add a pointer typedef if we are so asked
-#    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
+    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
   ENDIF("${wrap_method}" MATCHES "POINTER")
 
 ENDMACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE)
