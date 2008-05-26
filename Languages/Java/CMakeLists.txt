@@ -23,8 +23,16 @@ SET(WRAP_ITK_JAVA_JAR_DIR ${WRAP_ITK_JAVA_OUT_DIR}/jar CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_NAME "org.itk" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_PATH "org/itk" CACHE INTERNAL "") #TODO: this should be automated
 
-#!
-#SET(GCCXML "I:/dev/itk/CableSwig-ITK-3.6.0-bin-windows/bin/release/gccxml.exe")
+# generate the swig external runtime header for this language
+SET(swig_externalruntime_header "swigExternalRuntimeJava.h")
+MESSAGE(STATUS "Generating swig external runtime header for Java: ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${swig_externalruntime_header}")
+EXEC_PROGRAM(${SWIG_EXECUTABLE}
+  ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
+  ARGS
+  -java
+  -external-runtime ${swig_externalruntime_header}
+  )
+
 
 ###############################################################################
 MACRO(INIT_WRAP_LIBRARY_JAVA)

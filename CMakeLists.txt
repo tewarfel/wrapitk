@@ -188,3 +188,8 @@ INSTALL_AT_ABSOLUTE_PATH(install_wrapitk_compatibility "${CMAKE_ROOT}/Modules" "
 INCLUDE(ConfigureWrapping.cmake)
 
 
+###############################################################################
+# Set some global variables
+###############################################################################
+
+SET(LANGUAGES_SRC_DIR "${WRAP_ITK_CMAKE_DIR}/Languages" CACHE INTERNAL "languages source directory")
