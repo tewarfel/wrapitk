@@ -215,17 +215,23 @@ ENDMACRO(WRAP_LIBRARY_PYTHON)
 
 
 MACRO(END_WRAP_LIBRARY_PYTHON)
-  # build the dependency list
+  # create the python config file
+  # this file store all the name - type association and a dependencies list for the modules
+  #
+  # first build the dependency list
   SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS )
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "'${dep}', ${WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS}")
   ENDFOREACH(dep)
-  # create the python config file
+  # and create the file, with the var WRAP_ITK_PYTHON_CONFIGURATION_TEMPLATES and 
+  # WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS created earlier
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleConfig.py.in"
     "${WRAP_ITK_PYTHON_BINARY_DIR}/Configuration/${WRAPPER_LIBRARY_NAME}Config.py"
     @ONLY IMMEDIATE)
     
   # create the advanced lib module python file
+  # this file let the final user _not_ use the itk module, but rather
+  # something like "import Base"
   SET(CONFIG_LIBRARY_NAME "${WRAPPER_LIBRARY_NAME}")
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleLoader.py.in"
     "${WRAP_ITK_PYTHON_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}.py"
@@ -234,16 +240,25 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}SwigPython DEPENDS ${cpp_files} ${python_files})
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Python DEPENDS ${modules})
 
+  # create the python customization stuff in the main module
+  # it allow to group the pythons module in a single shared lib, by loading the int
+  # functions of the module. I also import the objects from the submodules in the
+  # main module.
+  #
+  # It uses WRAP_ITK_PYTHON_LIBRARY_DECLS, WRAP_ITK_PYTHON_LIBRARY_CALLS and
+  # WRAP_ITK_PYTHON_LIBRARY_IMPORTS
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/main_module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i"
     @ONLY IMMEDIATE)
 
 
+  # set some var reused later
   SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
   SET(lib ${WRAPPER_LIBRARY_NAME}Python)
   SET(python_file "${LIBRARY_OUTPUT_PATH}/${lib}.py")
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Python.cpp")
 
+  # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
     COMMAND ${SWIG_EXECUTABLE} -c++ -python -O -features autodoc=1 -Werror
@@ -262,6 +277,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
   )
 
+  # build all the c++ files from this module in a common lib
   SET(lib ${WRAPPER_LIBRARY_NAME}Python)
   ADD_LIBRARY(${lib} MODULE ${cpp_file} ${WRAP_ITK_PYTHON_CXX_FILES} ${WRAPPER_LIBRARY_CXX_SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES PREFIX "_")
@@ -275,40 +291,44 @@ ENDMACRO(END_WRAP_LIBRARY_PYTHON)
 
 MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
   
-    SET(base_name wrap_${group_name})
-    
-    # create the swig interface for all the groups in the module
-    #
-    SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${base_name}.i")
-    SET(lib ${group_name}Python)
-    SET(python_file "${LIBRARY_OUTPUT_PATH}/${lib}.py")
-    SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${base_name}Python.cpp")
+  SET(base_name wrap_${group_name})
+  
+  # create the swig interface for all the groups in the module
+  #
+  SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${base_name}.i")
+  SET(lib ${group_name}Python)
+  SET(python_file "${LIBRARY_OUTPUT_PATH}/${lib}.py")
+  SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${base_name}Python.cpp")
 
-    SET(WRAP_ITK_PYTHON_CXX_FILES ${WRAP_ITK_PYTHON_CXX_FILES} ${cpp_file})
+  # create the python customization for that wrap_*.cmake file.
+  CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/module_ext.i.in"
+  "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
+  @ONLY IMMEDIATE)
 
-    # prepare dependencies
-    SET(DEPS )
-    FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-      SET(DEPS ${DEPS} ${${dep}SwigFiles})
-    ENDFOREACH(dep)
- 
-    ADD_CUSTOM_COMMAND(
-      OUTPUT ${cpp_file} ${python_file}
-      COMMAND ${SWIG_EXECUTABLE} -c++ -python -O -features autodoc=1 -Werror
+  # prepare dependencies
+  SET(DEPS )
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    SET(DEPS ${DEPS} ${${dep}SwigFiles})
+  ENDFOREACH(dep)
+
+  # and run swig to produce the c++ file and the .py file
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${cpp_file} ${python_file}
+    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O -features autodoc=1 -Werror
 #       -fcompact
-      -w508 -w312 -w314 -w509 -w302 -w362
-      -w389 # operator[], to be suppressed later...
-      -w384 -w383 # operator++ ane operator--
-      -w361 # operator!
-      -w467 # overloaded functions (with typemaps)
+    -w508 -w312 -w314 -w509 -w302 -w362
+    -w389 # operator[], to be suppressed later...
+    -w384 -w383 # operator++ ane operator--
+    -w361 # operator!
+    -w467 # overloaded functions (with typemaps)
 #      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
-      -o ${cpp_file}
+    -o ${cpp_file}
 #      -I${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
-      -outdir ${LIBRARY_OUTPUT_PATH}
-      ${interface_file}
-      WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
-      DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
-    )
+    -outdir ${LIBRARY_OUTPUT_PATH}
+    ${interface_file}
+    WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
+    DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
+  )
     
 # gcc visibility can't be used without getting errors when passing objects
 # from one module to an other
@@ -316,24 +336,19 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 #    IF(CMAKE_COMPILER_IS_GNUCC)
 #      SET_TARGET_PROPERTIES(${lib} PROPERTIES COMPILE_FLAGS "-fvisibility=hidden")
 #    ENDIF(CMAKE_COMPILER_IS_GNUCC)
-    
-  
-#  ADD_LIBRARY(${WRAPPER_LIBRARY_NAME}Python MODULE ${cpp_files})
-#  SET_TARGET_PROPERTIES(${WRAPPER_LIBRARY_NAME}Python PROPERTIES PREFIX "_")
-#  TARGET_LINK_LIBRARIES( ${WRAPPER_LIBRARY_NAME}Python
-#    ${WRAPPER_LIBRARY_LINK_LIBRARIES} 
-#    ${PYTHON_LIBRARY}
-#  )
 
+  # add the c++ files which will be generated by the swig command to the
+  # list of python related c++ files, so they can be built at the end
+  # of the current module.
+  SET(WRAP_ITK_PYTHON_CXX_FILES ${WRAP_ITK_PYTHON_CXX_FILES} ${cpp_file})
 
-  # MESSAGE("${WRAP_ITK_PYTHON_SWIG_EXT}")
-  CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/module_ext.i.in"
-    "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
-    @ONLY IMMEDIATE)
-
+  # add needed files to the deps list
   SET(WRAP_ITK_PYTHON_LIBRARY_DEPS ${WRAP_ITK_PYTHON_LIBRARY_DEPS} "${python_file}" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i")
 
+  # add this wrap_*.cmake stuff to the list of modules to init in the main module.
+  # first the extern c declaration
   SET(WRAP_ITK_PYTHON_LIBRARY_DECLS "${WRAP_ITK_PYTHON_LIBRARY_DECLS}extern \"C\" int init_${module}Python();\n")
+  # and the call of the extern function
   SET(WRAP_ITK_PYTHON_LIBRARY_CALLS "${WRAP_ITK_PYTHON_LIBRARY_CALLS}  init_${module}Python();\n")
 
 ENDMACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
@@ -341,17 +356,9 @@ ENDMACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 
 
 MACRO(ADD_ONE_TYPEDEF_PYTHON wrap_method wrap_class swig_name template_params)
-  # ('simple name', 'c++ name', 'swig name', 'template params')
   STRING(REGEX REPLACE "(.*::)" "" base_name "${wrap_class}")
   
   ADD_PYTHON_CONFIG_TEMPLATE("${base_name}" "${wrap_class}" "${swig_name}" "${template_params}")
-#  IF("${wrap_method}" MATCHES "POINTER")
-#    IF("${template_params}" STREQUAL "")
-#      ADD_PYTHON_CONFIG_TEMPLATE("SmartPointer" "itk::SmartPointer" "${swig_name}_Pointer" "${wrap_class}")
-#    ELSE("${template_params}" STREQUAL "")
-#      ADD_PYTHON_CONFIG_TEMPLATE("SmartPointer" "itk::SmartPointer" "${swig_name}_Pointer" "${wrap_class}< ${template_params} >")
-#    ENDIF("${template_params}" STREQUAL "")
-#  ENDIF("${wrap_method}" MATCHES "POINTER")
   
   # std::complex and vcl_complex are the same classes, but python don't know that
   IF("${wrap_class}" STREQUAL "vcl_complex")
@@ -362,7 +369,8 @@ ENDMACRO(ADD_ONE_TYPEDEF_PYTHON)
 
 
 MACRO(ADD_PYTHON_CONFIG_TEMPLATE base_name wrap_class swig_name template_params)
-
+  # build the name - type association list used in *Config.py
+  
   IF("${template_params}" STREQUAL "")
     SET(WRAP_ITK_PYTHON_CONFIGURATION_TEMPLATES "${WRAP_ITK_PYTHON_CONFIGURATION_TEMPLATES}  ('${base_name}', '${wrap_class}', '${swig_name}'),\n")
   ELSE("${template_params}" STREQUAL "")
@@ -373,6 +381,7 @@ ENDMACRO(ADD_PYTHON_CONFIG_TEMPLATE)
 
 
 MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
+  # add some wrapping customizations specific on some modules.
 
   SET(text "")
   
@@ -924,110 +933,6 @@ MACRO(ADD_PYTHON_POINTER_TYPEMAP template_params)
   
   SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
 ENDMACRO(ADD_PYTHON_POINTER_TYPEMAP)
-
-
-MACRO(CONFIGURE_PYTHON_CONFIG_FILES outdir)
-  # Pull the WRAPPED_CLASSES list apart and use it to create Python-specific
-  # support files. This also uses the global WRAPPER_LIBRARY_DEPENDS,
-  # and WRAPPER_LIBRARY_NAME variables.
-    
-    SET(CONFIG_DEPENDS "")
-  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-    SET(CONFIG_DEPENDS "${CONFIG_DEPENDS} '${dep}',")
-  ENDFOREACH(dep)
-  
-  # Deal with the WRAPPED_CLASSES strings, which are in the format
-  # "simple name # c++ name # swig name # c++ template parameters"    
-  # or "simple name # c++ name # swig name # NO_TEMPLATE"
-  # We want to change them to the format:
-  # "  ('simple name', 'c++ name', 'swig name', 'template params'),\n"
-  # or "  ('simple name', 'c++ name', 'swig name'),\n", respectively.
-    
-  SET(CONFIG_TEMPLATES "")
-  FOREACH(wrapped_class ${WRAPPED_CLASSES})
-    # first put the internal quotes in place
-    STRING(REGEX REPLACE
-      " # "
-      "', '"
-      py_template_def
-      "${wrapped_class}")
-    # now put the outside parens and quotes, etc. in place
-    SET(py_template_def "  ('${py_template_def}'),\n")
-    # now strip out the NO_TEMPLATE if there is none
-    STRING(REGEX REPLACE
-      ", 'NO_TEMPLATE'"
-      ""
-      py_template_def
-      "${py_template_def}")
-    SET(CONFIG_TEMPLATES "${CONFIG_TEMPLATES}${py_template_def}")
-  ENDFOREACH(wrapped_class)
-  
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ModuleConfig.py.in"
-    "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py"
-    @ONLY IMMEDIATE)
-  WRAP_ITK_INSTALL("/Python/Configuration" "${outdir}/${WRAPPER_LIBRARY_NAME}Config.py")
-ENDMACRO(CONFIGURE_PYTHON_CONFIG_FILES)
-
-MACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG outdir)
-  # Create a helper file to set some sys.path entries so that external projects
-  # can be easily loaded even when not installed. To use, call 'import ProjectConfig'
-  # or 'import ProjectConfig-[Debug|Release|...]' if multiple build styles were
-  # selected from an IDE. After this module is imported, the external project
-  # can be easily imported by 'import ProjectName'.
-  # If ProjectConfig was not used, the user would have to manually set sys.path
-  # to point to *both* the Python directory in the WrapITK build tree and the
-  # directory where the current project's SWIG libraries have been placed.
-  
-  IF(CMAKE_CONFIGURATION_TYPES)
-    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-      # SWIG-generated libs and *.py files are sent to ${config} subdir
-      SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python/${config}")
-      SET(CONFIG_PROJECT_PYTHON_DIR "${CMAKE_BINARY_DIR}/Python/${config}")
-      SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${config}")
-      CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
-        "${outdir}/ProjectConfig_${config}.py"
-        @ONLY IMMEDIATE)
-      CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.pth.in"
-        "${outdir}/${config}/${PROJECT_NAME}.pth"
-        @ONLY IMMEDIATE)
-  ENDFOREACH(config)
-  ELSE(CMAKE_CONFIGURATION_TYPES)
-    SET(CONFIG_WRAP_ITK_PYTHON_DIR "${WrapITK_DIR}/Python")
-    SET(CONFIG_PROJECT_PYTHON_DIR "${CMAKE_BINARY_DIR}/Python")
-    SET(CONFIG_PROJECT_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}")
-    CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.py.in"
-      "${outdir}/ProjectConfig.py"
-      @ONLY IMMEDIATE)
-    CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/LanguageSupport/ExternalProjectConfig.pth.in"
-      "${outdir}/${PROJECT_NAME}.pth"
-      @ONLY IMMEDIATE)
-  ENDIF(CMAKE_CONFIGURATION_TYPES)
-ENDMACRO(CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG)
-
-
-MACRO(PYTHON_SUPPORT_CONFIGURE_FILES)
-  # Create the various files to make it easier to use the ITK wrappers, especially
-  # with reference to the multitude of templates.
-  # Currently, only Python is supported.
-  
-    CONFIGURE_PYTHON_CONFIG_FILES("${PROJECT_BINARY_DIR}/Python/Configuration")      
-    IF(CMAKE_CONFIGURATION_TYPES)
-      FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-        CONFIGURE_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/${config}")
-      ENDFOREACH(config)
-    ELSE(CMAKE_CONFIGURATION_TYPES)
-      CONFIGURE_PYTHON_LOADER_FILE("${PROJECT_BINARY_DIR}/Python/")
-    ENDIF(CMAKE_CONFIGURATION_TYPES)
-    # Just install the files once, regardless of how many different places
-    # they were configured into. If there are no configuration types, the 
-    # INTDIR variable expands to '', so no harm done.
-    WRAP_ITK_INSTALL("/Python" "${PROJECT_BINARY_DIR}/Python/${WRAP_ITK_INSTALL_INTDIR}${WRAPPER_LIBRARY_NAME}.py")
-    IF(EXTERNAL_WRAP_ITK_PROJECT)
-      # Configure a python file to make it easier to use this external project
-      # without first installing it into WrapITK.
-      CONFIGURE_PYTHON_EXTERNAL_PROJECT_CONFIG("${PROJECT_BINARY_DIR}/Python/")
-    ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
-ENDMACRO(PYTHON_SUPPORT_CONFIGURE_FILES)
 
 
 ###############################################################################
