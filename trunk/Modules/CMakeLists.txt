@@ -1,10 +1,10 @@
 
 #! TODO: BaseLight is purely a development tool testing, this should be removed later
 SET(base_name Base)
-IF(WRAP_ITK_JAVA)
-  Set(base_name BaseLight)
-  MESSAGE("Warning: Module Base is replaced by BaseLight.")
-ENDIF(WRAP_ITK_JAVA)
+#IF(WRAP_ITK_JAVA)
+#  Set(base_name BaseLight)
+#  MESSAGE("Warning: Module Base is replaced by BaseLight.")
+#ENDIF(WRAP_ITK_JAVA)
   
 SET(WRAP_ITK_MODULES
   VXLNumerics
