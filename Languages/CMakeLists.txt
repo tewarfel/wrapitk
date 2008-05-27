@@ -84,6 +84,9 @@ MACRO(ADD_ONE_TYPEDEF_ALL_LANGUAGES wrap_method wrap_class swig_name template_pa
   IF(WRAP_ITK_PYTHON AND WRAPPER_LIBRARY_PYTHON)
     ADD_ONE_TYPEDEF_PYTHON("${wrap_method}" "${wrap_class}" "${swig_name}" "${template_params}")
   ENDIF(WRAP_ITK_PYTHON AND WRAPPER_LIBRARY_PYTHON)
+  IF(WRAP_ITK_JAVA AND WRAPPER_LIBRARY_JAVA)
+    ADD_ONE_TYPEDEF_JAVA("${wrap_method}" "${wrap_class}" "${swig_name}" "${template_params}")
+  ENDIF(WRAP_ITK_JAVA AND WRAPPER_LIBRARY_JAVA)
 ENDMACRO(ADD_ONE_TYPEDEF_ALL_LANGUAGES)
 
 
