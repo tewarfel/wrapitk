@@ -24,15 +24,17 @@ SET(WRAP_ITK_JAVA_CORE_PACKAGE_NAME "org.itk" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_PATH "org/itk" CACHE INTERNAL "") #TODO: this should be automated
 
 # generate the swig external runtime header for this language
-SET(swig_externalruntime_header "swigExternalRuntimeJava.h")
-MESSAGE(STATUS "Generating swig external runtime header for Java: ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${swig_externalruntime_header}")
-EXEC_PROGRAM(${SWIG_EXECUTABLE}
-  ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
-  ARGS
-  -java
-  -external-runtime ${swig_externalruntime_header}
-  )
+#SET(swig_externalruntime_header "swigExternalRuntimeJava.h")
+#MESSAGE(STATUS "Generating swig external runtime header for Java: ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${swig_externalruntime_header}")
+#EXEC_PROGRAM(${SWIG_EXECUTABLE}
+#  ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
+#  ARGS
+#  -java
+#  -external-runtime ${swig_externalruntime_header}
+#  )
 
+# some glorbal variables
+#SET(WRAP_ITK_JAVA_CLASS_NAMES "" CACHE INTERNAL "")
 
 ###############################################################################
 MACRO(INIT_WRAP_LIBRARY_JAVA)
@@ -142,8 +144,15 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
   
   # prepare dependencies
   SET(DEPS )
+  SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS )
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    # library dependencies
     SET(DEPS ${DEPS} ${${dep}SwigFiles})
+    
+    # create the import package commands
+    STRING(TOLOWER ${dep} java_import_package_name)
+    SET(java_import_package_name ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${java_import_package_name})
+    SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
   ENDFOREACH(dep)
  
   ADD_CUSTOM_COMMAND(
@@ -167,7 +176,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     DEPENDS ${DEPS} ${WRAP_ITK_JAVA_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i ${WRAP_ITK_JAVA_SOURCE_DIR}/java.i ${SWIG_EXECUTABLE}
     COMMENT "Generating Java wrap files for class ${java_package_name}.${group_name}"
   )
-    
+      
    CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i"
     @ONLY IMMEDIATE)
@@ -187,4 +196,27 @@ MACRO(INCLUDE_WRAP_CMAKE_JAVA module)
   SET(WRAP_ITK_JAVA_SWIG_EXT "${text}")
   
 ENDMACRO(INCLUDE_WRAP_CMAKE_JAVA)
+
+
+###############################################################################
+MACRO(ADD_SIMPLE_TYPEDEF_JAVA wrap_class swig_name)
+
+  # store the wrapped class names, these classes hold the template parameters
+#  SET(WRAP_ITK_JAVA_CLASS_NAMES ${WRAP_ITK_JAVA_CLASS_NAMES} ${swig_name})
+
+  IF("${wrap_class}" MATCHES "SmartPointer$")
+    STRING(REGEX REPLACE "_Pointer$" "" smart_pointed "${swig_name}")
+    ADD_JAVA_POINTER_TYPEMAP("${smart_pointed}")
+  ENDIF("${wrap_class}" MATCHES "SmartPointer$")
+  
+ENDMACRO(ADD_SIMPLE_TYPEDEF_JAVA wrap_class swig_name)
+
+
+###############################################################################
+MACRO(ADD_JAVA_POINTER_TYPEMAP template_params)
+
+  SET(text "DECLARE_REF_COUNT_CLASS_JAVA(${template_params})\n")
+  SET(WRAP_ITK_JAVA_SWIG_EXT "${WRAP_ITK_JAVA_SWIG_EXT}${text}")
+  
+ENDMACRO(ADD_JAVA_POINTER_TYPEMAP template_params)
 

@@ -66,18 +66,18 @@
   }
 
 %}
-
+*/
 // more compact alternative
-
 SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 
-*/
+
 
 //%refobject   itkLightObject "$this->Register();"
 //%unrefobject itkLightObject "$this->UnRegister();"
 
 
 // TODO: always tell swig we're the owner
+// TODO: itk classes with no New() must be marked as abstract
 %define DECLARE_REF_COUNT_CLASS_JAVA(itkClass)
 
 	// Extend the itk classtype defined for wrapping to simulate a smart pointer in SWIG.
@@ -85,16 +85,24 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 	%extend itkClass {
 		public:
 		itkClass() {
-			typedef ::itk::SmartPointer<itkClass> Pointer;
+			typedef ::itk::SmartPointer<itkLightObject> Pointer;
 			Pointer smtPtr = itkClass::New();
-			smtPtr.GetPointer()->Register();
-			return smtPtr.GetPointer();
+			itkClass *rawPtr = dynamic_cast<itkClass *>(smtPtr.GetPointer());
+			rawPtr->Register();
+			return rawPtr;
 		};
 		~itkClassWrapped() {
 			self->UnRegister();
 		};
 	}
-
+/*
+	%typemap(out) itkClass *, itkClass & {
+		if (ptrRaw) {
+			ptrRaw->Register();
+		}
+		*(itkClass **)&$result = ptrRaw;
+	}
+*/	
 	%typemap(out) itkClass##_Pointer, itkClass##_Pointer *, itkClass##_Pointer & {
 		itkClass* ptrRaw = $1.GetPointer();
 		if (ptrRaw) {
@@ -102,13 +110,9 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 		}
 		*(itkClass **)&$result = ptrRaw;
 	}
-/*	
-	%typemap(in) itkClass##_Pointer, itkClass##_Pointer *, itkClass##_Pointer & {
-	}
-*/
+
 	// Do not wrap the corresponding itkSmartPointer
 	%ignore itkClass##_Pointer;     
 %enddef
 
-DECLARE_REF_COUNT_CLASS_JAVA(itkLightObject)
 
