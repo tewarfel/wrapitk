@@ -2,58 +2,6 @@
 SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/ClassIndex")
 SET(WRAPPER_SWIG_LIBRARY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/SWIG")
 
-################################################################################
-# Macros for writing the global module CableSwig inputs which specify all the
-# groups to be bundled together into one module. 
-################################################################################
-
-MACRO(WRITE_MODULE_FILES)
-#   # Write the wrap_LIBRARY_NAME.cxx file which specifies all the wrapped groups.
-#   
-#   MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating module wrapper files.")
-# 
-#   
-#   SET(group_list "")
-#   FOREACH(group_name ${WRAPPER_LIBRARY_GROUPS})
-#     SET(group_list "${group_list}    \"${group_name}\",\n")
-#   ENDFOREACH(group_name ${group})
-#   STRING(REGEX REPLACE ",\n$" "\n" group_list "${group_list}")
-# 
-#   SET(CONFIG_GROUP_LIST "${group_list}")
-#   
-#   # Create the cxx file.
-#   SET(cxx_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}.cxx")
-#   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/wrap_ITK.cxx.in"
-#     "${cxx_file}" @ONLY IMMEDIATE)
-#   
-# 
-#   IF(WRAP_ITK_TCL)
-#     WRITE_MODULE_FOR_LANGUAGE("Tcl")
-#   ENDIF(WRAP_ITK_TCL)
-#   IF(WRAP_ITK_PYTHON)
-#     WRITE_MODULE_FOR_LANGUAGE("Python")
-#   ENDIF(WRAP_ITK_PYTHON)
-#   IF(WRAP_ITK_JAVA)
-#     WRITE_MODULE_FOR_LANGUAGE("Java")
-#   ENDIF(WRAP_ITK_JAVA)
-#   IF(WRAP_ITK_PERL)
-#     WRITE_MODULE_FOR_LANGUAGE("Perl")
-#   ENDIF(WRAP_ITK_PERL)
-ENDMACRO(WRITE_MODULE_FILES)
-
-MACRO(WRITE_MODULE_FOR_LANGUAGE language)
-#   # Write the language specific CableSwig input which declares which language is
-#   # to be used and includes the general module cableswig input.
-#   SET(CONFIG_LANGUAGE "${language}")
-#   SET(CONFIG_MODULE_NAME ${WRAPPER_LIBRARY_NAME})
-#   STRING(TOUPPER ${language} CONFIG_UPPER_LANG)
-#   
-#   # Create the cxx file.
-#   SET(cxx_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${WRAPPER_LIBRARY_NAME}${language}.cxx")  
-#   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/wrap_ITKLang.cxx.in"
-#     "${cxx_file}" @ONLY IMMEDIATE)
-#   
-ENDMACRO(WRITE_MODULE_FOR_LANGUAGE)
 
 
 MACRO(WRAP_INCLUDE_CABLE_SWIG include_file)
