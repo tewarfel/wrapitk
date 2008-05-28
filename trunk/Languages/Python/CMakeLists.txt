@@ -425,6 +425,9 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
 
     SET(text "${text}%template(liststring) std::list< std::string >;\n\n")
     ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "liststring" "std::string")
+    
+    # make itk::Command hineritable in python
+    SET(text "${text}%feature(\"director\") itkCommand;")
 
   ENDIF("${module}" STREQUAL "ITKCommonBase")
 
