@@ -103,13 +103,14 @@ ENDIF("${CMAKE_VERSION}" STRGREATER "2.4")
 # First, configure for use directly from the build dir.
 SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
-SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${WRAPPER_SWIG_LIBRARY_OUTPUT_DIR}")
-SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}")
+SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClassIndex")
+SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClassIndex")
 SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
 SET(CONFIG_WRAP_ITK_MODULES "${WRAP_ITK_MODULES}")
 SET(CONFIG_WRAP_ITK_PYTHON_MODULE "${WrapITK_BINARY_DIR}/Python/\\\${CTEST_CONFIGURATION_TYPE}")
 SET(CONFIG_WRAP_ITK_PYTHON_LIBS "${LIBRARY_OUTPUT_PATH}/\\\${CTEST_CONFIGURATION_TYPE}")
 SET(CONFIG_WRAP_ITK_LIB_DIR  "${LIBRARY_OUTPUT_PATH}")
+SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_BINARY_DIR}/igenerator.py")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
@@ -129,6 +130,7 @@ SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "\${WrapITK_DIR}")
 SET(CONFIG_WRAP_ITK_PYTHON_MODULE "\${WrapITK_DIR}/Python/")
 SET(CONFIG_WRAP_ITK_PYTHON_LIBS "\${WrapITK_DIR}/lib")
 SET(CONFIG_WRAP_ITK_LIB_DIR  "\${WrapITK_DIR}/lib")
+SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_DIR}/Configuration/igenerator.py")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
@@ -195,12 +197,15 @@ INSTALL_AT_ABSOLUTE_PATH(install_wrapitk_compatibility "${CMAKE_ROOT}/Modules" "
 
 
 
-
 # create the igenerator.py with the pygccxml path in it
 SET(PYGCCXML_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pygccxml-0.8.2/")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
   "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py"
   @ONLY IMMEDIATE)
+
+
+SET(IGENERATOR  "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py")
+SET(WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClassIndex")
 
 
 ###############################################################################
@@ -211,7 +216,24 @@ INCLUDE(ConfigureWrapping.cmake)
 
 
 ###############################################################################
-# Set some global variables
+# let the different languages running some code before begining to parse the
+# modules
 ###############################################################################
 
-SET(LANGUAGES_SRC_DIR "${WRAP_ITK_CMAKE_DIR}/Languages" CACHE INTERNAL "languages source directory")
+WRAP_MODULES_ALL_LANGUAGES()
+
+
+###############################################################################
+# Configure specific wrapper modules
+###############################################################################
+
+ADD_SUBDIRECTORY("${CMAKE_CURRENT_SOURCE_DIR}/Modules" "${CMAKE_CURRENT_BINARY_DIR}/Modules")
+
+
+###############################################################################
+# let the different languages running some code after have parsed all the
+# modules
+###############################################################################
+
+END_WRAP_MODULES_ALL_LANGUAGES()
+

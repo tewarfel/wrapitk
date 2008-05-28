@@ -144,6 +144,9 @@ ENDIF(UNIX)
 SET(CSWIG_IGNORE_WARNINGS -w362 -w389 -w467 -w503 -w508 -w509 -w516)
 ADD_DEFINITIONS(-DSWIG_GLOBAL)
 
+# languages dir
+SET(LANGUAGES_SRC_DIR "${WRAP_ITK_CMAKE_DIR}/Languages" CACHE INTERNAL "languages source directory")
+
 ###############################################################################
 # Define install files macro. If we are building WrapITK, the generated files
 # and libraries will be installed into CMAKE_INSTALL_PREFIX, as usual. However,
@@ -171,38 +174,14 @@ INCLUDE("${WRAP_ITK_CMAKE_DIR}/TypedefMacros.cmake")
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateGccXMLInputs.cmake")
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateGenericSwigInterface.cmake")
 
-ADD_SUBDIRECTORY("${WRAP_ITK_CMAKE_DIR}/Languages")
+ADD_SUBDIRECTORY("${WRAP_ITK_CMAKE_DIR}/Languages" "${CMAKE_CURRENT_BINARY_DIR}/Languages")
 # get the porperties from the languages dirs - there should be others than this one
 GET_DIRECTORY_PROPERTY(inc DIRECTORY "${WRAP_ITK_CMAKE_DIR}/Languages" INCLUDE_DIRECTORIES)
 INCLUDE_DIRECTORIES(${inc})
 
 
-###############################################################################
-# let the different languages running some code before begining to parse the
-# modules
-###############################################################################
-
-WRAP_MODULES_ALL_LANGUAGES()
-
-
-###############################################################################
+  ###############################################################################
 # Create wrapper names for simple types to ensure consistent naming
 ###############################################################################
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapBasicTypes.cmake")
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapITKTypes.cmake")
-
-
-###############################################################################
-# Configure specific wrapper modules
-###############################################################################
-
-ADD_SUBDIRECTORY("${WRAP_ITK_CMAKE_DIR}/Modules")
-
-
-###############################################################################
-# let the different languages running some code after have parsed all the
-# modules
-###############################################################################
-
-WRAP_MODULES_ALL_LANGUAGES()
-

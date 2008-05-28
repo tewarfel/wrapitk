@@ -99,6 +99,15 @@ ENDMACRO(BEGIN_WRAPPER_LIBRARY)
 
 
 MACRO(END_WRAP_LIBRARY)
+  # don't chek for deps in external projects
+  IF("${PROJECT_NAME}" STREQUAL "WrapITK")
+    FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+      # be sure that the module is selected by the user
+      IF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
+        MESSAGE(SEND_ERROR "${dep} is required by ${WRAPPER_LIBRARY_NAME} module. Please set WRAP_${dep} to ON, or WRAP_${WRAPPER_LIBRARY_NAME} to OFF.")
+      ENDIF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
+    ENDFOREACH(dep)
+  ENDIF("${PROJECT_NAME}" STREQUAL "WrapITK")
   END_WRAP_LIBRARY_ALL_LANGUAGES()
 ENDMACRO(END_WRAP_LIBRARY)
 
