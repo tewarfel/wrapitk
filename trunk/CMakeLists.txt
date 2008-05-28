@@ -138,29 +138,43 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
                @ONLY IMMEDIATE)
 
+# create the igenerator.py with the pygccxml path in it
+SET(PYGCCXML_PATH "${WRAP_ITK_INSTALL_PREFIX}/pygccxml-0.8.2/")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
+  "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
+  @ONLY IMMEDIATE)
+  
+INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
+  DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/"
+)
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration" FILES 
- ConfigureWrapping.cmake
- CMakeUtilityFunctions.cmake
- CreateCableSwigInputs.cmake
- CreateLanguageSupport.cmake
- CreateWrapperLibrary.cmake
- WrapBasicTypes.cmake
- WrapITKTypes.cmake)
+  CMakeUtilityFunctions.cmake
+  ConfigureWrapping.cmake
+  CreateGccXMLInputs.cmake
+  CreateGenericSwigInterface.cmake
+  TypedefMacros.cmake
+  WrapBasicTypes.cmake
+  WrapITKTypes.cmake
+)
+
+INSTALL(DIRECTORY pygccxml-0.8.2
+  DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration"
+  PATTERN ".svn" EXCLUDE
+  PATTERN "CVS" EXCLUDE
+  PATTERN "docs" EXCLUDE
+  PATTERN "unittests" EXCLUDE
+)
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs" FILES
- ConfigurationInputs/wrap_ITKLang.cxx.in
- ConfigurationInputs/wrap_ITK.cxx.in
- ConfigurationInputs/wrap_.cxx.in
  ConfigurationInputs/Master.mdx.in
- ConfigurationInputs/gcc_xml.inc.in
  ConfigurationInputs/empty.depend.in
- ConfigurationInputs/typemaps.swg.in)
-
-INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs/LanguageSupport" FILES
-  ConfigurationInputs/LanguageSupport/ModuleLoader.py.in
-  ConfigurationInputs/LanguageSupport/ModuleConfig.py.in
-  ConfigurationInputs/LanguageSupport/ExternalProjectConfig.py.in)
+ ConfigurationInputs/empty.in
+ ConfigurationInputs/gcc_xml.inc.in
+ ConfigurationInputs/module.i.in
+ ConfigurationInputs/module.includes.in
+ ConfigurationInputs/wrap_.cxx.in
+)
 
 INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
 
@@ -179,6 +193,14 @@ ENDIF(INSTALL_WRAP_ITK_COMPATIBILITY)
 
 INSTALL_AT_ABSOLUTE_PATH(install_wrapitk_compatibility "${CMAKE_ROOT}/Modules" "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake")
 
+
+
+
+# create the igenerator.py with the pygccxml path in it
+SET(PYGCCXML_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pygccxml-0.8.2/")
+CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
+  "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py"
+  @ONLY IMMEDIATE)
 
 
 ###############################################################################
