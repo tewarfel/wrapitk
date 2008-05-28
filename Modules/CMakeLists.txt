@@ -17,6 +17,9 @@ ELSE(USE_FFTWD OR USE_FFTWF)
   OPTION(WRAP_FFTW "Build FFTW module." OFF)
 ENDIF(USE_FFTWD OR USE_FFTWF)
 
+# ItkVtk is very optional, it MUST be OFF by default
+# TODO: move it to external project
+OPTION(WRAP_ItkVtk "Build ITK-VTK glue module." OFF)
 
 SET(optional_modules 
   Numerics
@@ -61,7 +64,3 @@ ENDFOREACH(module)
 FOREACH(module ${WRAP_ITK_MODULES} ${WRAP_ITK_EXTRA_MODULES})
   ADD_SUBDIRECTORY(${module})
 ENDFOREACH(module)
-
-# ItkVtk is very optional, it MUST be OFF by default
-# TODO: is this the right place for this?
-OPTION(WRAP_ItkVtk "Build ITK-VTK glue module." OFF)
