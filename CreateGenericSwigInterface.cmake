@@ -28,8 +28,8 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     # prepare the options
     SET(opts )
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-      SET(opts ${opts} --mdx "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${dep}.mdx")
-      SET(opts ${opts} --take-includes "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${dep}.includes")
+      SET(opts ${opts} --mdx "${WRAP_ITK_MASTER_INDEX_DIRECTORY}/${dep}.mdx")
+      SET(opts ${opts} --take-includes "${WRAP_ITK_MASTER_INDEX_DIRECTORY}/${dep}.includes")
       SET(opts ${opts} --import "${dep}.i")
     ENDFOREACH(dep)
     # import the interface files previously defined instead of importing all the files defined
@@ -52,15 +52,11 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     SET(DEPS )
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       SET(DEPS ${DEPS} ${${dep}IdxFiles} ${${dep}SwigFiles})
-      # be sure that the module is selected by the user
-      IF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
-        MESSAGE(SEND_ERROR "${dep} is required by ${WRAPPER_LIBRARY_NAME} module. Please set WRAP_${dep} to ON, or WRAP_${WRAPPER_LIBRARY_NAME} to OFF.")
-      ENDIF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
     ENDFOREACH(dep)
   
     ADD_CUSTOM_COMMAND(
       OUTPUT ${interface_file}
-      COMMAND ${PYTHON_EXECUTABLE} ${CMAKE_BINARY_DIR}/igenerator.py
+      COMMAND ${PYTHON_EXECUTABLE} ${IGENERATOR}
         ${opts}
         --swig-include "${LANGUAGES_SRC_DIR}/itk.i"
         --mdx ${mdx_file}
@@ -71,7 +67,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
         # --verbose
         ${xml_file}
         ${interface_file}
-      DEPENDS ${DEPS} ${xml_file} ${includes_file} ${CMAKE_BINARY_DIR}/igenerator.py ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
+      DEPENDS ${DEPS} ${xml_file} ${includes_file} ${IGENERATOR} ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
     )
   #   ADD_CUSTOM_TARGET(${module}Swig DEPENDS ${interface_file})
   #   ADD_DEPENDENCIES(${module}Swig ${WRAPPER_LIBRARY_NAME}Idx)
@@ -167,7 +163,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE module)
   SET(mdx_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.mdx")
   
   # generate the idx file for all the groups of the module
-  SET(idx_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.idx")
+  SET(idx_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}.idx")
   ADD_CUSTOM_COMMAND(
     OUTPUT ${idx_file}
     COMMAND ${CABLE_INDEX}
