@@ -54,6 +54,7 @@ SET(optional_modules
   SegmentationValidation
   SimpleFilters
   UnaryPixelMath
+  ItkVtk
 )
 
 FOREACH(module ${optional_modules})
@@ -67,3 +68,7 @@ ENDFOREACH(module)
 FOREACH(module ${WRAP_ITK_MODULES} ${WRAP_ITK_EXTRA_MODULES})
   ADD_SUBDIRECTORY(${module})
 ENDFOREACH(module)
+
+# ItkVtk is very optional, it MUST be OFF by default
+# TODO: is this the right place for this?
+OPTION(WRAP_ItkVtk "Build ITK-VTK glue module." OFF)
