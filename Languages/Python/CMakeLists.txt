@@ -228,6 +228,10 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleConfig.py.in"
     "${WRAP_ITK_PYTHON_BINARY_DIR}/Configuration/${WRAPPER_LIBRARY_NAME}Config.py"
     @ONLY IMMEDIATE)
+  INSTALL(FILES "${WRAP_ITK_PYTHON_BINARY_DIR}/Configuration/${WRAPPER_LIBRARY_NAME}Config.py"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Python/Configuration"
+  )
+
     
   # create the advanced lib module python file
   # this file let the final user _not_ use the itk module, but rather
@@ -236,6 +240,9 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleLoader.py.in"
     "${WRAP_ITK_PYTHON_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}.py"
     @ONLY IMMEDIATE)
+  INSTALL(FILES "${WRAP_ITK_PYTHON_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}.py"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Python"
+  )
 
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}SwigPython DEPENDS ${cpp_files} ${python_files})
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Python DEPENDS ${modules})
@@ -250,6 +257,9 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/main_module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i"
     @ONLY IMMEDIATE)
+  INSTALL(FILES "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/python"
+  )
 
 
   # set some var reused later
@@ -276,6 +286,9 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
     DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
   )
+  INSTALL(FILES "${python_file}"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
+  )
 
   # build all the c++ files from this module in a common lib
   SET(lib ${WRAPPER_LIBRARY_NAME}Python)
@@ -285,6 +298,9 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     ADD_DEPENDENCIES(${lib} ${dep}Swig)
   ENDFOREACH(dep)
+  INSTALL(TARGETS "${lib}"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
+  )
 
 ENDMACRO(END_WRAP_LIBRARY_PYTHON)
 
@@ -304,6 +320,9 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/module_ext.i.in"
   "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
   @ONLY IMMEDIATE)
+  INSTALL(FILES "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/python"
+  )
 
   # prepare dependencies
   SET(DEPS )
@@ -328,6 +347,9 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
     DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
+  )
+  INSTALL(FILES "${python_file}"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
   )
     
 # gcc visibility can't be used without getting errors when passing objects
