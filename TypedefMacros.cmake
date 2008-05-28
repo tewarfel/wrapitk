@@ -10,6 +10,10 @@
 # lower_case are local to a given macro.
 ################################################################################
 
+# Support for additional include directories of each module
+# WARNING: Each module must set this variable BEFORE calling WRAP_LIBRARY
+# TODO: is this the place place for this?
+SET(WRAPPER_LIBRARY_INCLUDE_DIRECTORIES "" CACHE INTERNAL "additional include directories for each module")
 
 ###############################################################################
 # Define fundamental wrapping macro which sets up the global variables used
@@ -22,6 +26,11 @@ MACRO(WRAP_LIBRARY library_name)
 
   # Mark the current source dir for inclusion because it may contain header files.
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
+  INCLUDE_DIRECTORIES(${WRAPPER_LIBRARY_INCLUDE_DIRECTORIES})
+  
+  # WRAPPER_LIBRARY_INCLUDE_DIRECTORIES. List of other include directories that
+  # contain the desired header files.
+  #SET(WRAPPER_LIBRARY_INCLUDE_DIRECTORIES )
   
   # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files. 
   SET(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -103,6 +112,7 @@ ENDMACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
 ################################################################################
 
 MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+  
   # Include the wrap_*.cmake files in WRAPPER_LIBRARY_SOURCE_DIR. This causes 
   # corresponding wrap_*.cxx files to be generated WRAPPER_LIBRARY_OUTPUT_DIR, 
   # and added to the WRAPPER_LIBRARY_CABLESWIG_INPUTS list.
