@@ -177,7 +177,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
   SET(base_name wrap_${group_name})
     
   # create the swig interface for all the groups in the module
-  SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${base_name}.i")
+  SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${base_name}.i" )
   SET(lib ${group_name}Java)
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${base_name}Java.cpp")
 
@@ -195,7 +195,13 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     SET(java_import_package_name ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${java_import_package_name})
     SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
   ENDFOREACH(dep)
- 
+  
+  SET(swig_libs )
+  FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
+    SET(swig_libs ${swig_libs} "-l${swig_lib} ")
+    MESSAGE(>> ${swig_lib})
+  ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
+  
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} #${java_file}
     COMMAND ${SWIG_EXECUTABLE} -c++ -java -O -features autodoc=1
@@ -208,7 +214,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     -w361 # operator!
     -w467 # overloaded functions (with typemaps)
     -w401 -w503 -w516 #!
-#      -l${WRAP_ITK_JAVA_SOURCE_DIR}/java.i
+    ${swig_libs}
     -o ${cpp_file}
 #      -I${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
     -outdir ${java_package_path}
