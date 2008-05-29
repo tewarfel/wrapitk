@@ -108,12 +108,12 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
   )
     
-  SET(WRAP_ITK_FILE_CONTENT )
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${module_interface_ext_file}"
-    @ONLY IMMEDIATE )
-  INSTALL(FILES "${module_interface_ext_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
-  )
+#  SET(WRAP_ITK_FILE_CONTENT )
+#  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${module_interface_ext_file}"
+#    @ONLY IMMEDIATE )
+#  INSTALL(FILES "${module_interface_ext_file}"
+#    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+#  )
   
   # create the file which store all the includes
   SET(includes_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.includes")
@@ -183,13 +183,13 @@ MACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE module)
 
   SET(SWIG_INTERFACE_MODULES ${SWIG_INTERFACE_MODULES} ${module})
 
-  SET(interface_ext_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}_ext.i")
-  SET(WRAP_ITK_FILE_CONTENT )
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${interface_ext_file}"
-    @ONLY IMMEDIATE )
-  INSTALL(FILES "${interface_ext_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
-  )
+#  SET(interface_ext_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}_ext.i")
+#  SET(WRAP_ITK_FILE_CONTENT )
+#  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${interface_ext_file}"
+#    @ONLY IMMEDIATE )
+#  INSTALL(FILES "${interface_ext_file}"
+#    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+#  )
 
 ENDMACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE)
 

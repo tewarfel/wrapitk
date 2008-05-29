@@ -280,7 +280,8 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     -w467 # overloaded functions (with typemaps)
 #      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     -o ${cpp_file}
-#      -I${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
+    -I${WRAP_ITK_MASTER_INDEX_DIRECTORY}/python
+    -I${WRAP_ITK_MASTER_INDEX_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
@@ -342,7 +343,8 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     -w467 # overloaded functions (with typemaps)
 #      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     -o ${cpp_file}
-#      -I${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
+    -I${WRAP_ITK_MASTER_INDEX_DIRECTORY}/python
+    -I${WRAP_ITK_MASTER_INDEX_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
