@@ -28,8 +28,8 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     # prepare the options
     SET(opts )
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-      SET(opts ${opts} --mdx "${WRAP_ITK_MASTER_INDEX_DIRECTORY}/${dep}.mdx")
-      SET(opts ${opts} --take-includes "${WRAP_ITK_MASTER_INDEX_DIRECTORY}/${dep}.includes")
+      SET(opts ${opts} --mdx "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.mdx")
+      SET(opts ${opts} --take-includes "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.includes")
       SET(opts ${opts} --import "${dep}.i")
     ENDFOREACH(dep)
     # import the interface files previously defined instead of importing all the files defined
@@ -76,7 +76,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     SET(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} ${interface_file})
 
     INSTALL(FILES "${interface_file}"
-      DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex"
+      DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs"
     )
 
   ENDFOREACH(module)
@@ -88,7 +88,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/Master.mdx.in" "${mdx_file}"
      @ONLY IMMEDIATE )
   INSTALL(FILES "${mdx_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs"
   )
 
   SET(module_interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
@@ -105,14 +105,14 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.i.in" "${module_interface_file}"
     @ONLY IMMEDIATE )
   INSTALL(FILES "${module_interface_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
   )
     
 #  SET(WRAP_ITK_FILE_CONTENT )
 #  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${module_interface_ext_file}"
 #    @ONLY IMMEDIATE )
 #  INSTALL(FILES "${module_interface_ext_file}"
-#    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+#    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
 #  )
   
   # create the file which store all the includes
@@ -121,7 +121,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
      ${includes_file}
      @ONLY IMMEDIATE )
   INSTALL(FILES "${includes_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
   )
 
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Idx DEPENDS ${SWIG_INTERFACE_IDX_FILES})
@@ -171,7 +171,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE module)
     DEPENDS ${CABLE_INDEX} ${xml_file}
   )
   INSTALL(FILES "${idx_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
   )
 #   ADD_CUSTOM_TARGET(${module}Idx DEPENDS ${idx_file})
 
@@ -188,7 +188,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE module)
 #  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${interface_ext_file}"
 #    @ONLY IMMEDIATE )
 #  INSTALL(FILES "${interface_ext_file}"
-#    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/ClassIndex/"
+#    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
 #  )
 
 ENDMACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE)

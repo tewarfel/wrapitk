@@ -366,7 +366,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files devel
 %defattr(0644,root,root,0755)
-%{_libdir}/InsightToolkit/WrapITK/ClassIndex
+%{_libdir}/InsightToolkit/WrapITK/Typedefs
 %{_libdir}/InsightToolkit/WrapITK/Configuration
 %{_libdir}/InsightToolkit/WrapITK/SWIG
 %{_libdir}/InsightToolkit/WrapITK/WrapITKConfig.cmake

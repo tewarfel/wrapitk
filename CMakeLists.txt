@@ -97,49 +97,6 @@ IF("${CMAKE_VERSION}" STRGREATER "2.4")
   INCLUDE(CPack)
 ENDIF("${CMAKE_VERSION}" STRGREATER "2.4")
 
-###############################################################################
-# Configure WrapITKConfig.cmake and FindWrapITK.cmake for external projects
-###############################################################################
-# First, configure for use directly from the build dir.
-SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
-SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
-SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClassIndex")
-SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClassIndex")
-SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
-SET(CONFIG_WRAP_ITK_MODULES "${WRAP_ITK_MODULES}")
-SET(CONFIG_WRAP_ITK_PYTHON_MODULE "${WrapITK_BINARY_DIR}/Python/\\\${CTEST_CONFIGURATION_TYPE}")
-SET(CONFIG_WRAP_ITK_PYTHON_LIBS "${LIBRARY_OUTPUT_PATH}/\\\${CTEST_CONFIGURATION_TYPE}")
-SET(CONFIG_WRAP_ITK_LIB_DIR  "${LIBRARY_OUTPUT_PATH}")
-SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_BINARY_DIR}/igenerator.py")
-CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
-               "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
-               @ONLY IMMEDIATE)
-
-SET(CONFIG_WRAP_ITK_DIR "${WrapITK_BINARY_DIR}")
-CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
-               "${WrapITK_BINARY_DIR}/FindWrapITK.cmake"
-               @ONLY IMMEDIATE)
-
-# Second, configure for installed use. Ensure that no absolute paths
-# go into the installed config file, so that it is as portable as possible.
-SET(CONFIG_CONFIG_DIR "\${WrapITK_DIR}/Configuration/Inputs")
-SET(CONFIG_CMAKE_DIR "\${WrapITK_DIR}/Configuration")
-SET(CONFIG_WRAP_ITK_SWIG_LIBRARY_DIRECTORY "\${WrapITK_DIR}/SWIG")
-SET(CONFIG_WRAP_ITK_MASTER_INDEX_DIRECTORY "\${WrapITK_DIR}/ClassIndex")
-SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "\${WrapITK_DIR}")
-SET(CONFIG_WRAP_ITK_PYTHON_MODULE "\${WrapITK_DIR}/Python/")
-SET(CONFIG_WRAP_ITK_PYTHON_LIBS "\${WrapITK_DIR}/lib")
-SET(CONFIG_WRAP_ITK_LIB_DIR  "\${WrapITK_DIR}/lib")
-SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_DIR}/Configuration/igenerator.py")
-CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
-               "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
-               @ONLY IMMEDIATE)
-
-SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
-CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
-               "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
-               @ONLY IMMEDIATE)
-
 # create the igenerator.py with the pygccxml path in it
 SET(PYGCCXML_PATH "${WRAP_ITK_INSTALL_PREFIX}/pygccxml-0.8.2/")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
@@ -205,7 +162,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in"
 
 
 SET(IGENERATOR  "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py")
-SET(WRAP_ITK_MASTER_INDEX_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/ClassIndex")
+SET(WRAP_ITK_TYPEDEFS_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Typedefs")
 
 
 ###############################################################################
@@ -236,4 +193,45 @@ ADD_SUBDIRECTORY("${CMAKE_CURRENT_SOURCE_DIR}/Modules" "${CMAKE_CURRENT_BINARY_D
 ###############################################################################
 
 END_WRAP_MODULES_ALL_LANGUAGES()
+
+###############################################################################
+# Configure WrapITKConfig.cmake and FindWrapITK.cmake for external projects
+###############################################################################
+# First, configure for use directly from the build dir.
+SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
+SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
+SET(CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Typedefs")
+SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
+SET(CONFIG_WRAP_ITK_MODULES "${WRAP_ITK_MODULES}")
+SET(CONFIG_WRAP_ITK_PYTHON_MODULE "${WrapITK_BINARY_DIR}/Python/\\\${CTEST_CONFIGURATION_TYPE}")
+SET(CONFIG_WRAP_ITK_PYTHON_LIBS "${LIBRARY_OUTPUT_PATH}/\\\${CTEST_CONFIGURATION_TYPE}")
+SET(CONFIG_WRAP_ITK_LIB_DIR  "${LIBRARY_OUTPUT_PATH}")
+SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_BINARY_DIR}/igenerator.py")
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
+               "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
+               @ONLY IMMEDIATE)
+
+SET(CONFIG_WRAP_ITK_DIR "${WrapITK_BINARY_DIR}")
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
+               "${WrapITK_BINARY_DIR}/FindWrapITK.cmake"
+               @ONLY IMMEDIATE)
+
+# Second, configure for installed use. Ensure that no absolute paths
+# go into the installed config file, so that it is as portable as possible.
+SET(CONFIG_CONFIG_DIR "\${WrapITK_DIR}/Configuration/Inputs")
+SET(CONFIG_CMAKE_DIR "\${WrapITK_DIR}/Configuration")
+SET(CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY "\${WrapITK_DIR}/Typedefs")
+SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "\${WrapITK_DIR}")
+SET(CONFIG_WRAP_ITK_PYTHON_MODULE "\${WrapITK_DIR}/Python/")
+SET(CONFIG_WRAP_ITK_PYTHON_LIBS "\${WrapITK_DIR}/lib")
+SET(CONFIG_WRAP_ITK_LIB_DIR  "\${WrapITK_DIR}/lib")
+SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_DIR}/Configuration/igenerator.py")
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
+               "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
+               @ONLY IMMEDIATE)
+
+SET(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
+CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
+               "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
+               @ONLY IMMEDIATE)
 

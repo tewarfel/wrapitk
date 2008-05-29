@@ -60,6 +60,7 @@ FOREACH(module ${optional_modules})
     SET(WRAP_ITK_MODULES ${WRAP_ITK_MODULES} ${module})
   ENDIF(WRAP_${module})
 ENDFOREACH(module)
+SET(WRAP_ITK_MODULES ${WRAP_ITK_MODULES} CACHE INTERNAL "Internal module list.")
 
 FOREACH(module ${WRAP_ITK_MODULES} ${WRAP_ITK_EXTRA_MODULES})
   ADD_SUBDIRECTORY(${module})
