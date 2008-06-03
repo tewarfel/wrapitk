@@ -148,6 +148,8 @@ MACRO(END_WRAP_LIBRARY_JAVA)
     WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
     COMMENT "Creating java archive: ${java_jar_file_path}"
     )
+  MESSAGE(>> "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*.class")
+  
   ADD_CUSTOM_TARGET(${lib_jar} ALL DEPENDS ${java_bin_file} ${java_jar_file_path})
 
   ADD_DEPENDENCIES(${lib_jar} ${lib})
@@ -198,7 +200,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
   
   SET(swig_libs )
   FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
-    SET(swig_libs ${swig_libs} "-l${swig_lib} ")
+    SET(swig_libs ${swig_libs} "-l${swig_lib}")
     MESSAGE(>> ${swig_lib})
   ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
   
