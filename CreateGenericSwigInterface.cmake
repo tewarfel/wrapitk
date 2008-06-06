@@ -17,6 +17,12 @@ ENDMACRO(WRAP_LIBRARY_SWIG_INTERFACE)
 
 MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
 
+  SET(incs )
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    SET(incs "${incs}#include \"${dep}.includes\"\n")
+  ENDFOREACH(dep)
+  SET(SWIG_INTERFACE_INCLUDES_CONTENT "${incs}\n\n${SWIG_INTERFACE_INCLUDES_CONTENT}")
+
   # the list of .i files generated for the module
   SET(SWIG_INTERFACE_FILES )
 
@@ -139,7 +145,7 @@ ENDMACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
 MACRO(WRAP_INCLUDE_SWIG_INTERFACE include_file)
   # TODO: don't include the same file several times
   IF("${include_file}" MATCHES "<.*>")
-    SET(SWIG_INTERFACE_INCLUDES_CONTENT "${SWIG_INTERFACE_INCLUDES_CONTENT}#include ${include_file}\n")
+  SET(SWIG_INTERFACE_INCLUDES_CONTENT "${SWIG_INTERFACE_INCLUDES_CONTENT}#include ${include_file}\n")
   ELSE("${include_file}" MATCHES "<.*>")
     SET(SWIG_INTERFACE_INCLUDES_CONTENT "${SWIG_INTERFACE_INCLUDES_CONTENT}#include \"${include_file}\"\n")
   ENDIF("${include_file}" MATCHES "<.*>")
