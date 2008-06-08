@@ -81,9 +81,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   
     SET(SWIG_INTERFACE_FILES ${SWIG_INTERFACE_FILES} ${interface_file})
 
-    INSTALL(FILES "${interface_file}"
-      DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs"
-    )
+    WRAP_ITK_INSTALL("/Configuration/Typedefs" "${interface_file}")
 
   ENDFOREACH(module)
 
@@ -93,9 +91,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   SET(CONFIG_INDEX_FILE_CONTENT "${SWIG_INTERFACE_MDX_CONTENT}")
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/Master.mdx.in" "${mdx_file}"
      @ONLY IMMEDIATE )
-  INSTALL(FILES "${mdx_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs"
-  )
+  WRAP_ITK_INSTALL("/Configuration/Typedefs" "${mdx_file}")
 
   SET(module_interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
   SET(module_interface_ext_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}_ext.i")
@@ -110,9 +106,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   SET(CONFIG_MODULE_INTERFACE_CONTENT "${deps_imports}${SWIG_INTERFACE_MODULE_CONTENT}")
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.i.in" "${module_interface_file}"
     @ONLY IMMEDIATE )
-  INSTALL(FILES "${module_interface_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
-  )
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${module_interface_file}")
     
 #  SET(WRAP_ITK_FILE_CONTENT )
 #  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/empty.in" "${module_interface_ext_file}"
@@ -126,9 +120,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.includes.in"
      ${includes_file}
      @ONLY IMMEDIATE )
-  INSTALL(FILES "${includes_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
-  )
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${includes_file}")
 
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Idx DEPENDS ${SWIG_INTERFACE_IDX_FILES})
   SET(${WRAPPER_LIBRARY_NAME}IdxFiles ${SWIG_INTERFACE_IDX_FILES} CACHE INTERNAL "Internal ${WRAPPER_LIBRARY_NAME}Idx file list.")
@@ -176,9 +168,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE module)
           ${xml_file} ${idx_file}
     DEPENDS ${CABLE_INDEX} ${xml_file}
   )
-  INSTALL(FILES "${idx_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/"
-  )
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${idx_file}")
 #   ADD_CUSTOM_TARGET(${module}Idx DEPENDS ${idx_file})
 
   # store the path of the idx file to store it in the mdx file
