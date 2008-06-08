@@ -367,19 +367,19 @@ def New(self, *args, **kargs) :
     # copy the callback so it can be reset to None in itkConfig
     # without pb
     callback = itkConfig.ProgressCallback
-#    try :
-    def progress() :
-      # newItkObject and callback are kept referenced with a closure
-      callback(self.__name__, newItkObject.GetProgress())
-
-    command = ITKPyUtils.PyCommand.New()
-    command.SetCommandCallable(progress)
-    newItkObject.AddObserver(Base.ProgressEvent(), command)
-#    except :
+    try :
+      def progress() :
+        # newItkObject and callback are kept referenced with a closure
+        callback(self.__name__, newItkObject.GetProgress())
+  
+      command = ITKPyUtils.PyCommand.New()
+      command.SetCommandCallable(progress)
+      newItkObject.AddObserver(Base.ProgressEvent(), command)
+    except :
       # it seems that something goes wrong...
       # as this feature is designed for prototyping, it's not really a problem
       # if an object  don't have progress reporter, so adding reporter can silently fail
-#      pass
+      pass
 
   return newItkObject
 
