@@ -1009,10 +1009,19 @@ ENDMACRO(ADD_PYTHON_POINTER_TYPEMAP)
 
 ###############################################################################
 # Create the PyUtils library
-# SUBDIRS(PyUtils)
 
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   SUBDIRS(Tests)
   SUBDIRS(itkExtras)
+  
+  MACRO(END_WRAP_MODULES_PYTHON)
+  message("**************")
+    ADD_SUBDIRECTORY(${WRAP_ITK_PYTHON_SOURCE_DIR}/PyUtils)
+  ENDMACRO(END_WRAP_MODULES_PYTHON)
+
+ELSE(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  MACRO(END_WRAP_MODULES_PYTHON)
+    # just do nothing
+  ENDMACRO(END_WRAP_MODULES_PYTHON)
 ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
