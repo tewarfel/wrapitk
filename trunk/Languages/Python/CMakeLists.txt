@@ -638,6 +638,7 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     # add a template definition for the superclass which is not in ITK
     STRING(REGEX REPLACE "^[^,]+, *(.+) *$" "\\1" superclass_template_param "${template_params}")
     IF("${superclass_template_param}" MATCHES "::")
+      SET(param "${superclass_template_param}")
       STRING(REPLACE "::" "" superclass_template_param "${superclass_template_param}")
       STRING(REPLACE "unsigned" "U" superclass_template_param "${superclass_template_param}")
       STRING(REPLACE "signed" "S" superclass_template_param "${superclass_template_param}")
