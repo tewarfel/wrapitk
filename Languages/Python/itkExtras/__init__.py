@@ -335,6 +335,24 @@ class pipeline:
   def __len__( self ):
      return len(self.filter_list)
 
+
+def down_cast(obj):
+  """Down cast an itkLightObject (or a object of a subclass) to its most specialized type.
+  """
+  import itk, itkTemplate
+  className = obj.GetNameOfClass()
+  t = getattr(itk, className)
+  if isinstance(t, itkTemplate.itkTemplate):
+    for c in t.values():
+      try:
+        return c.cast(obj)
+      except:
+        # fail silently for now
+        pass
+    raise RuntimeError("Can't downcast to a specialization of %s" % className)
+  else:
+    return t.cast(obj)
+    
 # now loads the other modules we may found in the same directory
 import os.path, sys
 directory = os.path.dirname(__file__)
