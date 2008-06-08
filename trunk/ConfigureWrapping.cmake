@@ -156,10 +156,8 @@ SET(LANGUAGES_SRC_DIR "${WRAP_ITK_CMAKE_DIR}/Languages" CACHE INTERNAL "language
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CMakeUtilityFunctions.cmake")
 
 IF(EXTERNAL_WRAP_ITK_PROJECT)
-  CREATE_INSTALL_AT_ABSOLUTE_PATH_TARGET(install_external_wrapitk_project DEFAULT
-    "Installing external project ${PROJECT} into the WrapITK installation directory.")
   MACRO(WRAP_ITK_INSTALL path)
-    INSTALL_AT_ABSOLUTE_PATH(install_external_wrapitk_project "${WRAP_ITK_INSTALL_LOCATION}${path}" ${ARGN})
+    INSTALL(FILES ${ARGN} DESTINATION "${WRAP_ITK_INSTALL_LOCATION}${path}")
   ENDMACRO(WRAP_ITK_INSTALL)
 ELSE(EXTERNAL_WRAP_ITK_PROJECT)
   MACRO(WRAP_ITK_INSTALL path)

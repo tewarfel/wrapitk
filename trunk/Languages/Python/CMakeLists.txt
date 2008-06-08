@@ -41,100 +41,108 @@ ENDIF(DOXYGEN_MAN_PATH)
 # bundled up into an install conventiently. Python will take care of turning
 # the / path separator into \ on windows if needed.
 
-IF(CMAKE_CONFIGURATION_TYPES)
-  SET(CONFIG_WRAP_ITK_DATA_ROOT "../../Data")
-  SET(CONFIG_WRAP_ITK_TEST_ROOT "../../Testing")
-  SET(CONFIG_PYTHON_CONFIGPY_DIR "../Configuration")
-
-  FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
-    # SWIG-generated libs and *.py files are sent to ${config} subdir
-    # This assumes that LIBRARY_OUTPUT_PATH is WrapITK_BINARY_DIR/bin (bad!)
-    # TODO: We need a better way to do this.
-    SET(CONFIG_PYTHON_SWIGPY_DIR "../../lib/${config}")
-    SET(CONFIG_PYTHON_SWIGLIB_DIR "../../lib/${config}")
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  
+  IF(CMAKE_CONFIGURATION_TYPES)
+    SET(CONFIG_WRAP_ITK_DATA_ROOT "../../Data")
+    SET(CONFIG_WRAP_ITK_TEST_ROOT "../../Testing")
+    SET(CONFIG_PYTHON_CONFIGPY_DIR "../Configuration")
+  
+    FOREACH(config ${CMAKE_CONFIGURATION_TYPES})
+      # SWIG-generated libs and *.py files are sent to ${config} subdir
+      # This assumes that LIBRARY_OUTPUT_PATH is WrapITK_BINARY_DIR/bin (bad!)
+      # TODO: We need a better way to do this.
+      SET(CONFIG_PYTHON_SWIGPY_DIR "../../lib/${config}")
+      SET(CONFIG_PYTHON_SWIGLIB_DIR "../../lib/${config}")
+      CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
+                     "${WRAP_ITK_PYTHON_BINARY_DIR}/${config}/itkConfig.py"
+                     @ONLY IMMEDIATE)
+    ENDFOREACH(config)
+  ELSE(CMAKE_CONFIGURATION_TYPES)
+    SET(CONFIG_WRAP_ITK_DATA_ROOT "../Data")
+    SET(CONFIG_WRAP_ITK_TEST_ROOT "../Testing")
+    SET(CONFIG_PYTHON_CONFIGPY_DIR "Configuration")
+  
+    SET(CONFIG_PYTHON_SWIGPY_DIR "../lib")
+    SET(CONFIG_PYTHON_SWIGLIB_DIR "../lib")
     CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
-                   "${WRAP_ITK_PYTHON_BINARY_DIR}/${config}/itkConfig.py"
+                   "${WRAP_ITK_PYTHON_BINARY_DIR}/itkConfig.py"
                    @ONLY IMMEDIATE)
-  ENDFOREACH(config)
-ELSE(CMAKE_CONFIGURATION_TYPES)
-  SET(CONFIG_WRAP_ITK_DATA_ROOT "../Data")
-  SET(CONFIG_WRAP_ITK_TEST_ROOT "../Testing")
-  SET(CONFIG_PYTHON_CONFIGPY_DIR "Configuration")
-
-  SET(CONFIG_PYTHON_SWIGPY_DIR "../lib")
+  ENDIF(CMAKE_CONFIGURATION_TYPES)
+  
+  SET(CONFIG_WRAP_ITK_TEST_ROOT "None")
   SET(CONFIG_PYTHON_SWIGLIB_DIR "../lib")
+  SET(CONFIG_PYTHON_SWIGPY_DIR "../lib")
+  SET(CONFIG_PYTHON_CONFIGPY_DIR "Configuration")
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
-                 "${WRAP_ITK_PYTHON_BINARY_DIR}/itkConfig.py"
-                 @ONLY IMMEDIATE)
-ENDIF(CMAKE_CONFIGURATION_TYPES)
+                 "${WRAP_ITK_PYTHON_BINARY_DIR}/InstallOnly/itkConfig.py"
+                @ONLY IMMEDIATE)
+  
+  WRAP_ITK_INSTALL(/Python "${WRAP_ITK_PYTHON_BINARY_DIR}/InstallOnly/itkConfig.py")
 
-SET(CONFIG_WRAP_ITK_TEST_ROOT "None")
-SET(CONFIG_PYTHON_SWIGLIB_DIR "../lib")
-SET(CONFIG_PYTHON_SWIGPY_DIR "../lib")
-SET(CONFIG_PYTHON_CONFIGPY_DIR "Configuration")
-CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/itkConfig.py.in"
-               "${WRAP_ITK_PYTHON_BINARY_DIR}/InstallOnly/itkConfig.py"
-              @ONLY IMMEDIATE)
-
-WRAP_ITK_INSTALL(/Python "${WRAP_ITK_PYTHON_BINARY_DIR}/InstallOnly/itkConfig.py")
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
 
 ###############################################################################
 # Copy python files for out-of-source builds, and set up install of same.
 
-# Create a list of Python files.
-# WrapITK/Python/*.py
-SET(ITK_PYTHON_FILES
-  itk
-  itkBase
-  itkTemplate
-  itkTypes
-#  itkExtras/__init__
-  itkLazy
-  )
-# Done listing files.
-
-# Now copy these files if necessary.
-
-IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-  # In source build -- no need to copy Python file. Do need to set up the install.
-  FOREACH(file ${ITK_PYTHON_FILES})
-    SET(install_tgt "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    SET(WRAP_ITK_PYTHON_INSTALL_FILES ${WRAP_ITK_PYTHON_FILES} "${install_tgt}")
-  ENDFOREACH(file)
-ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
-  SET(WRAP_ITK_PYTHON_FILES)
-  ADD_CUSTOM_TARGET(copy_python_files ALL)
-  FOREACH(file ${ITK_PYTHON_FILES})
-    SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
-    # recall that WRAP_ITK_BUILD_INTDIR expands to nothing if no config types are set,
-    # or to "CMAKE_CONFIG_INTDIR/" if there are such. Likewise, WRAP_ITK_INSTALL_INTDIR
-    # expands to ${BUILD_TYPE}/ or nothing.
-    SET(copy_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_BUILD_INTDIR}${file}.py")
-    SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${copy_tgt}")
-    SET(install_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${file}.py")
-    SET(WRAP_ITK_PYTHON_INSTALL_FILES ${WRAP_ITK_PYTHON_INSTALL_FILES} "${install_tgt}")
-    
-    # create the directory to avoid loosing case on windows
-    FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${path})
-
-    ADD_CUSTOM_COMMAND(SOURCE ${src}
-      COMMAND ${CMAKE_COMMAND}
-      ARGS -E copy ${src} ${copy_tgt}
-      OUTPUTS ${copy_tgt}
-      TARGET copy_python_files
-      COMMENT "Copying ${file}.py to build dir.")
-  ENDFOREACH(file)
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   
-  # driver command to make the copy happen.
-  ADD_CUSTOM_COMMAND(
-    SOURCE copy_python_files
-    DEPENDS ${WRAP_ITK_PYTHON_FILES}
-    TARGET copy_python_files)
-ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
+  # Create a list of Python files.
+  # WrapITK/Python/*.py
+  SET(ITK_PYTHON_FILES
+    itk
+    itkBase
+    itkTemplate
+    itkTypes
+  #  itkExtras/__init__
+    itkLazy
+    )
+  # Done listing files.
+  
+  # Now copy these files if necessary.
+  
+  IF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
+    # In source build -- no need to copy Python file. Do need to set up the install.
+    FOREACH(file ${ITK_PYTHON_FILES})
+      SET(install_tgt "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
+      SET(WRAP_ITK_PYTHON_INSTALL_FILES ${WRAP_ITK_PYTHON_FILES} "${install_tgt}")
+    ENDFOREACH(file)
+  ELSE ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
+    SET(WRAP_ITK_PYTHON_FILES)
+    ADD_CUSTOM_TARGET(copy_python_files ALL)
+    FOREACH(file ${ITK_PYTHON_FILES})
+      SET(src "${CMAKE_CURRENT_SOURCE_DIR}/${file}.py")
+      # recall that WRAP_ITK_BUILD_INTDIR expands to nothing if no config types are set,
+      # or to "CMAKE_CONFIG_INTDIR/" if there are such. Likewise, WRAP_ITK_INSTALL_INTDIR
+      # expands to ${BUILD_TYPE}/ or nothing.
+      SET(copy_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_BUILD_INTDIR}${file}.py")
+      SET(WRAP_ITK_PYTHON_FILES ${WRAP_ITK_PYTHON_FILES} "${copy_tgt}")
+      SET(install_tgt "${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${file}.py")
+      SET(WRAP_ITK_PYTHON_INSTALL_FILES ${WRAP_ITK_PYTHON_INSTALL_FILES} "${install_tgt}")
+      
+      # create the directory to avoid loosing case on windows
+      FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/${WRAP_ITK_INSTALL_INTDIR}${path})
+  
+      ADD_CUSTOM_COMMAND(SOURCE ${src}
+        COMMAND ${CMAKE_COMMAND}
+        ARGS -E copy ${src} ${copy_tgt}
+        OUTPUTS ${copy_tgt}
+        TARGET copy_python_files
+        COMMENT "Copying ${file}.py to build dir.")
+    ENDFOREACH(file)
+    
+    # driver command to make the copy happen.
+    ADD_CUSTOM_COMMAND(
+      SOURCE copy_python_files
+      DEPENDS ${WRAP_ITK_PYTHON_FILES}
+      TARGET copy_python_files)
+  ENDIF ("${WrapITK_BINARY_DIR}" MATCHES "^${WrapITK_SOURCE_DIR}$")
+  
+  # Install the package python files.
+  WRAP_ITK_INSTALL(/Python ${WRAP_ITK_PYTHON_INSTALL_FILES})
 
-# Install the package python files.
-WRAP_ITK_INSTALL(/Python ${WRAP_ITK_PYTHON_INSTALL_FILES})
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
 
 ###############################################################################
@@ -204,6 +212,28 @@ ENDIF(PY_SITE_PACKAGES_PATH)
 # )
 
 
+###############################################################################
+# Install python stuff for external projects
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Python
+    CMakeLists.txt
+    ExternalProjectConfig.pth.in
+    ExternalProjectConfig.py.in
+    ModuleConfig.py.in
+    ModuleLoader.py.in
+    WrapITK.pth.in
+    itkConfig.py.in
+    main_module_ext.i.in
+    make_doxygen_config.py.in
+    module_ext.i.in
+    python.i
+  )
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+
+
+
+
+
 MACRO(WRAP_LIBRARY_PYTHON library_name)
   SET(WRAP_ITK_PYTHON_CONFIGURATION_TEMPLATES "")
   SET(WRAP_ITK_PYTHON_LIBRARY_IMPORTS "")
@@ -228,8 +258,8 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleConfig.py.in"
     "${WRAP_ITK_PYTHON_BINARY_DIR}/Configuration/${WRAPPER_LIBRARY_NAME}Config.py"
     @ONLY IMMEDIATE)
-  INSTALL(FILES "${WRAP_ITK_PYTHON_BINARY_DIR}/Configuration/${WRAPPER_LIBRARY_NAME}Config.py"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Python/Configuration"
+  WRAP_ITK_INSTALL("/Python/Configuration"
+    "${WRAP_ITK_PYTHON_BINARY_DIR}/Configuration/${WRAPPER_LIBRARY_NAME}Config.py"
   )
 
     
@@ -240,9 +270,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleLoader.py.in"
     "${WRAP_ITK_PYTHON_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}.py"
     @ONLY IMMEDIATE)
-  INSTALL(FILES "${WRAP_ITK_PYTHON_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}.py"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Python"
-  )
+  WRAP_ITK_INSTALL("/Python" "${WRAP_ITK_PYTHON_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}.py")
 
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}SwigPython DEPENDS ${cpp_files} ${python_files})
 #   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Python DEPENDS ${modules})
@@ -257,8 +285,8 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/main_module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i"
     @ONLY IMMEDIATE)
-  INSTALL(FILES "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/python"
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/python"
+    "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i"
   )
 
 
@@ -294,9 +322,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
     DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
   )
-  INSTALL(FILES "${python_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
-  )
+  WRAP_ITK_INSTALL("/lib" "${python_file}")
 
   # build all the c++ files from this module in a common lib
   SET(lib ${WRAPPER_LIBRARY_NAME}Python)
@@ -306,9 +332,15 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     ADD_DEPENDENCIES(${lib} ${dep}Swig)
   ENDFOREACH(dep)
-  INSTALL(TARGETS "${lib}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
-  )
+  IF(EXTERNAL_WRAP_ITK_PROJECT)
+    INSTALL(TARGETS "${lib}"
+      DESTINATION "${WRAP_ITK_INSTALL_LOCATION}/lib"
+    )
+  ELSE(EXTERNAL_WRAP_ITK_PROJECT)
+    INSTALL(TARGETS "${lib}"
+      DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
+    )
+  ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
 
 ENDMACRO(END_WRAP_LIBRARY_PYTHON)
 
@@ -328,8 +360,8 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/module_ext.i.in"
   "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
   @ONLY IMMEDIATE)
-  INSTALL(FILES "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Typedefs/python"
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/python" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
+    DESTINATION 
   )
 
   # prepare dependencies
@@ -364,9 +396,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
     DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
   )
-  INSTALL(FILES "${python_file}"
-    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
-  )
+  WRAP_ITK_INSTALL("/lib" "${python_file}")
     
 # gcc visibility can't be used without getting errors when passing objects
 # from one module to an other
@@ -979,7 +1009,9 @@ ENDMACRO(ADD_PYTHON_POINTER_TYPEMAP)
 ###############################################################################
 # Create the PyUtils library
 # SUBDIRS(PyUtils)
-SUBDIRS(Tests)
-SUBDIRS(itkExtras)
 
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  SUBDIRS(Tests)
+  SUBDIRS(itkExtras)
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 

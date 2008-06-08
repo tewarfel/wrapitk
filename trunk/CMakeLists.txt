@@ -98,7 +98,7 @@ IF("${CMAKE_VERSION}" STRGREATER "2.4")
 ENDIF("${CMAKE_VERSION}" STRGREATER "2.4")
 
 # create the igenerator.py with the pygccxml path in it
-SET(PYGCCXML_PATH "${WRAP_ITK_INSTALL_PREFIX}/pygccxml-0.8.2/")
+SET(PYGCCXML_PATH "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Configuration/pygccxml-0.8.2/")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
   "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
   @ONLY IMMEDIATE)
@@ -107,7 +107,7 @@ INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
   DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/"
 )
 
-INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration" FILES 
+INSTALL(FILES 
   CMakeUtilityFunctions.cmake
   ConfigureWrapping.cmake
   CreateGccXMLInputs.cmake
@@ -115,6 +115,7 @@ INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration" FILES
   TypedefMacros.cmake
   WrapBasicTypes.cmake
   WrapITKTypes.cmake
+  DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration" 
 )
 
 INSTALL(DIRECTORY pygccxml-0.8.2
@@ -125,7 +126,7 @@ INSTALL(DIRECTORY pygccxml-0.8.2
   PATTERN "unittests" EXCLUDE
 )
 
-INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs" FILES
+INSTALL(FILES
  ConfigurationInputs/Master.mdx.in
  ConfigurationInputs/empty.depend.in
  ConfigurationInputs/empty.in
@@ -133,9 +134,12 @@ INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs" FILES
  ConfigurationInputs/module.i.in
  ConfigurationInputs/module.includes.in
  ConfigurationInputs/wrap_.cxx.in
+ DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Inputs"
 )
 
-INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/" FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake")
+INSTALL(FILES "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
+  DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/"
+)
 
 # Add a custom target to drive installation of the WrapITK-compatibility files
 IF(INSTALL_WRAP_ITK_COMPATIBILITY)
@@ -220,12 +224,12 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
 # go into the installed config file, so that it is as portable as possible.
 SET(CONFIG_CONFIG_DIR "\${WrapITK_DIR}/Configuration/Inputs")
 SET(CONFIG_CMAKE_DIR "\${WrapITK_DIR}/Configuration")
-SET(CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY "\${WrapITK_DIR}/Typedefs")
+SET(CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY "\${WrapITK_DIR}/Configuration/Typedefs")
 SET(CONFIG_WRAP_ITK_INSTALL_LOCATION "\${WrapITK_DIR}")
 SET(CONFIG_WRAP_ITK_PYTHON_MODULE "\${WrapITK_DIR}/Python/")
 SET(CONFIG_WRAP_ITK_PYTHON_LIBS "\${WrapITK_DIR}/lib")
 SET(CONFIG_WRAP_ITK_LIB_DIR  "\${WrapITK_DIR}/lib")
-SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_DIR}/Configuration/igenerator.py")
+SET(CONFIG_WRAP_ITK_IGENERATOR  "\${WrapITK_DIR}/Configuration/igenerator.py")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
