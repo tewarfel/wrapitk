@@ -58,6 +58,8 @@ public:
    */
   void SetCommandCallable(PyObject *obj);
 
+  PyObject * GetCommandCallable();
+
   void Execute(Object *, const EventObject&);
   void Execute(const Object *, const EventObject&);
 

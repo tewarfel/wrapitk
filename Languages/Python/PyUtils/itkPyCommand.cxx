@@ -55,6 +55,11 @@ void PyCommand::SetCommandCallable(PyObject *obj)
     }
 }
 
+PyObject * PyCommand::GetCommandCallable()
+{
+    return this->obj;
+}
+
 void PyCommand::Execute(Object *, const EventObject&)
 {
     this->PyExecute();

@@ -14,15 +14,15 @@ def auto_progress( progressType = 1 ):
   
   if progressType == True or progressType == 1 :
     itkConfig.ImportCallback = terminal_import_callback
-#    itkConfig.ProgressCallback = terminal_progress_callback
+    itkConfig.ProgressCallback = terminal_progress_callback
     
   elif progressType == 2 :
     itkConfig.ImportCallback = simple_import_callback
-#    itkConfig.ProgressCallback = simple_progress_callback
+    itkConfig.ProgressCallback = simple_progress_callback
     
   elif progressType == False or progressType == 0 :
     itkConfig.ImportCallback = None
-#    itkConfig.ProgressCallback = None
+    itkConfig.ProgressCallback = None
     
   else:
     raise ValueError("Invalid auto progress type: "+repr(progressType))
