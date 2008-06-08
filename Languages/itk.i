@@ -50,4 +50,19 @@
 	
 	%ignore class_name##_Pointer;
      
+	// a cast() static method to downcast objects
+	%extend class_name {
+		public:
+		static class_name * cast( itkLightObject * obj ) {
+		  if( obj == NULL ) {
+		    return NULL;
+		  }
+		  class_name * cast_obj = dynamic_cast<class_name *>(obj);
+		  if( cast_obj == NULL ) {
+		    throw std::bad_cast();
+		  }
+		  return cast_obj;
+		};
+	}
+
 %enddef
