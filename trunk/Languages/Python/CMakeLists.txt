@@ -426,7 +426,9 @@ ENDMACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 MACRO(ADD_ONE_TYPEDEF_PYTHON wrap_method wrap_class swig_name template_params)
   STRING(REGEX REPLACE "(.*::)" "" base_name "${wrap_class}")
   
-  ADD_PYTHON_CONFIG_TEMPLATE("${base_name}" "${wrap_class}" "${swig_name}" "${template_params}")
+  IF(NOT "${wrap_class}" STREQUAL "MetaEvent")
+    ADD_PYTHON_CONFIG_TEMPLATE("${base_name}" "${wrap_class}" "${swig_name}" "${template_params}")
+  ENDIF(NOT "${wrap_class}" STREQUAL "MetaEvent")
   
   # std::complex and vcl_complex are the same classes, but python don't know that
   IF("${wrap_class}" STREQUAL "vcl_complex")
