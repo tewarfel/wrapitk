@@ -63,27 +63,12 @@
 
 #endif
 
+
 #ifdef SWIGJAVA
 %{
 #include "vtkJavaUtil.h"
 %}
 
-%typemap(out) vtkImageExport* {
-  $result = vtkJavaGetObjectFromPointer( (vtkImageExport*)$1 );
-}
-
-%typemap(out) vtkImageImport* {
-  $result = vtkJavaGetObjectFromPointer( (vtkImageImport*)$1 );
-}
-
-%typemap(out) vtkImageData* {
-
-  $result = vtkJavaGetObjectFromPointer( (vtkImageData*)$1 );
-}
-
-%typemap(in) vtkImageData* {
-  $1 = NULL;
-  $1 = (vtkImageData*) vtkJavaGetPointerFromObject( env, $input, (char *)"vtkImageData" );
-  if ( $1 == NULL ) { SWIG_fail; }
-}
+// TODO: The java typemaps seem to only work in java.i, they are harmless in that file but misplaces.
 #endif
+

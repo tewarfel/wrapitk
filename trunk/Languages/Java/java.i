@@ -76,6 +76,39 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 //%unrefobject itkLightObject "$this->UnRegister();"
 
 
+// itkvtk, this is temp
+%define TYPEMAP_ITKVTK_OUT(vtkClassType, vtkClassJava)
+	%typemap(jstype) vtkClassType "vtk.vtkClassJava"
+	%typemap(javaout) vtkClassType{
+	    long cPtr = $jnicall;
+	    if (cPtr == 0) return null;
+	    vtk.vtkClassJava obj = null;
+	    java.lang.ref.WeakReference ref = (java.lang.ref.WeakReference)vtk.vtkGlobalJavaHash.PointerToReference.get(new Long(cPtr));
+	    if (ref != null) {
+	      obj = (vtk.vtkClassJava)ref.get();
+	    }
+	    if (obj == null) {
+	    	vtk.vtkClassJava tempObj = new vtk.vtkClassJava(cPtr);
+	      String className = tempObj.GetClassName();
+	      try {
+	        Class c = Class.forName("vtk." + className);
+	        java.lang.reflect.Constructor cons = c.getConstructor(new Class[] {long.class} );
+	        obj = (vtk.vtkClassJava)cons.newInstance(new Object[] {new Long(cPtr)});
+	      } catch (Exception e) {
+	        e.printStackTrace();
+	      }
+	      tempObj.Delete();
+	    }
+	    return obj;
+	}
+%enddef
+
+%define TYPEMAP_ITKVTK_IN(vtkClassType)
+	%typemap(javain) vtkClassType "$javainput.GetVTKId()"
+%enddef
+// end itkvtk
+
+
 // TODO: always tell swig we're the owner
 // TODO: itk classes with no New() must be marked as abstract
 %define DECLARE_REF_COUNT_CLASS_JAVA(itkClass)
@@ -115,47 +148,10 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 	%ignore itkClass##_Pointer;
 
 // itkvtk, this is temp
-
-//%typemap(jtype) vtkImageData* "vtk.vtkImageData"
-%typemap(jstype) vtkImageData* "vtk.vtkImageData"
-%typemap(javaout) vtkImageData*{
-    long cPtr = itkImageToVTKImageFilterJavaJNI.itkImageToVTKImageFilterIUC2_GetOutput(swigCPtr, this);
-    if (cPtr == 0) return null;
-    vtk.vtkImageData obj = null;
-    java.lang.ref.WeakReference ref = (java.lang.ref.WeakReference)vtk.vtkGlobalJavaHash.PointerToReference.get(new Long(cPtr));
-    if (ref != null) {
-      obj = (vtk.vtkImageData)ref.get();
-    }
-    if (obj == null) {
-    	vtk.vtkImageData tempObj = new vtk.vtkImageData(cPtr);
-      String className = tempObj.GetClassName();
-      try {
-        Class c = Class.forName("vtk." + className);
-        java.lang.reflect.Constructor cons = c.getConstructor(new Class[] {long.class} );
-        obj = (vtk.vtkImageData)cons.newInstance(new Object[] {new Long(cPtr)});
-      } catch (Exception e) {
-        e.printStackTrace();
-      }
-      tempObj.Delete();
-    }
-    return obj;
-}
-
-/*
-//%typemap(out) vtkImageData*, vtkImageImport*, vtkImageExport* {
-%typemap(out) vtkImageData*{
-  itkClass* ptr = (itkClass*) vtkJavaGetPointerFromObject(jenv, jarg1_);
-  *(vtkImageData **)&$result = ptr->GetOutput();
-}
-
-arg1 = (itkImageToVTKImageFilterIUC2 *)vtkJavaGetPointerFromObject(jenv,jarg1_);
-
-%typemap(in) vtkImageData* {
-  $1 = (itkClass*) $input;
-  $1 = (vtkImageData*) vtkJavaGetPointerFromObject(jenv, $1);
-  //if ( $1 == NULL ) { SWIG_fail; }
-}
-*/
+TYPEMAP_ITKVTK_OUT(vtkImageExport*, vtkImageExport)
+TYPEMAP_ITKVTK_OUT(vtkImageImport*, vtkImageImport)
+TYPEMAP_ITKVTK_OUT(vtkImageData*, vtkImageData)
+TYPEMAP_ITKVTK_IN(vtkImageData*)
 // end itkvtk
 
 %enddef
