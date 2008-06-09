@@ -1,3 +1,5 @@
+WRAP_NON_TEMPLATE_CLASS("itk::MetaEvent")
+
 WRAP_CLASS("itk::SpatialObject" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${d}" "${d}")
@@ -13,3 +15,15 @@ FILTER_DIMS(d 3)
 IF(d)
   WRAP_NON_TEMPLATE_CLASS("itk::CylinderSpatialObject" POINTER)
 ENDIF(d)
+
+#
+# hack for ::MetaEvent, the super class of itk::MetaEvent
+#
+SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
+WRAP_NAMED_CLASS("MetaEvent" "itkMetaEvent_Superclass")
+  WRAP_CLASS_ALL_LANGUAGES()
+  # to avoid useless warning: no template can be defined in 
+  SET(WRAPPER_WARN_ABOUT_NO_TEMPLATE OFF)
+#  ADD_ONE_TYPEDEF("FORCE_INSTANTIATE" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
+END_WRAP_CLASS()
+# WRAP_NON_TEMPLATE_CLASS_ALL_LANGUAGES("MetaEvent")

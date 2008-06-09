@@ -10,6 +10,7 @@ SET(WRAPPER_LIBRARY_DEPENDS
   Transforms
   SpatialObject
   Resize
+  Calculators
 )
 
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKNumerics)
