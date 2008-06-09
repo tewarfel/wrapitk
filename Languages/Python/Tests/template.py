@@ -73,7 +73,7 @@ except :
 # pass filter as argument for input
 # to a filter with SetInput method
 median = itk.MedianImageFilter[IType, IType].New(reader)
-assert repr(reader.GetOutput().GetPointer()) == repr(median.GetInput().GetPointer())
+assert repr(reader.GetOutput()) == repr(median.GetInput())
 
 # to a filter with a SetImage method
 calculator = itk.MinimumMaximumImageCalculator[IType].New(reader)
@@ -81,14 +81,14 @@ calculator = itk.MinimumMaximumImageCalculator[IType].New(reader)
 
 # to a filter with several inputs
 sub = itk.SubtractImageFilter[IType, IType, IType].New(reader, reader2)
-assert repr(reader.GetOutput().GetPointer()) == repr(sub.GetInput(0).GetPointer())
-assert repr(reader2.GetOutput().GetPointer()) == repr(sub.GetInput(1).GetPointer())
+assert repr(reader.GetOutput()) == repr(sub.GetInput(0))
+assert repr(reader2.GetOutput()) == repr(sub.GetInput(1))
 
 
 # pass image as argument for input
 # to a filter with SetInput method
 median = itk.MedianImageFilter[IType, IType].New(im)
-assert repr(im.GetPointer()) == repr(median.GetInput().GetPointer())
+assert repr(im) == repr(median.GetInput())
 
 # to a filter with a SetImage method
 calculator = itk.MinimumMaximumImageCalculator[IType].New(im)
@@ -96,8 +96,8 @@ calculator = itk.MinimumMaximumImageCalculator[IType].New(im)
 
 # to a filter with several inputs
 sub = itk.SubtractImageFilter[IType, IType, IType].New(im, im2)
-assert repr(im.GetPointer()) == repr(sub.GetInput(0).GetPointer())
-assert repr(im2.GetPointer()) == repr(sub.GetInput(1).GetPointer())
+assert repr(im) == repr(sub.GetInput(0))
+assert repr(im2) == repr(sub.GetInput(1))
 
 
 # pass invalid input
@@ -116,8 +116,8 @@ except TypeError:
 
 # pass both input and attribute
 recons = itk.ReconstructionByDilationImageFilter[IType, IType].New(reader.GetOutput(), im, FullyConnected=True)
-assert repr(reader.GetOutput().GetPointer()) == repr(recons.GetInput(0).GetPointer())
-assert repr(im.GetPointer()) == repr(recons.GetInput(1).GetPointer())
+assert repr(reader.GetOutput()) == repr(recons.GetInput(0))
+assert repr(im) == repr(recons.GetInput(1))
 assert recons.GetFullyConnected() == True
 
 

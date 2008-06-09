@@ -45,9 +45,9 @@ gaussian.GetObjectToParentTransform().SetScale( 10 )
 gaussian.ComputeObjectToWorldTransform()
 
 group = itk.GroupSpatialObject[dim].New()
-group.AddSpatialObject( ellipse.GetPointer() )
-group.AddSpatialObject( box.GetPointer() )
-group.AddSpatialObject( gaussian.GetPointer() )
+group.AddSpatialObject( ellipse )
+group.AddSpatialObject( box )
+group.AddSpatialObject( gaussian )
 
 filter = itk.SpatialObjectToImageFilter[SOType, InternalImageType].New( group, Size=[100,100], UseObjectValue=True )
 filter.Update() # required ?!

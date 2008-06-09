@@ -40,6 +40,9 @@ excluded = set([
   "DefaultStaticMeshTraits",
   "NormalBandNode",
   "ZeroFluxNeumannBoundaryCondition",
+  "SparseFieldLevelSetNode",
+  "ParallelSparseFieldLevelSetNode",
+  "PySwigIterator",
   ])
 
 attrNameList = set([i for i in dir(itk) if i[0].isupper() and len(i) > 2]) - excluded
