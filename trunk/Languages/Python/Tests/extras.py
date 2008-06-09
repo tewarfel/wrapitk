@@ -29,13 +29,11 @@ itk.echo(reader, sys.stdout)
 
 # test class_
 assert itk.class_(reader) == ReaderType
-assert itk.class_(reader.GetPointer()) == ReaderType
 assert itk.class_("dummy") == str
 
 # test template
 assert itk.template(ReaderType) == (itk.ImageFileReader, (IType,))
 assert itk.template(reader) == (itk.ImageFileReader, (IType,))
-assert itk.template(reader.GetPointer()) == (itk.ImageFileReader, (IType,))
 try:
   itk.template(str)
   raise Exception("unknown class should send an exception")
@@ -53,9 +51,7 @@ except KeyError:
 
 
 # test image
-assert repr(itk.image(reader)) == repr(reader.GetOutput().GetPointer())
-assert repr(itk.image(reader.GetOutput())) == repr(reader.GetOutput().GetPointer())
-assert repr(itk.image(reader.GetOutput().GetPointer())) == repr(reader.GetOutput().GetPointer())
+assert repr(itk.image(reader)) == repr(reader.GetOutput())
 assert itk.image(1) == 1
 
 
@@ -75,14 +71,11 @@ s = itk.size(reader)
 assert s.GetElement(0) == s.GetElement(1) == 256
 s = itk.size(reader.GetOutput())
 assert s.GetElement(0) == s.GetElement(1) == 256
-s = itk.size(reader.GetOutput().GetPointer())
-assert s.GetElement(0) == s.GetElement(1) == 256
 
 
 # test range
 assert itk.range(reader) == (0, 255)
 assert itk.range(reader.GetOutput()) == (0, 255)
-assert itk.range(reader.GetOutput().GetPointer()) == (0, 255)
 
 
 # test write

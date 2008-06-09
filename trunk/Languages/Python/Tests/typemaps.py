@@ -46,17 +46,16 @@ assert size1.GetElement(1) == size2.GetElement(1) == size3.GetElement(1) == size
 
 # smart pointers
 im = itk.Image.US2.New()
-assert im.GetPointer() != None
-assert im.GetPointer().__class__ != im.__class__
+assert im != None
 
 median.SetInput( im )
-assert repr(median.GetInput().GetPointer()) == repr(im.GetPointer())
+assert repr(median.GetInput()) == repr(im)
 
-median.SetInput( im.GetPointer() )
-assert repr(median.GetInput().GetPointer()) == repr(im.GetPointer())
+median.SetInput( im )
+assert repr(median.GetInput()) == repr(im)
 
 median.SetInput( None )
-assert repr(median.GetInput().GetPointer()) == repr(None)
+assert repr(median.GetInput()) == repr(None)
 
 
 

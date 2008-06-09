@@ -407,7 +407,7 @@ IF(WRAP_float AND WRAP_2)
     ${PYTHON_DRIVER}
     --compare SpatialObject.png
               ${WrapITK_SOURCE_DIR}/images/SpatialObject.png
-    ${CMAKE_CURRENT_SOURCE_DIR}/SpatialObject.py
+    ${CMAKE_CURRENT_SOURCE_DIR}/SpatialObjectTest.py
           SpatialObject.png
   )
 
