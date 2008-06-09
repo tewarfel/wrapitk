@@ -16,10 +16,12 @@ FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
 # some glorbal variables
 SET(WRAP_ITK_JAVA_OUT_DIR ${PROJECT_BINARY_DIR}/Proxies/Java CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_SRC_DIR ${WRAP_ITK_JAVA_OUT_DIR}/src CACHE INTERNAL "")
-SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_OUT_DIR}/bin CACHE INTERNAL "")
+#SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_OUT_DIR}/bin CACHE INTERNAL "")
+SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_SRC_DIR} CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_JAR_DIR ${WRAP_ITK_JAVA_OUT_DIR}/jar CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CLASS_NAMES "" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_JAR_DEPS "" CACHE INTERNAL "")
+SET(WRAP_ITK_JAVA_USER_CLASS_PATH "" CACHE INTERNAL "additional user java classpath")
 
 # java proxy package
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_NAME "org.itk" CACHE INTERNAL "")
@@ -123,6 +125,14 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     ADD_DEPENDENCIES(${lib} ${dep}Swig)
   ENDFOREACH(dep)
+  
+  SET(class_path )
+  SET(class_path "${class_path}${java_package_path}\;")
+  SET(class_path "${class_path}${WRAP_ITK_JAVA_BIN_DIR}\;")
+  FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
+    SET(class_path "${class_path}${ucp}\;")
+  ENDFOREACH(ucp)
+  MESSAGE(>> ${class_path})
 
   # compile java proxies
   SET(lib_jar ${lib}Jar)
@@ -131,7 +141,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
     DEPENDS ${java_file}
     COMMAND ${JAVA_COMPILE}
     ARGS
-    -classpath "${java_package_path}\;${WRAP_ITK_JAVA_BIN_DIR}\;"
+    -classpath "${class_path}"
     -d "${WRAP_ITK_JAVA_BIN_DIR}"
 #    -sourcepath "${java_package_path}"
 #    -verbose
@@ -148,7 +158,6 @@ MACRO(END_WRAP_LIBRARY_JAVA)
     WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
     COMMENT "Creating java archive: ${java_jar_file_path}"
     )
-  MESSAGE(>> "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*.class")
   
   ADD_CUSTOM_TARGET(${lib_jar} ALL DEPENDS ${java_bin_file} ${java_jar_file_path})
 
@@ -201,7 +210,6 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
   SET(swig_libs )
   FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
     SET(swig_libs ${swig_libs} "-l${swig_lib}")
-    MESSAGE(>> ${swig_lib})
   ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
   
   ADD_CUSTOM_COMMAND(
