@@ -8,7 +8,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkSpatialObjectPoint
 )
 
-SET(WRAPPER_LIBRARY_DEPENDS Base Transforms)
+SET(WRAPPER_LIBRARY_DEPENDS Base Transforms Calculators)
 
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKSpatialObject)
 
