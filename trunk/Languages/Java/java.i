@@ -1,14 +1,61 @@
+
+//######################################################################
+// Includes
+
 %include "typemaps.i"
 %include "stl.i"
 
 //######################################################################
+// Some declarations
+
+// Arrays
+%include "carrays.i"
+%array_functions(unsigned long, ULArray);
+%array_functions(long, LArray);
+%array_functions(int, IArray);
+%array_functions(float, FArray);
+%array_functions(double, DArray);
+%array_class(unsigned long, ULArrayClass);
+%array_class(long, LArrayClass);
+%array_class(int, IArrayClass);
+%array_class(float, FArrayClass);
+%array_class(double, DArrayClass);
+
+// String
+//%template(StringVector) std::vector<std::string>;
+
+// std::ostream
+%ignore *::operator<<;
+%ignore *::Print;
+%extend itkLightObject
+{
+    std::string toString()
+    {
+        std::stringstream str;
+        $self->Print(str);
+        return str.str();
+    }
+    
+    std::string Print()
+    {
+        std::stringstream str;
+        $self->Print(str);
+        return str.str();
+    }
+};
+
+//######################################################################
 // The ignore list
 
-%ignore New();
-//%ignore CreateAnother();
-%ignore Delete();
-%ignore Register();
-%ignore UnRegister();
+%ignore *::New();
+%ignore *::CreateAnother();
+%ignore *::Delete();
+%ignore *::Register();
+%ignore *::UnRegister();
+
+//######################################################################
+// Messing with the ctors
+// Currently this is only used for vxl classes
 
 /*
 // By default swig-java creates protected constructors, when breaking the wrapping into
@@ -70,11 +117,8 @@
 // more compact alternative
 SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 
-
-
-//%refobject   itkLightObject "$this->Register();"
-//%unrefobject itkLightObject "$this->UnRegister();"
-
+//######################################################################
+// Temporarily hosting itk-vtk stuff
 
 // itkvtk, this is temp
 %define TYPEMAP_ITKVTK_OUT(vtkClassType, vtkClassJava)
@@ -108,6 +152,9 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 %enddef
 // end itkvtk
 
+//######################################################################
+// Simulating smart pointers in SWIG
+// This gets rid of wrapping ITK smart pointers.
 
 // TODO: always tell swig we're the owner
 // TODO: itk classes with no New() must be marked as abstract

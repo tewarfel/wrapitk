@@ -132,7 +132,6 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
     SET(class_path "${class_path}${ucp}\;")
   ENDFOREACH(ucp)
-  MESSAGE(>> ${class_path})
 
   # compile java proxies
   SET(lib_jar ${lib}Jar)
