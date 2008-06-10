@@ -153,7 +153,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
     COMMAND ${JAVA_ARCHIVE}
     ARGS
     -cf "${java_jar_file_path}"
-    "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*.class"
+    "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*"
     WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
     COMMENT "Creating java archive: ${java_jar_file_path}"
     )
