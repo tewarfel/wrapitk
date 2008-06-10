@@ -223,6 +223,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     -w361 # operator!
     -w467 # overloaded functions (with typemaps)
     -w401 -w503 -w516 #!
+    -w303 # extend itklightobject
     ${swig_libs}
     -o ${cpp_file}
 #      -I${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
