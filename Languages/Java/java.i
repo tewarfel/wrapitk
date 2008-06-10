@@ -176,15 +176,24 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 		};
 	}
 /*
-	%typemap(out) itkClass *, itkClass & {
+	%typemap(out) itkClass * {
+		itkClass* ptrRaw = $1;
 		if (ptrRaw) {
 			ptrRaw->Register();
 		}
 		*(itkClass **)&$result = ptrRaw;
 	}
 */	
-	%typemap(out) itkClass##_Pointer, itkClass##_Pointer *, itkClass##_Pointer & {
+	%typemap(out) itkClass##_Pointer {
 		itkClass* ptrRaw = $1.GetPointer();
+		if (ptrRaw) {
+			ptrRaw->Register();
+		}
+		*(itkClass **)&$result = ptrRaw;
+	}
+	
+	%typemap(out) itkClass##_Pointer & {
+		itkClass* ptrRaw = (*$1).GetPointer();
 		if (ptrRaw) {
 			ptrRaw->Register();
 		}
