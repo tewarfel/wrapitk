@@ -47,11 +47,16 @@
 //######################################################################
 // The ignore list
 
-%ignore *::New();
-%ignore *::CreateAnother();
-%ignore *::Delete();
-%ignore *::Register();
-%ignore *::UnRegister();
+%ignore New;
+%ignore CreateAnother;
+%ignore Delete;
+%ignore Register;
+%ignore UnRegister;
+
+// TODO: SwigValueWrapper is not able to call wrap std::_Vector_iterator properly
+// for SetSeeds method of itkVoronoiSegmentationImageFilter.
+%ignore SetSeeds;
+
 
 //######################################################################
 // Messing with the ctors
@@ -59,62 +64,37 @@
 
 /*
 // By default swig-java creates protected constructors, when breaking the wrapping into
-
 // packages, we need public, ie visible, constructors.
-
 //%typemap(javabody) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*)
-
 %typemap(javabody) SWIGTYPE
-
 %{
-
   private long swigCPtr;
-
   private boolean swigCMemOwn;
 
-
-
   public $javaclassname(long cPtr, boolean cMemoryOwn) {
-
     swigCPtr = cPtr;
-
     swigCMemOwn = cMemoryOwn;
-
   }
-
-
 
   public static long getCPtr($javaclassname obj) {
-
     return (obj == null) ? 0 : obj.swigCPtr;
-
   }
-
 %}
 
-// And the ame goes for the derived classes
-
+// And the same goes for the derived classes
 //%typemap(javabody_derived) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*)
-
 %typemap(javabody_derived) SWIGTYPE
-
 %{
-
   private long swigCPtr;
-
   private boolean swigCMemOwn;
 
-
-
   public $javaclassname(long cPtr, boolean cMemoryOwn) {
-
 	  super(cPtr, cMemoryOwn);
-
   }
-
 %}
 */
 // more compact alternative
+// This is currently used for the vxl module only.
 SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 
 //######################################################################
