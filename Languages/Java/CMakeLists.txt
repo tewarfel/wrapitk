@@ -27,7 +27,8 @@ SET(WRAP_ITK_JAVA_USER_CLASS_PATH "" CACHE INTERNAL "additional user java classp
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_NAME "org.itk" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_CORE_PACKAGE_PATH "org/itk" CACHE INTERNAL "") #TODO: this should be automated
 
-
+# TODO: iterators are not supported by java
+REMOVE(JAVA_ITK_MODULES "${WRAP_ITK_MODULES}" Iterators)
 
 
 ###############################################################################
