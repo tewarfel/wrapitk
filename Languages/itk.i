@@ -31,7 +31,19 @@
   // transform smart pointers in raw pointers
 	%typemap(out) class_name##_Pointer {
 	  // get the raw pointer from the smart pointer
-	  class_name * ptr = $1.GetPointer();
+	  class_name * ptr = $1;
+		// always tell SWIG_NewPointerObj we're the owner
+		$result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
+		// register the object, it it exists
+		if (ptr) {
+			ptr->Register();
+		}
+	}
+
+  // transform smart pointers in raw pointers
+	%typemap(out) class_name##_Pointer & {
+	  // get the raw pointer from the smart pointer
+	  class_name * ptr = *$1;
 		// always tell SWIG_NewPointerObj we're the owner
 		$result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
 		// register the object, it it exists
