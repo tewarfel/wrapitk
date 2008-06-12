@@ -57,12 +57,6 @@
 // for SetSeeds method of itkVoronoiSegmentationImageFilter.
 %ignore SetSeeds;
 
-// TODO: itkPointBasedSpatialObject::GetPoint is supposed to be virtual,
-// but it is implemented in itk, we temporarily ignore it here.
-%ignore itkPointBasedSpatialObject2::GetPoint;
-%ignore itkPointBasedSpatialObject3::GetPoint;
-
-
 //######################################################################
 // Messing with the ctors
 // Currently this is only used for vxl classes

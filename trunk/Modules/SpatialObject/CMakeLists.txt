@@ -1,11 +1,14 @@
 WRAP_LIBRARY(SpatialObject)
 
 SET(WRAPPER_LIBRARY_GROUPS
+  itkSpatialObjectProperty
+  itkAffineGeometryFrame
   itkSpatialObjectBase
+  itkSpatialObjectPoint
+  itkContourSpatialObjectPoint
   itkPointBasedSpatialObject
   itkImageSpatialObject
-  itkTreeNodeSO
-  itkSpatialObjectPoint
+  itkPolygonSpatialObject
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS Base Transforms Calculators)
