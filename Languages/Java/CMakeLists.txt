@@ -123,6 +123,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   ADD_LIBRARY(${lib} MODULE ${WRAP_ITK_JAVA_CXX_FILES} ${WRAPPER_LIBRARY_CXX_SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES PREFIX "_")
   TARGET_LINK_LIBRARIES(${lib} ${WRAPPER_LIBRARY_LINK_LIBRARIES})
+  ADD_DEPENDENCIES(${lib} ${WRAPPER_LIBRARY_NAME}Swig)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     ADD_DEPENDENCIES(${lib} ${dep}Swig)
   ENDFOREACH(dep)
@@ -219,7 +220,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
   ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
   
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${cpp_file} #${java_file}
+    OUTPUT ${cpp_file} ${java_file}
     COMMAND ${SWIG_EXECUTABLE} -c++ -java -O -features autodoc=1
 #    -Werror
     -package ${java_package_name}
@@ -237,10 +238,11 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     -outdir ${java_package_path}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java
-    DEPENDS ${DEPS} ${WRAP_ITK_JAVA_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i ${WRAP_ITK_JAVA_SOURCE_DIR}/java.i ${SWIG_EXECUTABLE}
+    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i ${WRAP_ITK_JAVA_SOURCE_DIR}/java.i ${SWIG_EXECUTABLE}
     COMMENT "Generating Java wrap files for class ${java_package_name}.${group_name}"
   )
-      
+  # ${WRAP_ITK_JAVA_LIBRARY_DEPS} 
+  
    CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i"
     @ONLY IMMEDIATE)

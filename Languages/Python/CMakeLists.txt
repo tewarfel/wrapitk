@@ -329,6 +329,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   ADD_LIBRARY(${lib} MODULE ${cpp_file} ${WRAP_ITK_PYTHON_CXX_FILES} ${WRAPPER_LIBRARY_CXX_SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES PREFIX "_")
   TARGET_LINK_LIBRARIES(${lib} ${WRAPPER_LIBRARY_LINK_LIBRARIES} ${PYTHON_LIBRARY})
+  ADD_DEPENDENCIES(${lib} ${WRAPPER_LIBRARY_NAME}Swig)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     ADD_DEPENDENCIES(${lib} ${dep}Swig)
   ENDFOREACH(dep)
@@ -394,7 +395,8 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
-    DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
+    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
+    # ${WRAP_ITK_PYTHON_LIBRARY_DEPS}
   )
   WRAP_ITK_INSTALL("/lib" "${python_file}")
     
@@ -411,7 +413,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
   SET(WRAP_ITK_PYTHON_CXX_FILES ${WRAP_ITK_PYTHON_CXX_FILES} ${cpp_file})
 
   # add needed files to the deps list
-  SET(WRAP_ITK_PYTHON_LIBRARY_DEPS ${WRAP_ITK_PYTHON_LIBRARY_DEPS} "${python_file}" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i")
+  SET(WRAP_ITK_PYTHON_LIBRARY_DEPS ${WRAP_ITK_PYTHON_LIBRARY_DEPS} "${python_file}" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i" "${cpp_file}")
 
   # add this wrap_*.cmake stuff to the list of modules to init in the main module.
   # first the extern c declaration
