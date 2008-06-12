@@ -146,7 +146,7 @@ SWIG_JAVABODY_METHODS(public, public, SWIGTYPE)
 		public:
 		itkClass() {
 			typedef ::itk::SmartPointer<itkLightObject> Pointer;
-			Pointer smtPtr = itkClass::New();
+			Pointer smtPtr = itkClass::New().GetPointer();
 			itkClass *rawPtr = dynamic_cast<itkClass *>(smtPtr.GetPointer());
 			rawPtr->Register();
 			return rawPtr;
