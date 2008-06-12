@@ -26,7 +26,6 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkImage
   itkVectorImage
   itkNeighborhood
-  ITKRegions
 #  SwigExtras
   itkImageSource
   itkImageToImageFilterA
