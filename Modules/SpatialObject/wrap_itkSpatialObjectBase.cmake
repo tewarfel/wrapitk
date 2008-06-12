@@ -27,3 +27,16 @@ WRAP_NAMED_CLASS("MetaEvent" "itkMetaEvent_Superclass")
   ADD_ONE_TYPEDEF("FORCE_INSTANTIATE" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
 END_WRAP_CLASS()
 # WRAP_NON_TEMPLATE_CLASS_ALL_LANGUAGES("MetaEvent")
+
+
+# must be in the same file than SpatialObject for java wrappers
+
+WRAP_CLASS("itk::TreeNode" POINTER)
+  FOREACH(d ${WRAP_ITK_DIMS})
+    WRAP_TEMPLATE("${ITKM_SO${d}}" "${ITKT_SO${d}}*")
+  ENDFOREACH(d)
+END_WRAP_CLASS()
+
+WRAP_CLASS("itk::SpatialObjectTreeNode" POINTER)
+  SET(WRAPPER_TEMPLATES "${itk_Wrap_SpatialObject}")
+END_WRAP_CLASS()
