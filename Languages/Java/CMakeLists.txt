@@ -127,11 +127,17 @@ MACRO(END_WRAP_LIBRARY_JAVA)
     ADD_DEPENDENCIES(${lib} ${dep}Swig)
   ENDFOREACH(dep)
   
+  IF(WIN32)
+    SET(sep "\;")
+  ELSE(WIN32)
+    SET(sep ":")
+  ENDIF(WIN32)
+  
   SET(class_path )
-  SET(class_path "${class_path}${java_package_path}\;")
-  SET(class_path "${class_path}${WRAP_ITK_JAVA_BIN_DIR}\;")
+  SET(class_path "${class_path}${java_package_path}${sep}")
+  SET(class_path "${class_path}${WRAP_ITK_JAVA_BIN_DIR}${sep}")
   FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
-    SET(class_path "${class_path}${ucp}\;")
+    SET(class_path "${class_path}${ucp}${sep}")
   ENDFOREACH(ucp)
 
   # compile java proxies
