@@ -1,24 +1,30 @@
 WRAP_LIBRARY(Base)
 
 SET(WRAPPER_LIBRARY_GROUPS
+  itkEventObjects
   ITKCommonBase
   itkOffset
   itkArray
   itkFixedArray
   itkIndex
   itkSize
+  itkVector
   itkPoint
   itkDefaultDynamicMeshTraits
   itkDefaultStaticMeshTraits
+  itkLevelSet
+  itkVectorContainer
+  itkMapContainer
+  itkBoundingBox
   itkPointSet
   itkContinuousIndex
   itkCovariantVector
-  itkVector
   itkRGBPixel
   itkVariableLengthVector
+  ITKRegions
+  itkMatrix
   itkImage
   itkVectorImage
-  itkLevelSet
   itkNeighborhood
   ITKRegions
 #  SwigExtras
@@ -27,9 +33,8 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkImageToImageFilterB
   itkInPlaceImageFilterA
   itkInPlaceImageFilterB
+  itkFiniteDifferenceFunction
   itkFiniteDifferenceImageFilter
-  itkVectorContainer
-  itkMapContainer
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)

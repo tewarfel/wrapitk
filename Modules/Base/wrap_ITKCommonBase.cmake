@@ -21,3 +21,4 @@ WRAP_NON_TEMPLATE_CLASS("itk::TimeProbe")
 # TODO: enable pointer support, once fixed the protected New() method.
 WRAP_NON_TEMPLATE_CLASS("itk::MetaDataObjectBase" POINTER)
 WRAP_NON_TEMPLATE_CLASS("itk::ProgressReporter")
+WRAP_NON_TEMPLATE_CLASS("itk::MultiThreader"      POINTER)
