@@ -496,6 +496,10 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
     SET(text "${text}%template(liststring) std::list< std::string >;\n\n")
     ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "liststring" "std::string")
     
+    SET(text "${text}%template(vectoritkDataObject_Pointer) std::vector< itkDataObject_Pointer >;\n")
+    # TODO: how to put that in python without warning?
+    # ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itkDataObject")
+
     # make itk::Command hineritable in python
     SET(text "${text}%feature(\"director\") itkCommand;")
 
@@ -505,6 +509,12 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
     FOREACH(t B UC US UL SC SS SL F D)
       SET(text "${text}%template(vector${t}) std::vector< ${ITKT_${t}} >;\n")
       ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${t}" "${ITKT_${t}}")
+      # vector of vectors
+      SET(text "${text}%{\n")
+      SET(text "${text}typedef std::vector< ${ITKT_${t}} > vector${t};\n")
+      SET(text "${text}%}\n")
+      SET(text "${text}%template(vectorvector${t}) std::vector< std::vector< ${ITKT_${t}} > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectorvector${t}" "std::vector< ${ITKT_${t}} >")
     ENDFOREACH(t)
   ENDIF("${module}" STREQUAL "itkVectorContainer")
 
@@ -657,6 +667,26 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
       ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "${swig_name}_Superclass" "unsigned long, ${param}")
     ENDIF("${superclass_template_param}" MATCHES "::")
   ENDIF("${cpp_name}" STREQUAL "itk::MapContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
+
+  IF("${cpp_name}" STREQUAL "itk::SpatialObjectPoint")
+    SET(text "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+    SET(text "${text}\n\n")
+    SET(text "${text}%extend ${swig_name} {\n")
+    SET(text "${text}  std::string __str__() {\n")
+    SET(text "${text}    itk::OStringStream msg;\n")
+    SET(text "${text}    self->Print( msg );\n")
+    SET(text "${text}    return msg.str();\n")
+    SET(text "${text}  }\n")
+    SET(text "${text}}\n")
+    SET(text "${text}\n\n")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+  ENDIF("${cpp_name}" STREQUAL "itk::SpatialObjectPoint")
+
+  IF("${cpp_name}" STREQUAL "itk::ContourSpatialObjectPoint")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+  ENDIF("${cpp_name}" STREQUAL "itk::ContourSpatialObjectPoint")
 
 ENDMACRO(ADD_SIMPLE_TYPEDEF_PYTHON)
 
