@@ -182,7 +182,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
   # set the java source files
   SET(java_file )
   FOREACH(class_name ${WRAP_ITK_JAVA_CLASS_NAMES})
-    SET(java_file ${java_file} ${java_package_path}/${classname}.java)
+    SET(java_file ${java_file} ${java_package_path}/${class_name}.java)
   ENDFOREACH(class_name ${WRAP_ITK_JAVA_CLASS_NAMES})
   
   SET(base_name wrap_${group_name})
