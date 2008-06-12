@@ -31,11 +31,12 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}.i")
     SET(xml_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.xml")
     SET(includes_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.includes")
+    SET(module_interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
     # prepare the options
     SET(opts )
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       SET(opts ${opts} --mdx "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.mdx")
-      SET(opts ${opts} --take-includes "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.includes")
+      SET(opts ${opts} --include "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.includes")
       SET(opts ${opts} --import "${dep}.i")
     ENDFOREACH(dep)
     # import the interface files previously defined instead of importing all the files defined
@@ -66,14 +67,14 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
         ${opts}
         --swig-include "${LANGUAGES_SRC_DIR}/itk.i"
         --mdx ${mdx_file}
-        --take-includes ${includes_file}
-  #       --import ${module_interface_file}
+        --include ${includes_file}
+#        --import ${module_interface_file}
         --swig-include wrap_${module}_ext.i
         -w1 -w3 -w51 -w52 -w53 -w54 #--warning-error
         # --verbose
         ${xml_file}
         ${interface_file}
-      DEPENDS ${DEPS} ${xml_file} ${includes_file} ${IGENERATOR} ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
+      DEPENDS ${DEPS} ${xml_file} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
     )
   #   ADD_CUSTOM_TARGET(${module}Swig DEPENDS ${interface_file})
   #   ADD_DEPENDENCIES(${module}Swig ${WRAPPER_LIBRARY_NAME}Idx)
@@ -122,13 +123,14 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
      @ONLY IMMEDIATE )
   WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${includes_file}")
 
-#   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Idx DEPENDS ${SWIG_INTERFACE_IDX_FILES})
+  ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Idx DEPENDS ${SWIG_INTERFACE_IDX_FILES})
   SET(${WRAPPER_LIBRARY_NAME}IdxFiles ${SWIG_INTERFACE_IDX_FILES} CACHE INTERNAL "Internal ${WRAPPER_LIBRARY_NAME}Idx file list.")
 
   ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Swig DEPENDS ${SWIG_INTERFACE_FILES})
   SET(${WRAPPER_LIBRARY_NAME}SwigFiles ${SWIG_INTERFACE_FILES} CACHE INTERNAL "Internal ${WRAPPER_LIBRARY_NAME}Swig file list.")
+  ADD_DEPENDENCIES(${WRAPPER_LIBRARY_NAME}Swig ${WRAPPER_LIBRARY_NAME}Idx)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-    ADD_DEPENDENCIES(${WRAPPER_LIBRARY_NAME}Swig ${dep}Swig) # ${dep}Idx
+    ADD_DEPENDENCIES(${WRAPPER_LIBRARY_NAME}Swig ${dep}Swig ${dep}Idx)
   ENDFOREACH(dep)
 
 ENDMACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)

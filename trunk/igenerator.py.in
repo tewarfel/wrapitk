@@ -183,8 +183,8 @@ def load_idx(file_name):
     full_name = normalize( full_name )
     # TODO: add a warning if the type is defined several times
     aliases[ full_name ] = alias
-    # declare the typedef
-    print >> outputFile, "typedef %s %s;" % (full_name, alias)
+    # don't declare the typedef - they are included from .include files
+    # print >> outputFile, "typedef %s %s;" % (full_name, alias)
   f.close()
 
 
