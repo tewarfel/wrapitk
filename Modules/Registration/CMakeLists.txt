@@ -5,6 +5,7 @@ SET(WRAPPER_LIBRARY_GROUPS
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS 
+  VXLNumerics 
   Base 
   Numerics
   Transforms

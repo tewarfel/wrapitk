@@ -1,6 +1,6 @@
 WRAP_LIBRARY(FFT)
 
-SET(WRAPPER_LIBRARY_DEPENDS Base)
+SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base)
 
 # find needed libs
 SET(libs ITKCommon ITKAlgorithms)
