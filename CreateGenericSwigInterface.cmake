@@ -74,7 +74,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
         # --verbose
         ${xml_file}
         ${interface_file}
-      DEPENDS ${DEPS} ${xml_file} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
+      DEPENDS ${DEPS} ${idx_file} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
     )
   #   ADD_CUSTOM_TARGET(${module}Swig DEPENDS ${interface_file})
   #   ADD_DEPENDENCIES(${module}Swig ${WRAPPER_LIBRARY_NAME}Idx)
