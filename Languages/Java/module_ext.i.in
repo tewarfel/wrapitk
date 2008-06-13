@@ -5,5 +5,4 @@
 @WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@"
 
 %pragma(java) jniclassimports = %{
-import org.itk.vxlnumerics.*;
 @WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@%}
