@@ -8,6 +8,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkContourSpatialObjectPoint
   itkPointBasedSpatialObject
   itkImageSpatialObject
+  itkBlobSpatialObject
   itkPolygonSpatialObject
 )
 
