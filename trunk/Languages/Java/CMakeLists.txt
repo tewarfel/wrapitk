@@ -242,7 +242,8 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     -w303 # extend itklightobject
     ${swig_libs}
     -o ${cpp_file}
-#      -I${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
+    -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/java
+    -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${java_package_path}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java
