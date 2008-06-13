@@ -167,6 +167,7 @@ CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in"
 
 SET(IGENERATOR  "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py")
 SET(WRAP_ITK_TYPEDEFS_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Typedefs")
+SET(WRAP_ITK_LIB_DIRECTORY  "${LIBRARY_OUTPUT_PATH}")
 
 
 ###############################################################################
