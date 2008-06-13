@@ -143,41 +143,46 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
     SET(class_path "${class_path}${ucp}${sep}")
   ENDFOREACH(ucp)
-
-  # compile java proxies
-  SET(lib_jar ${lib}Jar)
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${java_bin_file}
-    DEPENDS ${java_file}
-    COMMAND ${JAVA_COMPILE}
-    ARGS
-    -classpath "${class_path}"
-    -d "${WRAP_ITK_JAVA_BIN_DIR}"
-#    -sourcepath "${java_package_path}"
-#    -verbose
-    "${java_package_path}/*.java"
-    COMMENT "Compiling java proxies: ${java_package_name}"
-    )
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${java_jar_file_path}
-    DEPENDS ${java_bin_file}
-    COMMAND ${JAVA_ARCHIVE}
-    ARGS
-    -cf "${java_jar_file_path}"
-    "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*"
-    WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
-    COMMENT "Creating java archive: ${java_jar_file_path}"
-    )
   
-  ADD_CUSTOM_TARGET(${lib_jar} ALL DEPENDS ${java_bin_file} ${java_jar_file_path})
+  # Add java proxy compilation stuff
+  # Only add this if there is any classes to be built
+  IF(NOT "${WRAP_ITK_JAVA_CLASS_NAMES}" STREQUAL "")
+    # compile java proxies
+    SET(lib_jar ${lib}Jar)
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${java_bin_file}
+      DEPENDS ${java_file}
+      COMMAND ${JAVA_COMPILE}
+      ARGS
+      -classpath "${class_path}"
+      -d "${WRAP_ITK_JAVA_BIN_DIR}"
+#      -sourcepath "${java_package_path}"
+#      -verbose
+      "${java_package_path}/*.java"
+      COMMENT "Compiling java proxies: ${java_package_name}"
+      )
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${java_jar_file_path}
+      DEPENDS ${java_bin_file}
+      COMMAND ${JAVA_ARCHIVE}
+      ARGS
+      -cf "${java_jar_file_path}"
+      "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*"
+      WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
+      COMMENT "Creating java archive: ${java_jar_file_path}"
+      )
+    ADD_CUSTOM_TARGET(${lib_jar} ALL DEPENDS ${java_bin_file} ${java_jar_file_path})
 
-  ADD_DEPENDENCIES(${lib_jar} ${lib})
-  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-    ADD_DEPENDENCIES(${lib_jar} ${dep}Java)
-    ADD_DEPENDENCIES(${lib_jar} ${dep}JavaJar)
-  ENDFOREACH(dep)
+    ADD_DEPENDENCIES(${lib_jar} ${lib})
+    FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+      ADD_DEPENDENCIES(${lib_jar} ${dep}Java)
+      ADD_DEPENDENCIES(${lib_jar} ${dep}JavaJar)
+    ENDFOREACH(dep)
   
-  SET(WRAP_ITK_JAVA_JAR_DEPS ${WRAP_ITK_JAVA_JAR_DEPS} ${lib_jar})
+    SET(WRAP_ITK_JAVA_JAR_DEPS ${WRAP_ITK_JAVA_JAR_DEPS} ${lib_jar})
+  ELSE(NOT "${WRAP_ITK_JAVA_CLASS_NAMES}" STREQUAL "")
+    MESSAGE("Warning: Unable to create java proxies for ${WRAPPER_LIBRARY_NAME}, nothing to get wrapped in this module.")
+  ENDIF(NOT "${WRAP_ITK_JAVA_CLASS_NAMES}" STREQUAL "")
 
 ENDMACRO(END_WRAP_LIBRARY_JAVA)
 
