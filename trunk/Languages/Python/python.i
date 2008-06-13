@@ -27,11 +27,7 @@
   {$result = PyFloat_FromDouble( *$1 );}
 
 // ignore reference count management
-%ignore itkLightObject::Delete();
-%ignore itkLightObject::GetReferenceCount();
-%ignore itkLightObject::Register();
-%ignore itkLightObject::UnRegister();
-%ignore itkObject::Delete();
-%ignore itkObject::GetReferenceCount();
-%ignore itkObject::Register();
-%ignore itkObject::UnRegister();
+%ignore Delete;
+%ignore SetReferenceCount;
+%ignore Register;
+%ignore UnRegister;
