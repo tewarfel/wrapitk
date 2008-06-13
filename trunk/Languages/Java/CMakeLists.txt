@@ -15,11 +15,11 @@ FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
 
 # some glorbal variables
 SET(WRAP_ITK_JAVA_OUT_DIR ${PROJECT_BINARY_DIR}/Languages/Java/Proxies CACHE INTERNAL "Java proxies directory")
-SET(WRAP_ITK_JAVA_LIB_OUT_DIR ${LIBRARY_OUTPUT_PATH} CACHE INTERNAL "Java final libraries directory")
+SET(WRAP_ITK_JAVA_LIB_OUT_DIR ${WrapITK_DIR}/lib CACHE INTERNAL "Java final libraries directory")
 SET(WRAP_ITK_JAVA_SRC_DIR ${WRAP_ITK_JAVA_OUT_DIR}/src CACHE INTERNAL "Java proxies source directory")
 #SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_OUT_DIR}/bin CACHE INTERNAL "Java proxies binary directory")
 SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_SRC_DIR} CACHE INTERNAL "Java proxies binary directory")
-SET(WRAP_ITK_JAVA_JAR_DIR ${WRAP_ITK_JAVA_LIB_OUT_DIR} CACHE INTERNAL "Java jar files directory")
+SET(WRAP_ITK_JAVA_JAR_DIR ${LIBRARY_OUTPUT_PATH} CACHE INTERNAL "Java jar files directory")
 SET(WRAP_ITK_JAVA_CLASS_NAMES "" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_JAR_DEPS "" CACHE INTERNAL "")
 SET(WRAP_ITK_JAVA_USER_CLASS_PATH "" CACHE INTERNAL "additional user java classpath")
@@ -142,8 +142,17 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   ENDIF(WIN32)
   
   SET(class_path )
+  # Current module source path
   SET(class_path "${class_path}${java_package_path}${sep}")
-  SET(class_path "${class_path}${WRAP_ITK_JAVA_BIN_DIR}${sep}")
+  # Dependency modules bin path
+  #SET(class_path "${class_path}${WRAP_ITK_JAVA_BIN_DIR}${sep}")
+  # Dependency modules jar files
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    # create the import package commands
+    STRING(TOLOWER ${dep} dep_jar_file)
+    SET(dep_jar_file ${WRAP_ITK_JAVA_JAR_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${dep_jar_file}.jar)
+    SET(class_path "${class_path}${dep_jar_file}${sep}")
+  ENDFOREACH(dep)
   FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
     SET(class_path "${class_path}${ucp}${sep}")
   ENDFOREACH(ucp)
@@ -165,6 +174,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
       "${java_package_path}/*.java"
       COMMENT "Compiling java proxies: ${java_package_name}"
       )
+
     ADD_CUSTOM_COMMAND(
       OUTPUT ${java_jar_file_path}
       DEPENDS ${java_bin_file}
