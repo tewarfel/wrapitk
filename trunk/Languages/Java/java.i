@@ -53,6 +53,10 @@
 %ignore Register;
 %ignore UnRegister;
 
+// GetNeighborhoodAccessor() doesn't always return the same type in a class
+// and in its subclasses
+%ignore GetNeighborhoodAccessor;
+
 // TODO: SwigValueWrapper is not able to call wrap std::_Vector_iterator properly
 // for SetSeeds method of itkVoronoiSegmentationImageFilter.
 %ignore SetSeeds;
