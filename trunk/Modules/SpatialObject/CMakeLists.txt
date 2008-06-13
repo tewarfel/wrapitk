@@ -12,7 +12,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkPolygonSpatialObject
 )
 
-SET(WRAPPER_LIBRARY_DEPENDS Base Transforms Calculators)
+SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Calculators)
 
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKSpatialObject)
 
