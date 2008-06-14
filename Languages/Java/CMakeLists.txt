@@ -13,17 +13,8 @@ INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
 # create the java directory in the classindex dir
 FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
 
-# the binary directory for wrapitk
-SET(wrapitk_bin_dir )
-IF(EXTERNAL_WRAP_ITK_PROJECT)
-  SET(wrapitk_bin_dir ${WrapITK_DIR})
-ELSE(EXTERNAL_WRAP_ITK_PROJECT)
-  SET(wrapitk_bin_dir ${LIBRARY_OUTPUT_PATH})
-ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
-
 # some glorbal variables
 SET(WRAP_ITK_JAVA_OUT_DIR ${PROJECT_BINARY_DIR}/Languages/Java/Proxies CACHE INTERNAL "Java proxies directory")
-SET(WRAP_ITK_JAVA_LIB_OUT_DIR ${wrapitk_bin_dir}/lib CACHE INTERNAL "Java final libraries directory")
 SET(WRAP_ITK_JAVA_SRC_DIR ${WRAP_ITK_JAVA_OUT_DIR}/src CACHE INTERNAL "Java proxies source directory")
 #SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_OUT_DIR}/bin CACHE INTERNAL "Java proxies binary directory")
 SET(WRAP_ITK_JAVA_BIN_DIR ${WRAP_ITK_JAVA_SRC_DIR} CACHE INTERNAL "Java proxies binary directory")
@@ -158,7 +149,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     # create the import package commands
     STRING(TOLOWER ${dep} dep_jar_file)
-    SET(dep_jar_file ${WRAP_ITK_JAVA_LIB_OUT_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${dep_jar_file}.jar)
+    SET(dep_jar_file ${WRAP_ITK_LIB_DIRECTORY}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${dep_jar_file}.jar)
     SET(class_path "${class_path}${dep_jar_file}${sep}")
   ENDFOREACH(dep)
   FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
