@@ -17,6 +17,11 @@ IF(EXISTS "${possible_cableswig_dir}")
 SET(CableSwig_DIR "${possible_cableswig_dir}"  CACHE PATH "Path to CableSwig build or install")
 ENDIF(EXISTS "${possible_cableswig_dir}")
 
+SET(possible_swig_dir "@SWIG_DIR@")
+IF(EXISTS "${possible_swig_dir}")
+SET(SWIG_DIR "${possible_swig_dir}"  CACHE PATH "Path to Swig build or install")
+ENDIF(EXISTS "${possible_swig_dir}")
+
 # set WrapITK version
 SET(WrapITK_VERSION_MAJOR @WrapITK_VERSION_MAJOR@)
 SET(WrapITK_VERSION_MINOR @WrapITK_VERSION_MINOR@)
