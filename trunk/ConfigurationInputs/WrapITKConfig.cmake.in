@@ -79,12 +79,11 @@ INCLUDE_DIRECTORIES("@CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY@")
 # Tell the world that this is an external project using WrapITK:
 SET(EXTERNAL_WRAP_ITK_PROJECT ON)
 
+# libraries are all in the same dir
+SET (LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib" CACHE INTERNAL "Single output directory for building all libraries.")
+
 # Now include ConfigureWrapping
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/ConfigureWrapping.cmake")
-
-# Some macros require LIBRARY_OUTPUT_PATH to be set. For now, set it to its default.
-# Re-set later if a different library output path is needed.
-SET(LIBRARY_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}")
 
 # If WrapITK has been installed, we need to point the linker at the various
 # language directories, where libSwigRuntime has been installed.
@@ -96,9 +95,6 @@ MACRO(LINK_IF_EXISTS dir)
 ENDMACRO(LINK_IF_EXISTS)
 
 LINK_DIRECTORIES("@CONFIG_WRAP_ITK_LIB_DIR@")
-
-# libraries are all in the same dir
-SET (LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib" CACHE INTERNAL "Single output directory for building all libraries.")
 
 # pre-configure the python test driver
 # TODO: do the same for java and tcl, once external projects will be supported for those languages
