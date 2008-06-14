@@ -30,6 +30,16 @@ SET(WRAP_ITK_JAVA_CORE_PACKAGE_PATH "org/itk" CACHE INTERNAL "") #TODO: this sho
 # TODO: iterators are not supported by java
 REMOVE(JAVA_ITK_MODULES "${WRAP_ITK_MODULES}" Iterators)
 
+###############################################################################
+# Install java stuff for external projects
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Java
+    CMakeLists.txt
+    java.i
+    module_ext.i.in
+  )
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+
 
 ###############################################################################
 MACRO(CREATE_JAVA_DIRECTORY_STRUCTURE)
@@ -127,12 +137,20 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   ENDIF(APPLE)
   TARGET_LINK_LIBRARIES(${lib} ${WRAPPER_LIBRARY_LINK_LIBRARIES})
   ADD_DEPENDENCIES(${lib} ${WRAPPER_LIBRARY_NAME}Swig)
-  IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  IF(EXTERNAL_WRAP_ITK_PROJECT)
+    INSTALL(TARGETS "${lib}"
+      DESTINATION "${WRAP_ITK_INSTALL_LOCATION}/lib"
+    )
+  ELSE(EXTERNAL_WRAP_ITK_PROJECT)
+    INSTALL(TARGETS "${lib}"
+      DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib"
+    )
+
     # don't depends on the targets from wrapitk in external projects
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       ADD_DEPENDENCIES(${lib} ${dep}Swig)
     ENDFOREACH(dep)
-  ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
   
   IF(WIN32)
     SET(sep "\;")
@@ -185,6 +203,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
       COMMENT "Creating java archive: ${java_jar_file_name}"
       )
     ADD_CUSTOM_TARGET(${lib_jar} ALL DEPENDS ${java_bin_file} ${java_jar_file_path})
+    WRAP_ITK_INSTALL(/lib ${java_jar_file_path})
 
     ADD_DEPENDENCIES(${lib_jar} ${lib})
     IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
@@ -271,6 +290,8 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
    CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i"
     @ONLY IMMEDIATE)
+ WRAP_ITK_INSTALL("/Configuration/Typedefs/java"
+   "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i")
 
   SET(WRAP_ITK_JAVA_LIBRARY_DEPS ${WRAP_ITK_JAVA_LIBRARY_DEPS} "${java_file}" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i")
 
