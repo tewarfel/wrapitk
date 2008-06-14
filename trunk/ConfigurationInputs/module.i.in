@@ -57,7 +57,7 @@
 @SWIG_INTERFACE_INCLUDES@
 %}
 
-%include @LANGUAGES_SRC_DIR@/itk.i
+%include itk.i
 
 %include @WRAPPER_LIBRARY_NAME@_ext.i
 
