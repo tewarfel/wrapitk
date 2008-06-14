@@ -182,7 +182,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
       -cf "${java_jar_file_path}"
       "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*"
       WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
-      COMMENT "Creating java archive: ${java_jar_file_path}"
+      COMMENT "Creating java archive: ${java_jar_file_name}"
       )
     ADD_CUSTOM_TARGET(${lib_jar} ALL DEPENDS ${java_bin_file} ${java_jar_file_path})
 
