@@ -99,6 +99,8 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
     "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${WRAPPER_LIBRARY_NAME}_ext.i"
     @ONLY IMMEDIATE)
+  WRAP_ITK_INSTALL(/Configuration/Typedefs/java
+    "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${WRAPPER_LIBRARY_NAME}_ext.i")
 
   SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
 
@@ -277,6 +279,8 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     -w303 # extend itklightobject
     ${swig_libs}
     -o ${cpp_file}
+    -I${LANGUAGES_SRC_DIR}
+    -I${WRAP_ITK_JAVA_SOURCE_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/java
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${java_package_path}
@@ -303,7 +307,7 @@ MACRO(INCLUDE_WRAP_CMAKE_JAVA module)
 
   SET(text "\n")
   
-  SET(text "${text}%include ${WRAP_ITK_JAVA_SOURCE_DIR}/java.i\n\n")
+  SET(text "${text}%include java.i\n\n")
   
   SET(WRAP_ITK_JAVA_SWIG_EXT "${text}")
   

@@ -315,6 +315,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
 #      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     ${swig_libs}
     -o ${cpp_file}
+    -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
@@ -392,6 +393,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 #      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     ${swig_libs}
     -o ${cpp_file}
+    -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}

@@ -3,7 +3,7 @@
 import sys
 sys.path.append('@PYGCCXML_PATH@')
 
-import pygccxml, sys, re, cStringIO, time
+import pygccxml, sys, re, cStringIO, time, os
 from optparse import OptionParser
 
 # Start process time measurement
@@ -379,7 +379,7 @@ for file_name in options.mdx:
   for l in f :
     # exclude the lines which are starting with % - that's not the idx files
     if not l.startswith( '%' ) and not l.isspace():
-      load_idx(l.strip())
+      load_idx(os.path.dirname(file_name)+os.sep+l.strip())
   f.close()
 # iterate over all the typedefs in the _cable_::wrappers namespace
 # to fill the alias dict

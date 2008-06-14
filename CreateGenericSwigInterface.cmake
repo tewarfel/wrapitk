@@ -36,7 +36,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     SET(opts )
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       SET(opts ${opts} --mdx "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.mdx")
-      SET(opts ${opts} --include "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.includes")
+      SET(opts ${opts} --include "${dep}.includes")
       SET(opts ${opts} --import "${dep}.i")
     ENDFOREACH(dep)
     # import the interface files previously defined instead of importing all the files defined
@@ -65,9 +65,9 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
       OUTPUT ${interface_file}
       COMMAND ${PYTHON_EXECUTABLE} ${IGENERATOR}
         ${opts}
-        --swig-include "${LANGUAGES_SRC_DIR}/itk.i"
+        --swig-include itk.i
         --mdx ${mdx_file}
-        --include ${includes_file}
+        --include ${WRAPPER_LIBRARY_NAME}.includes
 #        --import ${module_interface_file}
         --swig-include wrap_${module}_ext.i
         -w1 -w3 -w51 -w52 -w53 -w54 #--warning-error
@@ -177,7 +177,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_SWIG_INTERFACE module)
 #   ADD_CUSTOM_TARGET(${module}Idx DEPENDS ${idx_file})
 
   # store the path of the idx file to store it in the mdx file
-  SET(SWIG_INTERFACE_MDX_CONTENT "${SWIG_INTERFACE_MDX_CONTENT}${idx_file}\n")
+  SET(SWIG_INTERFACE_MDX_CONTENT "${SWIG_INTERFACE_MDX_CONTENT}wrap_${module}.idx\n")
   SET(SWIG_INTERFACE_IDX_FILES ${SWIG_INTERFACE_IDX_FILES} ${idx_file})
   
   SET(SWIG_INTERFACE_MODULE_CONTENT "${SWIG_INTERFACE_MODULE_CONTENT}%import wrap_${module}.i\n")
