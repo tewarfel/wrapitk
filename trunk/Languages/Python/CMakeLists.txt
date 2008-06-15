@@ -316,6 +316,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     ${swig_libs}
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
+    -I${WRAP_ITK_PYTHON_SOURCE_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
@@ -393,6 +394,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 #      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     ${swig_libs}
     -o ${cpp_file}
+    -I${WRAP_ITK_PYTHON_SOURCE_DIR}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
@@ -532,7 +534,7 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
   SET(text "${text}\n\n")
 
   # the default typemaps, exception handler, and includes
-  SET(text "${text}%include ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i\n\n")
+  SET(text "${text}%include python.i\n\n")
   
   SET(WRAP_ITK_PYTHON_SWIG_EXT "${text}")
   
