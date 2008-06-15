@@ -37,14 +37,14 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       SET(opts ${opts} --mdx "${WRAP_ITK_TYPEDEFS_DIRECTORY}/${dep}.mdx")
       SET(opts ${opts} --include "${dep}.includes")
-      SET(opts ${opts} --import "${dep}.i")
+#      SET(opts ${opts} --import "${dep}.i")
     ENDFOREACH(dep)
     # import the interface files previously defined instead of importing all the files defined
     # in the module to avoid many warnings when running swig
-    FOREACH(i ${SWIG_INTERFACE_FILES})
-      GET_FILENAME_COMPONENT(bi "${i}" NAME)
-      SET(opts ${opts} --import "${bi}")
-    ENDFOREACH(i)
+#    FOREACH(i ${SWIG_INTERFACE_FILES})
+#      GET_FILENAME_COMPONENT(bi "${i}" NAME)
+#      SET(opts ${opts} --import "${bi}")
+#    ENDFOREACH(i)
   
   # MESSAGE("${opts}")
   
