@@ -65,6 +65,7 @@ ENDIF("${ITK_VERSION}" STRLESS "${ITK_REQUIRED_VERSION}")
 #SET(CableSwig_DIR ${ITK_CableSwig_DIR})
 FIND_PACKAGE(CableSwig REQUIRED)
 
+cmake_policy(SET CMP0003 NEW)
 
 # We have found CableSwig.  Use the settings.
 SET(CABLE_INDEX ${CableSwig_cableidx_EXE})
