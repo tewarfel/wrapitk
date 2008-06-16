@@ -366,7 +366,6 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
   "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
   @ONLY IMMEDIATE)
   WRAP_ITK_INSTALL("/Configuration/Typedefs/python" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
-    DESTINATION 
   )
 
   # prepare dependencies
