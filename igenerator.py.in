@@ -193,8 +193,8 @@ def load_idx(file_name):
     # TODO: add a warning if the type is defined several times
     aliases[ full_name ] = alias
     # store the source of the def
-    if typedefSource.has_key( alias ):
-      warn( 7, "%s is already defined in %s." % (alias, typedefSource[ alias ]) )
+    if typedefSource.has_key( alias ) and file_name != typedefSource[ alias ]:
+      warn( 7, "%s in %s is already defined in %s." % (alias, file_name, typedefSource[ alias ]) )
     else:
       typedefSource[ alias ] = file_name
     # don't declare the typedef - they are included from .include files
