@@ -62,6 +62,8 @@ excluded = set([
   "BasicErodeImageFilter",
   "BasicErodeImageFilter",
   "AdaptImageFilter",
+  "ValuedRegionalExtremaImageFilter",
+  "ProjectionImageFilter",
   ])
 
 
