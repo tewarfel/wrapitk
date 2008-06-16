@@ -19,6 +19,7 @@ optionParser.add_option("--import", action="append", dest="imports", default=[],
 optionParser.add_option("-w", "--disable-warning", action="append", dest="warnings", default=[], metavar="WARNING", help="Warning to be disabled.")
 optionParser.add_option("-W", "--warning-error", action="store_true", dest="warningError", help="Treat warnings as errors.")
 optionParser.add_option("-v", "--verbose", action="store_true", dest="verbose", help="Log what is currently done.")
+optionParser.add_option("-k", "--keep", action="store_true", dest="keep", help="Don't rewrite the output file if the content is unchanged.")
 options, args = optionParser.parse_args()
 
 # the output file
@@ -494,18 +495,18 @@ print >> importFile
 
 
 # finally, really write the output
+content = headerFile.getvalue()+ importFile.getvalue() + includeFile.getvalue() + outputFile.getvalue()
+
 if args[1] != '-':
-  info("Writing %s." % args[1])
-  f = file(args[1], "w")
+  if options.keep and os.path.exists( args[1] ) and file( args[1] ).read() == content:
+    info("%s unchanged." % args[1])
+  else:
+    info("Writing %s." % args[1])
+    f = file(args[1], "w")
+    f.write( content )
+    f.close()
 else:
-  f = sys.stdout
-
-f.write( headerFile.getvalue() )
-f.write( importFile.getvalue() )
-f.write( includeFile.getvalue() )
-f.write( outputFile.getvalue() )
-
-f.close()
+  sys.stdout.write( content )
 
 # Stop process time measurement
 info("%s seconds i-generation time." % (time.clock() - t0))
