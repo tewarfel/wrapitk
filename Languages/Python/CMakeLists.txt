@@ -226,7 +226,6 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
     main_module_ext.i.in
     make_doxygen_config.py.in
     module_ext.i.in
-    python.i
   )
 ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
@@ -245,11 +244,28 @@ ENDMACRO(WRAP_LIBRARY_PYTHON)
 
 
 MACRO(END_WRAP_LIBRARY_PYTHON)
+
+  # Loop over the extra swig input files and add them to the generated files 
+  # lists. Guess that the generated cxx output will have the same name as 
+  # the .i input file.
+  FOREACH(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
+    GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
+    STRING(REPLACE "wrap_" "" base_name "${base_name}")
+    INCLUDE_WRAP_CMAKE_PYTHON("${base_name}")
+    END_INCLUDE_WRAP_CMAKE_PYTHON("${base_name}")
+  ENDFOREACH(source)
+
   # create the python config file
   # this file store all the name - type association and a dependencies list for the modules
   #
   # first build the dependency list
-  SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS )
+  # ITKPyBase is always included, excepted ITKPyBase itself
+  IF("${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
+    SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "")
+  ELSE("${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
+    SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "'ITKPyBase',")
+  ENDIF("${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
+
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "'${dep}', ${WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS}")
   ENDFOREACH(dep)
@@ -312,17 +328,15 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     -w384 -w383 # operator++ ane operator--
     -w361 # operator!
     -w467 # overloaded functions (with typemaps)
-#      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     ${swig_libs}
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
-    -I${WRAP_ITK_PYTHON_SOURCE_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
-    DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
+    DEPENDS ${DEPS} ${WRAP_ITK_PYTHON_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/PyBase/wrap_pyBase.i ${SWIG_EXECUTABLE}
   )
   WRAP_ITK_INSTALL("/lib" "${python_file}")
 
@@ -363,9 +377,9 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 
   # create the python customization for that wrap_*.cmake file.
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/module_ext.i.in"
-  "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
+  "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${group_name}_ext.i"
   @ONLY IMMEDIATE)
-  WRAP_ITK_INSTALL("/Configuration/Typedefs/python" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${module}_ext.i"
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/python" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/wrap_${group_name}_ext.i"
   )
 
   # prepare dependencies
@@ -390,17 +404,15 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     -w384 -w383 # operator++ ane operator--
     -w361 # operator!
     -w467 # overloaded functions (with typemaps)
-#      -l${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i
     ${swig_libs}
     -o ${cpp_file}
-    -I${WRAP_ITK_PYTHON_SOURCE_DIR}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
-    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/python.i ${SWIG_EXECUTABLE}
+    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_PYTHON_SOURCE_DIR}/PyBase/wrap_pyBase.i ${SWIG_EXECUTABLE}
     # ${WRAP_ITK_PYTHON_LIBRARY_DEPS}
   )
   WRAP_ITK_INSTALL("/lib" "${python_file}")
@@ -422,9 +434,9 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 
   # add this wrap_*.cmake stuff to the list of modules to init in the main module.
   # first the extern c declaration
-  SET(WRAP_ITK_PYTHON_LIBRARY_DECLS "${WRAP_ITK_PYTHON_LIBRARY_DECLS}extern \"C\" int init_${module}Python();\n")
+  SET(WRAP_ITK_PYTHON_LIBRARY_DECLS "${WRAP_ITK_PYTHON_LIBRARY_DECLS}extern \"C\" int init_${group_name}Python();\n")
   # and the call of the extern function
-  SET(WRAP_ITK_PYTHON_LIBRARY_CALLS "${WRAP_ITK_PYTHON_LIBRARY_CALLS}  init_${module}Python();\n")
+  SET(WRAP_ITK_PYTHON_LIBRARY_CALLS "${WRAP_ITK_PYTHON_LIBRARY_CALLS}  init_${group_name}Python();\n")
 
 ENDMACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
 
@@ -462,47 +474,11 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
 
   SET(text "")
   
+  # the default typemaps, exception handler, and includes
+  SET(text "${text}%import wrap_pyBase.i\n\n")
+  
   # add stream support only in one module, so it doesn't implemented in all the modules
   IF("${module}" STREQUAL "ITKCommonBase")
-    SET(text "${text}%include std_iostream.i\n")
-    SET(text "${text}%include std_sstream.i\n\n")
-    SET(text "${text}%include <std_vector.i>\n")
-    SET(text "${text}%include <std_map.i>\n")
-    SET(text "${text}%include <std_list.i>\n\n")
-
-    # add the vars defined by including std_iostream and std_stream to the python config
-    ADD_PYTHON_CONFIG_TEMPLATE("PySwigIterator" "PySwigIterator" "PySwigIterator" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("cerr" "std::cerr" "cerr" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("cin" "std::cin" "cin" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("clog" "std::clog" "clog" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("cout" "std::cout" "cout" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("cvar" "std::cvar" "cvar" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("endl" "std::endl" "endl" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ends" "std::ends" "ends" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("flush" "std::flush" "flush" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ios" "std::ios" "ios" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ios_base" "std::ios_base" "ios_base" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ios_base_sync_with_stdio" "std::ios_base_sync_with_stdio" "ios_base_sync_with_stdio" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ios_base_xalloc" "std::ios_base_xalloc" "ios_base_xalloc" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("iostream" "std::iostream" "iostream" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("istream" "std::istream" "istream" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("istringstream" "std::istringstream" "istringstream" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ostream" "std::ostream" "ostream" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("ostringstream" "std::ostringstream" "ostringstream" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("streambuf" "std::streambuf" "streambuf" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("string" "std::string" "string" "")
-    ADD_PYTHON_CONFIG_TEMPLATE("stringstream" "std::stringstream" "stringstream" "")
-
-    # include std_strin.i here instead of python.i to workaround a bug when std_string.i
-    # is included before std_sstream.i (bug #1607576)
-    SET(text "${text}%include std_string.i\n\n")
-    
-    SET(text "${text}%template(vectorstring) std::vector< std::string >;\n")
-    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectorstring" "std::string")
-
-    SET(text "${text}%template(liststring) std::list< std::string >;\n\n")
-    ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "liststring" "std::string")
-    
     SET(text "${text}%template(vectoritkDataObject_Pointer) std::vector< itkDataObject_Pointer >;\n")
     # TODO: how to put that in python without warning?
     # ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itkDataObject")
@@ -512,29 +488,8 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
 
   ENDIF("${module}" STREQUAL "ITKCommonBase")
 
-  IF("${module}" STREQUAL "itkVectorContainer")
-    FOREACH(t B UC US UL SC SS SL F D)
-      SET(text "${text}%template(vector${t}) std::vector< ${ITKT_${t}} >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${t}" "${ITKT_${t}}")
-      # vector of vectors
-      SET(text "${text}%{\n")
-      SET(text "${text}typedef std::vector< ${ITKT_${t}} > vector${t};\n")
-      SET(text "${text}%}\n")
-      SET(text "${text}%template(vectorvector${t}) std::vector< std::vector< ${ITKT_${t}} > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectorvector${t}" "std::vector< ${ITKT_${t}} >")
-    ENDFOREACH(t)
-  ENDIF("${module}" STREQUAL "itkVectorContainer")
-
-  IF("${module}" STREQUAL "itkMapContainer")
-    SET(text "${text}%template(mapULD) std::map< unsigned long, double >;\n")
-    ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULD" "unsigned long, double")
-  ENDIF("${module}" STREQUAL "itkMapContainer")
-
   SET(text "${text}\n\n")
 
-  # the default typemaps, exception handler, and includes
-  SET(text "${text}%include python.i\n\n")
-  
   SET(WRAP_ITK_PYTHON_SWIG_EXT "${text}")
   
   # register the module for the lib module
@@ -1057,9 +1012,18 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
     ADD_SUBDIRECTORY(${WRAP_ITK_PYTHON_SOURCE_DIR}/PyUtils)
   ENDMACRO(END_WRAP_MODULES_PYTHON)
 
+  MACRO(WRAP_MODULES_PYTHON)
+    ADD_SUBDIRECTORY(${WRAP_ITK_PYTHON_SOURCE_DIR}/PyBase)
+  ENDMACRO(WRAP_MODULES_PYTHON)
+
 ELSE(NOT EXTERNAL_WRAP_ITK_PROJECT)
   MACRO(END_WRAP_MODULES_PYTHON)
     # just do nothing
   ENDMACRO(END_WRAP_MODULES_PYTHON)
+
+  MACRO(WRAP_MODULES_PYTHON)
+    # just do nothing
+  ENDMACRO(WRAP_MODULES_PYTHON)
+
 ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 

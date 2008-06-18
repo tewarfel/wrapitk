@@ -17,6 +17,15 @@ ENDMACRO(WRAP_LIBRARY_SWIG_INTERFACE)
 
 MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
 
+  # Loop over the extra swig input files and copy them to the Typedefs directory
+  FOREACH(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
+    GET_FILENAME_COMPONENT(basename ${source} NAME)
+    SET(dest "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${basename}")
+    EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different "\"${source}\"" "\"${dest}\"")
+    WRAP_ITK_INSTALL("/Configuration/Typedefs" "${dest}")
+    SET(SWIG_INTERFACE_MODULE_CONTENT "${SWIG_INTERFACE_MODULE_CONTENT}%import ${basename}\n")
+  ENDFOREACH(source)
+
   SET(incs )
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     SET(incs "${incs}#include \"${dep}.includes\"\n")
