@@ -259,11 +259,6 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
   ENDFOREACH(dep)
   
-  SET(swig_libs )
-  FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
-    SET(swig_libs ${swig_libs} "-l${swig_lib}")
-  ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
-  
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${java_file}
     COMMAND ${SWIG_EXECUTABLE} -c++ -java -O -features autodoc=1
@@ -277,7 +272,6 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
     -w467 # overloaded functions (with typemaps)
     -w401 -w503 -w516 #!
     -w303 # extend itklightobject
-    ${swig_libs}
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_JAVA_SOURCE_DIR}

@@ -312,12 +312,6 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   SET(python_file "${LIBRARY_OUTPUT_PATH}/${lib}.py")
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Python.cpp")
 
-  # add some libs required by this module
-  SET(swig_libs )
-  FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
-    SET(swig_libs ${swig_libs} "-l${swig_lib}")
-  ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
-
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
@@ -328,7 +322,6 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     -w384 -w383 # operator++ ane operator--
     -w361 # operator!
     -w467 # overloaded functions (with typemaps)
-    ${swig_libs}
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
@@ -388,12 +381,6 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     SET(DEPS ${DEPS} ${${dep}SwigFiles})
   ENDFOREACH(dep)
 
-  # add some libs required by this module
-  SET(swig_libs )
-  FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
-    SET(swig_libs ${swig_libs} "-l${swig_lib}")
-  ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
-
   # and run swig to produce the c++ file and the .py file
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
@@ -404,7 +391,6 @@ MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
     -w384 -w383 # operator++ ane operator--
     -w361 # operator!
     -w467 # overloaded functions (with typemaps)
-    ${swig_libs}
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
