@@ -35,6 +35,22 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   # the list of .i files generated for the module
   SET(SWIG_INTERFACE_FILES )
 
+  # prepare dependencies
+  SET(DEPS )
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    SET(DEPS ${DEPS} ${${dep}IdxFiles} ${${dep}SwigFiles})
+  ENDFOREACH(dep)
+
+  # add some libs required by this module
+  SET(swig_libs )
+  FOREACH(swig_lib ${WRAPPER_SWIG_LIBRARY_FILES})
+    GET_FILENAME_COMPONENT(basename ${swig_lib} NAME)
+    SET(swig_libs ${swig_libs} --swig-include ${basename})
+    SET(dest "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${basename}")
+    EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different "\"${swig_lib}\"" "\"${dest}\"")
+    WRAP_ITK_INSTALL("/Configuration/Typedefs" "${dest}")
+  ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
+
   FOREACH(module ${SWIG_INTERFACE_MODULES})
     # create the swig interface
     SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}.i")
@@ -64,17 +80,12 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   #     "${PYTHON_EXECUTABLE}"
   #   )
   
-    # prepare dependencies
-    SET(DEPS )
-    FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
-      SET(DEPS ${DEPS} ${${dep}IdxFiles} ${${dep}SwigFiles})
-    ENDFOREACH(dep)
-  
     ADD_CUSTOM_COMMAND(
       OUTPUT ${interface_file}
       COMMAND ${PYTHON_EXECUTABLE} ${IGENERATOR}
         ${opts}
         --swig-include itk.i
+        ${swig_libs}
         --mdx ${mdx_file}
         --include ${WRAPPER_LIBRARY_NAME}.includes
 #        --import ${module_interface_file}
