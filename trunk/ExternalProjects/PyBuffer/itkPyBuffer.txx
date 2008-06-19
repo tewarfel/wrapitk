@@ -43,8 +43,6 @@ PyBuffer<TImage>
   
   image->Update();
 
-  import_array();
-
   PixelType * buffer = const_cast < PixelType * > ( image->GetBufferPointer() );
  
   char * data = (char *)( buffer );
@@ -73,8 +71,6 @@ const typename PyBuffer<TImage>::ImagePointer
 PyBuffer<TImage>
 ::GetImageFromArray( PyObject *obj )
 {
-
-  import_array();
 
     int element_type = GetPyType();  ///PyArray_DOUBLE;  // change this with pixel traits.
 
