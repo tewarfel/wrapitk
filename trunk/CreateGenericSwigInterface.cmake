@@ -23,7 +23,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     SET(dest "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${basename}")
     EXEC_PROGRAM(${CMAKE_COMMAND} ARGS -E copy_if_different "\"${source}\"" "\"${dest}\"")
     WRAP_ITK_INSTALL("/Configuration/Typedefs" "${dest}")
-    SET(SWIG_INTERFACE_MODULE_CONTENT "${SWIG_INTERFACE_MODULE_CONTENT}%import ${basename}\n")
+#    SET(SWIG_INTERFACE_MODULE_CONTENT "${SWIG_INTERFACE_MODULE_CONTENT}%import ${basename}\n")
   ENDFOREACH(source)
 
   SET(incs )
@@ -124,7 +124,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   ENDFOREACH(dep)
   
   SET(SWIG_INTERFACE_INCLUDES "${deps_includes}#include \"${WRAPPER_LIBRARY_NAME}.includes\"")
-  SET(CONFIG_MODULE_INTERFACE_CONTENT "${deps_imports}${SWIG_INTERFACE_MODULE_CONTENT}")
+  SET(CONFIG_MODULE_INTERFACE_CONTENT ) #"${deps_imports}${SWIG_INTERFACE_MODULE_CONTENT}")
   CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.i.in" "${module_interface_file}"
     @ONLY IMMEDIATE )
   WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${module_interface_file}")
