@@ -366,7 +366,7 @@ s = set()
 print >> headerFile, "%{"
 # the include files passed in option
 for f in options.includes:
-  i = "#include <%s>" % f
+  i = '#include "%s"' % f
   if not i in s:
     print >> headerFile, i
     s.add( i )
