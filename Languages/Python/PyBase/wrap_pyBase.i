@@ -46,6 +46,15 @@
 %template(liststring)     std::list< std::string >;
 
 %template(mapULD)         std::map< unsigned long, double >;
+%template(mapBB)          std::map< bool, bool >;
+%template(mapUCUC)        std::map< unsigned char, unsigned char >;
+%template(mapUSUS)        std::map< unsigned short, unsigned short >;
+%template(mapULUL)        std::map< unsigned long, unsigned long >;
+%template(mapSCSC)        std::map< signed char, signed char >;
+%template(mapSSSS)        std::map< signed short, signed short >;
+%template(mapSLSL)        std::map< signed long, signed long >;
+%template(mapFF)          std::map< float, float >;
+%template(mapDD)          std::map< double, double >;
 
 %template(vectorB)        std::vector< bool >;
 %template(vectorvectorB)  std::vector< std::vector< bool > >;
@@ -65,3 +74,13 @@
 %template(vectorvectorF)  std::vector< std::vector< float > >;
 %template(vectorD)        std::vector< double >;
 %template(vectorvectorD)  std::vector< std::vector< double > >;
+
+%template(listB)          std::list< bool >;
+%template(listUC)         std::list< unsigned char >;
+%template(listUS)         std::list< unsigned short >;
+%template(listUL)         std::list< unsigned long >;
+%template(listSC)         std::list< signed char >;
+%template(listSS)         std::list< signed short >;
+%template(listSL)         std::list< signed long >;
+%template(listF)          std::list< float >;
+%template(listD)          std::list< double >;

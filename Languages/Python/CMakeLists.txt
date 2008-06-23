@@ -259,17 +259,19 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   # this file store all the name - type association and a dependencies list for the modules
   #
   # first build the dependency list
-  # ITKPyBase is always included, excepted ITKPyBase itself
-  IF("${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
-    SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "")
-  ELSE("${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
-    SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "'ITKPyBase',")
-  ENDIF("${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
+  SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "")
 
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "'${dep}', ${WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS}")
     SET(WRAP_ITK_PYTHON_LIBRARY_IMPORTS "import ${dep}Python\n${WRAP_ITK_PYTHON_LIBRARY_IMPORTS}")
   ENDFOREACH(dep)
+  
+  # ITKPyBase is always included, excepted ITKPyBase itself
+  IF(NOT "${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
+    SET(WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS "'ITKPyBase', ${WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS}")
+    SET(WRAP_ITK_PYTHON_LIBRARY_IMPORTS "import ITKPyBasePython\n${WRAP_ITK_PYTHON_LIBRARY_IMPORTS}")
+  ENDIF(NOT "${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKPyBase")
+
   # and create the file, with the var WRAP_ITK_PYTHON_CONFIGURATION_TEMPLATES and 
   # WRAP_ITK_PYTHON_CONFIGURATION_DEPENDS created earlier
   CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/ModuleConfig.py.in"
@@ -463,19 +465,7 @@ MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
   
   # the default typemaps, exception handler, and includes
   SET(text "${text}%import wrap_pyBase.i\n\n")
-  
-  # add stream support only in one module, so it doesn't implemented in all the modules
-  IF("${module}" STREQUAL "ITKCommonBase")
-    SET(text "${text}%template(vectoritkDataObject_Pointer) std::vector< itkDataObject_Pointer >;\n")
-    # TODO: how to put that in python without warning?
-    # ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itkDataObject")
-
-    # make itk::Command hineritable in python
-    SET(text "${text}%feature(\"director\") itkCommand;")
-
-  ENDIF("${module}" STREQUAL "ITKCommonBase")
-
-  SET(text "${text}\n\n")
+    SET(text "${text}\n\n")
 
   SET(WRAP_ITK_PYTHON_SWIG_EXT "${text}")
   
@@ -513,6 +503,9 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     SET(text "${text}}\n")
     SET(text "${text}\n\n")
 
+    SET(text "${text}%template(listitkLightObject) std::list< itkLightObject_Pointer >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "listitkLightObject" "itk::LightObject")
+
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
   ENDIF("${swig_name}" STREQUAL "itkLightObject")
   
@@ -520,6 +513,26 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     STRING(REGEX REPLACE "_Pointer$" "" smart_pointed "${swig_name}")
     ADD_PYTHON_POINTER_TYPEMAP("${smart_pointed}")
   ENDIF("${wrap_class}" MATCHES "SmartPointer$")
+
+  IF("${swig_name}" STREQUAL "itkDataObject")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vectoritkDataObject) std::vector< itkDataObject_Pointer >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itk::DataObject")
+  ENDIF("${swig_name}" STREQUAL "itkDataObject")
+
+  IF("${swig_name}" STREQUAL "itkObjectFactoryBase")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(listitkObjectFactoryBase) std::list< itkObjectFactoryBase * >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "listitkObjectFactoryBase" "itk::ObjectFactoryBase")
+  ENDIF("${swig_name}" STREQUAL "itkObjectFactoryBase")
+
+  IF("${swig_name}" STREQUAL "itkMetaDataDictionary")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vectoritkMetaDataDictionary) std::vector< itkMetaDataDictionary * >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkMetaDataDictionary" "itk::MetaDataDictionary")
+  ENDIF("${swig_name}" STREQUAL "itkMetaDataDictionary")
+
+  IF("${swig_name}" STREQUAL "itkCommand")
+    # make itk::Command hineritable in python
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%feature(\"director\") itkCommand;")
+  ENDIF("${swig_name}" STREQUAL "itkCommand")
 
   IF("${cpp_name}" STREQUAL "itk::ImageRegion")
     SET(text "${text}%extend ${swig_name} {\n")
@@ -617,6 +630,11 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     ENDIF("${superclass_template_param}" MATCHES "::")
   ENDIF("${cpp_name}" STREQUAL "itk::MapContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
 
+  IF("${swig_name}" STREQUAL "itkTransformBase")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "itk::TransformBase")
+  ENDIF("${swig_name}" STREQUAL "itkTransformBase")
+
   IF("${cpp_name}" STREQUAL "itk::SpatialObjectPoint")
     SET(text "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
     SET(text "${text}\n\n")
@@ -636,6 +654,21 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
   ENDIF("${cpp_name}" STREQUAL "itk::ContourSpatialObjectPoint")
+
+  IF("${cpp_name}" STREQUAL "itk::LineSpatialObjectPoint")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+  ENDIF("${cpp_name}" STREQUAL "itk::LineSpatialObjectPoint")
+
+  IF("${cpp_name}" STREQUAL "itk::SurfaceSpatialObjectPoint")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+  ENDIF("${cpp_name}" STREQUAL "itk::SurfaceSpatialObjectPoint")
+
+  IF("${cpp_name}" STREQUAL "itk::SpatialObject")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "${cpp_name}< ${template_params} >")
+  ENDIF("${cpp_name}" STREQUAL "itk::SpatialObject")
 
 ENDMACRO(ADD_SIMPLE_TYPEDEF_PYTHON)
 

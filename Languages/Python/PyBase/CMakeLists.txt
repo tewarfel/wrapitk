@@ -32,6 +32,8 @@ WRAP_LIBRARY("ITKPyBase" Python)
   ADD_PYTHON_CONFIG_TEMPLATE("stringstream" "std::stringstream" "stringstream" "")
 
   FOREACH(t B UC US UL SC SS SL F D)
+    ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "map${t}${t}" "${ITKT_${t}}, ${ITKT_${t}}")
+    ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "list${t}" "${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${t}" "${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectorvector${t}" "std::vector< ${ITKT_${t}} >")
   ENDFOREACH(t)
