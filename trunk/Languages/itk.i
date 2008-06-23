@@ -77,4 +77,13 @@
 		};
 	}
 
+	// a GetPointer() method for backward compatibility with older wrapitk
+	%extend class_name {
+		public:
+		class_name * GetPointer() {
+		  std::cerr << "WrapITK warning: GetPointer() is now deprecated for 'class_name'." << std::endl;
+		  return self;
+		};
+	}
+
 %enddef
