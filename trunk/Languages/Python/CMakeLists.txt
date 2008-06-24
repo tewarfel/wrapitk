@@ -363,6 +363,10 @@ ENDMACRO(END_WRAP_LIBRARY_PYTHON)
 MACRO(END_INCLUDE_WRAP_CMAKE_PYTHON group_name)
   
   SET(base_name wrap_${group_name})
+
+  # the default typemaps, exception handler, and includes
+  SET(WRAP_ITK_PYTHON_SWIG_EXT "%import wrap_pyBase.i\n\n${WRAP_ITK_PYTHON_SWIG_EXT}")
+
   
   # create the swig interface for all the groups in the module
   #
@@ -459,15 +463,7 @@ ENDMACRO(ADD_PYTHON_CONFIG_TEMPLATE)
 
 
 MACRO(INCLUDE_WRAP_CMAKE_PYTHON module)
-  # add some wrapping customizations specific on some modules.
-
-  SET(text "")
-  
-  # the default typemaps, exception handler, and includes
-  SET(text "${text}%import wrap_pyBase.i\n\n")
-    SET(text "${text}\n\n")
-
-  SET(WRAP_ITK_PYTHON_SWIG_EXT "${text}")
+  SET(WRAP_ITK_PYTHON_SWIG_EXT "")
   
   # register the module for the lib module
   SET(WRAP_ITK_PYTHON_LIBRARY_IMPORTS "${WRAP_ITK_PYTHON_LIBRARY_IMPORTS}from ${module}Python import *\n")
@@ -490,6 +486,13 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
 #  MESSAGE("${wrap_class} -- ${swig_name}")
 #  MESSAGE("${cpp_name} -- ${template_params} -- ${ext_def}")
 
+  # must be done first so the typemap are used in the %template commands
+  IF("${wrap_class}" MATCHES "SmartPointer$")
+    STRING(REGEX REPLACE "_Pointer$" "" smart_pointed "${swig_name}")
+    ADD_PYTHON_POINTER_TYPEMAP("${smart_pointed}")
+  ENDIF("${wrap_class}" MATCHES "SmartPointer$")
+
+
   # and now, generate the typemaps and other customizations
   
   IF("${swig_name}" STREQUAL "itkLightObject")
@@ -501,6 +504,13 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     SET(text "${text}    return msg.str();\n")
     SET(text "${text}  }\n")
     SET(text "${text}}\n")
+# swig generates invalid code with that simple typemap
+#     SET(text "${text}%typemap(in) ${swig_name}_Pointer const & {\n")
+#     SET(text "${text}  // tralala\n")
+#     SET(text "${text}  ${swig_name} * ptr;\n")
+#     SET(text "${text}//	  if ((SWIG_ConvertPtr($input,(void **) &ptr, $descriptor(${swig_name}), 0)) == -1) return NULL;\n")
+#     SET(text "${text}$1 = ptr;\n")
+#     SET(text "${text}}\n") 
     SET(text "${text}\n\n")
 
     SET(text "${text}%template(listitkLightObject) std::list< itkLightObject_Pointer >;\n")
@@ -509,11 +519,6 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
   ENDIF("${swig_name}" STREQUAL "itkLightObject")
   
-  IF("${wrap_class}" MATCHES "SmartPointer$")
-    STRING(REGEX REPLACE "_Pointer$" "" smart_pointed "${swig_name}")
-    ADD_PYTHON_POINTER_TYPEMAP("${smart_pointed}")
-  ENDIF("${wrap_class}" MATCHES "SmartPointer$")
-
   IF("${swig_name}" STREQUAL "itkDataObject")
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(vectoritkDataObject) std::vector< itkDataObject_Pointer >;\n")
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itk::DataObject")
@@ -531,10 +536,11 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
 
   IF("${swig_name}" STREQUAL "itkCommand")
     # make itk::Command hineritable in python
-    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%feature(\"director\") itkCommand;")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%feature(\"director\") itkCommand;\n")
   ENDIF("${swig_name}" STREQUAL "itkCommand")
 
   IF("${cpp_name}" STREQUAL "itk::ImageRegion")
+    SET(text "")
     SET(text "${text}%extend ${swig_name} {\n")
     SET(text "${text}  std::string __repr__() {\n")
     SET(text "${text}    itk::OStringStream msg;\n")
@@ -1017,7 +1023,7 @@ MACRO(ADD_PYTHON_POINTER_TYPEMAP template_params)
 # SET(text "${text}%ignore ${template_params}_Pointer;\n")
 # SET(text "${text}\n\n")
   
-  SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  SET(WRAP_ITK_PYTHON_SWIG_EXT "${text}${WRAP_ITK_PYTHON_SWIG_EXT}")
 ENDMACRO(ADD_PYTHON_POINTER_TYPEMAP)
 
 
