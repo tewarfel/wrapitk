@@ -671,10 +671,10 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
   ENDIF("${cpp_name}" STREQUAL "itk::SurfaceSpatialObjectPoint")
 
-  IF("${cpp_name}" STREQUAL "itk::SpatialObject")
+  IF("${cpp_name}" STREQUAL "itk::SpatialObject" AND NOT "${ext_def}" MATCHES "SmartPointer")
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
     ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "${cpp_name}< ${template_params} >")
-  ENDIF("${cpp_name}" STREQUAL "itk::SpatialObject")
+  ENDIF("${cpp_name}" STREQUAL "itk::SpatialObject" AND NOT "${ext_def}" MATCHES "SmartPointer")
 
 ENDMACRO(ADD_SIMPLE_TYPEDEF_PYTHON)
 
