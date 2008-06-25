@@ -198,15 +198,6 @@ class itkTemplate(object):
         
     cleanParameters = []
     for param in parameters:
-      # In the case of itk SmartPointer, get the pointed object class
-      try: param = param.GetPointer()
-      except:pass
-      
-      # In the case where elt is a pointer (<className>Ptr), the real class
-      # can be found in the pointer class dictionary
-      try: param = param.__dict__[ param.__class__ ]
-      except: pass
-
       # In the case of itk class instance, get the class
       if not inspect.isclass( param ) and param.__class__.__name__[:3] == 'itk' and param.__class__.__name__!= "itkCType" :
         param = param.__class__
@@ -358,39 +349,56 @@ def New(self, *args, **kargs) :
     # use Set as prefix. It allow to use a shorter and more intuitive
     # call (Ex: itk.ImageFileReader.UC2.New(FileName='image.png')) than with the
     # full name (Ex: itk.ImageFileReader.UC2.New(SetFileName='image.png'))
-    attrib = getattr(newItkObject, 'Set' + attribName)
-    attrib(value)
+    if attribName != "auto_progress" :
+      attrib = getattr(newItkObject, 'Set' + attribName)
+      attrib(value)
 
   # now, try to add observer to display progress
-  if itkConfig.ProgressCallback :
-    import ITKPyUtils, Base
-    # copy the callback so it can be reset to None in itkConfig
-    # without pb
+  if "auto_progress" in kargs.keys() :
+    if kargs["auto_progress"] in [True, 1] :
+      import itk
+      callback = itk.terminal_progress_callback
+    elif kargs["auto_progress"] == 2 :
+      import itk
+      callback = itk.simple_progress_callback
+    else :
+      callback = None
+  elif itkConfig.ProgressCallback :
     callback = itkConfig.ProgressCallback
+  else :
+    callback = None
+      
+  if callback :
+    import itk
     try :
       def progress() :
         # newItkObject and callback are kept referenced with a closure
         callback(self.__name__, newItkObject.GetProgress())
-  
-      command = ITKPyUtils.PyCommand.New()
+	
+      command = itk.PyCommand.New()
       command.SetCommandCallable(progress)
-      newItkObject.AddObserver(Base.ProgressEvent(), command)
+      newItkObject.AddObserver(itk.ProgressEvent(), command)
     except :
       # it seems that something goes wrong...
       # as this feature is designed for prototyping, it's not really a problem
       # if an object  don't have progress reporter, so adding reporter can silently fail
       pass
 
+  if itkConfig.NotInPlace and "SetInPlace" in dir(newItkObject) :
+    newItkObject.SetInPlace( False )
+  
   return newItkObject
 
 
+def output(input) :
+  try :
+    img = input.GetOutput()
+  except AttributeError :
+    img = input
+  return img
+
 def image(input) :
-    try :
-	img = input.GetOutput()
-    except AttributeError :
-	img = input
-    try :
-	img = img.GetPointer()
-    except AttributeError :
-	pass
-    return img
+  import sys
+  print >> sys.stderr, "WrapITK warning: itk.image() is deprecated. Use itk.output() instead."
+  return output(input)
+  
