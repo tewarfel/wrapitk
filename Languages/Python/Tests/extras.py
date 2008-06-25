@@ -50,7 +50,10 @@ except KeyError:
   pass
 
 
-# test image
+# test output
+assert repr(itk.output(reader)) == repr(reader.GetOutput())
+assert itk.output(1) == 1
+# test the deprecated image
 assert repr(itk.image(reader)) == repr(reader.GetOutput())
 assert itk.image(1) == 1
 

@@ -2,6 +2,12 @@
 # each new feature use a name in lower case
 clrLine = "\033[2K\033E\033[1A"
 
+def auto_not_in_place( v=True ) :
+  """Force it to not run in place
+  """
+  import itkConfig
+  itkConfig.NotInPlace = v
+
 def auto_progress( progressType = 1 ):
   """Set up auto progress report
   
@@ -43,7 +49,7 @@ def terminal_import_callback(name, p):
   This function can be used with itkConfig.ImportCallback
   """
   import sys
-  print >> sys.stderr, "Loading %s..." % name,
+  print >> sys.stderr, clrLine+"Loading %s..." % name,
   if p == 1 :
     print >> sys.stderr, clrLine,
   
@@ -55,7 +61,7 @@ def simple_import_callback(name, p):
   import sys
   if p == 0:
     print >> sys.stderr, "Loading %s..." % name,
-  if p == 1 :
+  elif p == 1 :
     print >> sys.stderr, "done"
 
 def simple_progress_callback(name, p):
@@ -65,7 +71,7 @@ def simple_progress_callback(name, p):
   """
   import sys
   if p == 0 :
-    print >> sys.stderr, clrLine+"Running %s..." % name,
+    print >> sys.stderr, "Running %s..." % name,
   elif p == 1 :
     print >> sys.stderr, "done"
 
@@ -90,7 +96,7 @@ def echo(object, f=sys.stderr) :
       try:
          object.Print(ss)
       except:
-         object.Print(ss, itk.Indent.New());
+         object.Print(ss, Indent.New());
    except:
       print >> f, repr(object)
    else:
@@ -105,7 +111,7 @@ def size(imageOrFilter) :
   """
   # we don't need the entire output, only its size
   imageOrFilter.UpdateOutputInformation()
-  img = image(imageOrFilter)
+  img = output(imageOrFilter)
   return img.GetLargestPossibleRegion().GetSize()
   
 
@@ -130,8 +136,19 @@ def spacing(imageOrFilter) :
   """
   # we don't need the entire output, only its size
   imageOrFilter.UpdateOutputInformation()
-  img = image(imageOrFilter)
+  img = output(imageOrFilter)
   return img.GetSpacing()
+  
+
+def origin(imageOrFilter) :
+  """Return the origin of an image, or of the output image of a filter
+  
+  This method take care of updating the needed informations
+  """
+  # we don't need the entire output, only its size
+  imageOrFilter.UpdateOutputInformation()
+  img = output(imageOrFilter)
+  return img.GetOrigin()
   
 
 def index(imageOrFilter) :
@@ -141,7 +158,7 @@ def index(imageOrFilter) :
   """
   # we don't need the entire output, only its size
   imageOrFilter.UpdateOutputInformation()
-  img = image(imageOrFilter)
+  img = output(imageOrFilter)
   return img.GetLargestPossibleRegion().GetIndex()
   
 
@@ -154,7 +171,7 @@ def strel(dim, radius=1) :
   return itk.FlatStructuringElement[dim].Ball(radius)
   
 # return an image
-from itkTemplate import image
+from itkTemplate import image, output
 
 
 def template(cl) :
@@ -192,18 +209,7 @@ def class_(obj) :
     # obj is already a class !
     return obj
   else :
-    # First, drop the smart pointer
-    try:
-      obj = obj.GetPointer()
-    except:
-      pass
-    # try to get the real object if elt is a pointer (ends with Ptr)
-    try:
-      cls = obj.__dict__[obj.__class__]
-    except:
-      cls = obj.__class__
-    # finally, return the class found
-    return cls
+    return obj.__class__
 
 
 def range(imageOrFilter) :
@@ -213,7 +219,7 @@ def range(imageOrFilter) :
   range() take care of updating the pipeline
   """
   import itk
-  img = image(imageOrFilter)
+  img = output(imageOrFilter)
   img.UpdateOutputInformation()
   img.Update()
   comp = itk.MinimumMaximumImageCalculator[img].New(Image=img)
@@ -221,24 +227,96 @@ def range(imageOrFilter) :
   return (comp.GetMinimum(), comp.GetMaximum())
 
 
-def write(imageOrFilter, fileName):
+def write(imageOrFilter, fileName, compression=False):
   """Write a image or the output image of a filter to filename
   
   The writer is instantiated with the image type of the image in
   parameter (or, again, with the output image of the filter in parameter)
   """
   import itk
-  img = image(imageOrFilter)
+  img = output(imageOrFilter)
   img.UpdateOutputInformation()
-  writer = itk.ImageFileWriter[img].New(Input=img, FileName=fileName)
+  writer = itk.ImageFileWriter[img].New(Input=img, FileName=fileName, UseCompression=compression)
   writer.Update()
+  
+
+def index_to_physical_point( imageOrFilter, idx ):
+  """Get the pysical point in an image from an index
+  
+  imageOrFilter is the image where the physical point must be computed
+  idx is the index used to compute the physical point. It can be a continuous index.
+  """
+  from __builtin__ import range # required because range is overladed in this module
+  # get the image if needed
+  img = output( imageOrFilter )
+  dim = img.GetImageDimension()
+  o = origin( img )
+  s = spacing( img )
+  
+  # use the typemaps to really get a continuous index
+  import itk
+  idx = itk.ContinuousIndex[ itk.D, dim ]( idx )
+  
+  # create the output object
+  p = itk.Point[ itk.D, dim ]()
+  for i in range( 0, dim ):
+    p.SetElement( i, s.GetElement(i) * idx.GetElement(i) + o.GetElement(i) )
+  return p
+  
+
+def physical_point_to_continuous_index( imageOrFilter, p ):
+  """Get the continuous index in an image from the physical point
+  
+  imageOrFilter is the image where the physical point must be computed
+  p is the point used to compute the index
+  """
+  from __builtin__ import range # required because range is overladed in this module
+  # get the image if needed
+  img = output( imageOrFilter )
+  dim = img.GetImageDimension()
+  o = origin( img )
+  s = spacing( img )
+  
+  # use the typemaps to really get a point
+  import itk
+  p = itk.Point[ itk.D, dim ]( p )
+  
+  # create the output object
+  idx = itk.ContinuousIndex[ itk.D, dim ]()
+  for i in range( 0, dim ):
+    idx.SetElement( i, ( p.GetElement(i) - o.GetElement(i) ) / s.GetElement(i) )
+  return idx
+  
+
+def physical_point_to_index( imageOrFilter, p ):
+  """Get the index in an image from the physical point
+  
+  image is the image where the physical point must be computed
+  p is the point used to compute the index
+  """
+  from __builtin__ import range # required because range is overladed in this module
+  # get the image if needed
+  img = output( imageOrFilter )
+  dim = img.GetImageDimension()
+  o = origin( img )
+  s = spacing( img )
+  
+  # use the typemaps to really get a point
+  import itk
+  p = itk.Point[ itk.D, dim ]( p )
+  
+  # create the output object
+  idx = itk.Index[ dim ]()
+  for i in range( 0, dim ):
+    idx.SetElement( i, int( round( ( p.GetElement(i) - o.GetElement(i) ) / s.GetElement(i) ) ) )
+  return idx
   
 
 def show(input, **kargs) :
   """display an image
   """
   import itk
-  img = image(input)
+  img = output(input)
   if img.GetImageDimension() == 3 and "show3D" in dir(itk):
 	  return itk.show3D(input, **kargs)
   else :
