@@ -293,7 +293,7 @@ def New(self, *args, **kargs) :
   newItkObject = self.__New_orig__()
   
   # try to get the images from the filters in args
-  args = [image(arg) for arg in args]
+  args = [output(arg) for arg in args]
   
   # args without name are filter used to set input image
   #
