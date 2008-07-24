@@ -57,7 +57,7 @@ class show3D :
     
   def SetInput(self, input) :
     import itk
-    img = itk.image(input)
+    img = itk.output(input)
     self.__input__ = img
     if img :
       # Update to try to avoid to exit if a c++ exception is throwed
