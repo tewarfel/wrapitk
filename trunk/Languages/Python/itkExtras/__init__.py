@@ -312,6 +312,38 @@ def physical_point_to_index( imageOrFilter, p ):
   return idx
   
 
+def search( s, case_sensitive=False): #, fuzzy=True):
+  """Search for a class name in itk module.
+  """
+  s = s.replace(" ", "")
+  if case_sensitive:
+    s = s.lower()
+  import itk
+  names = dir(itk)
+  names.sort()
+  # exact match first
+  if case_sensitive:
+    res = [n for n in names if s == n]
+  else:
+    res = [n for n in names if s == n.lower()]
+  # then exact match inside the name
+  if case_sensitive:
+    res += [n for n in names if s in n and s != n]
+  else:
+    res += [n for n in names if s in n.lower() and s != n.lower()]
+#   if fuzzy:
+#     try:
+#       # everything now requires editdist
+#       import editdist
+#       if case_sensitive:
+#         res.sort(key=lambda x: editdist.distance(x, s))
+#       else:
+#         res.sort(key=lambda x: (editdist.distance(x.lower(), s), x))
+#     except:
+#       pass
+  return res
+
+
 def show(input, **kargs) :
   """display an image
   """
