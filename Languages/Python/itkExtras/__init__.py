@@ -316,7 +316,7 @@ def search( s, case_sensitive=False): #, fuzzy=True):
   """Search for a class name in itk module.
   """
   s = s.replace(" ", "")
-  if case_sensitive:
+  if not case_sensitive:
     s = s.lower()
   import itk
   names = dir(itk)
