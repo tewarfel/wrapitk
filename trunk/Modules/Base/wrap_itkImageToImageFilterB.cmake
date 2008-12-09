@@ -35,7 +35,7 @@ WRAP_CLASS("itk::ImageToImageFilter" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})    
     FOREACH(d2 ${WRAP_ITK_DIMS})
       IF (NOT "${d}" EQUAL "${d2}") # this was already taken care of elsewhere
-        FOREACH(t ${WRAP_ITK_SCALAR})
+        FOREACH(t ${WRAP_ITK_SCALAR} ${WRAP_ITK_RGB} ${WRAP_ITK_COMPLEX_REAL})
           WRAP_TEMPLATE("${ITKM_I${t}${d}}${ITKM_I${t}${d2}}"
                         "${ITKT_I${t}${d}},${ITKT_I${t}${d2}}")
         ENDFOREACH(t)
