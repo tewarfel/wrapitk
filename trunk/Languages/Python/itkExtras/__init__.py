@@ -389,10 +389,14 @@ class show2D :
   """Display a 2D image
   """
   def __init__(self, imageOrFilter) :
+    import tempfile, itk, os
+    # get some data from the environment
+    command = os.environ.get("WRAPITK_SHOW2D_COMMAND", "imview %s -fork")
+    compress = os.environ.get("WRAPITK_SHOW2D_COMPRESS", "true").lower() in ["on", "true", "yes", "1"]
+    extension = os.environ.get("WRAPITK_SHOW2D_EXTENSION", ".tif")
     # use the tempfile module to get a non used file name and to put
     # the file at the rignt place
-    import tempfile, itk
-    self.__tmpFile__ = tempfile.NamedTemporaryFile(suffix='.tif')
+    self.__tmpFile__ = tempfile.NamedTemporaryFile(suffix=extension)
     # get an updated image
     img = output(imageOrFilter)
     img.UpdateOutputInformation()
@@ -403,10 +407,10 @@ class show2D :
       convert = itk.LabelMapToRGBImageFilter[ img, rgb_image_type ].New( img )
       convert.Update()
       img = convert.GetOutput()
-    write(img, self.__tmpFile__.name, True)
+    write(img, self.__tmpFile__.name, compress)
     # now run imview
     import os
-    os.system("imview %s -fork" % self.__tmpFile__.name)
+    os.system( command % self.__tmpFile__.name)
     #tmpFile.close()
 
 
