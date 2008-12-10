@@ -162,6 +162,36 @@ def index(imageOrFilter) :
   return img.GetLargestPossibleRegion().GetIndex()
   
 
+def region(imageOrFilter) :
+  """Return the region of an image, or of the output image of a filter
+  
+  This method take care of updating the needed informations
+  """
+  # we don't need the entire output, only its size
+  imageOrFilter.UpdateOutputInformation()
+  img = output(imageOrFilter)
+  return img.GetLargestPossibleRegion()
+  
+
+def add_observer( filter, event, function ):
+  """Add a python function has an observer of an ITK object.
+  
+  filter is the itk object to observe
+  event is the itk event to observe
+  function is the python function to run when the event occurs
+  
+  Ex: dilate = itk.BinaryDilateImageFilter.IUC3IUC3.New()
+      obo = itk.ObjectByObjectLabelMapFilter.LM3.New(input, Filter=dilate)
+      itk.add_observer( obo, itk.IterationEvent(),  lambda : dilate.SetKernel( data[obo.GetLabel()] ) )
+  """
+  import itk
+  # TODO: the single line one should work!
+  # pycommand = itk.PyCommand.New( CommandCallable=function )
+  pycommand = itk.PyCommand.New()
+  pycommand.SetCommandCallable( function )
+  filter.AddObserver( event, pycommand )
+
+
 def strel(dim, radius=1) :
   """A method to create a ball structuring element
   """
@@ -358,13 +388,23 @@ def show(input, **kargs) :
 class show2D :
   """Display a 2D image
   """
-  def __init__(self, input) :
+  def __init__(self, imageOrFilter) :
     # use the tempfile module to get a non used file name and to put
     # the file at the rignt place
-    import tempfile
+    import tempfile, itk
     self.__tmpFile__ = tempfile.NamedTemporaryFile(suffix='.tif')
-    write(input, self.__tmpFile__.name)
-    # no run imview
+    # get an updated image
+    img = output(imageOrFilter)
+    img.UpdateOutputInformation()
+    # change the LabelMaps to a color image, so we can look at them easily
+    if 'LabelMap' in dir(itk) and img.GetNameOfClass() == 'LabelMap':
+      # search for a filter to convert the label map
+      rgb_image_type = sorted( [params[1] for params in itk.LabelMapToRGBImageFilter.keys() if params[0] == class_(img) ] )[0]
+      convert = itk.LabelMapToRGBImageFilter[ img, rgb_image_type ].New( img )
+      convert.Update()
+      img = convert.GetOutput()
+    write(img, self.__tmpFile__.name, True)
+    # now run imview
     import os
     os.system("imview %s -fork" % self.__tmpFile__.name)
     #tmpFile.close()
