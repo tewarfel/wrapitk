@@ -388,10 +388,11 @@ def show(input, **kargs) :
 class show2D :
   """Display a 2D image
   """
-  def __init__(self, imageOrFilter) :
+  def __init__(self, imageOrFilter, Label=False) :
     import tempfile, itk, os
     # get some data from the environment
     command = os.environ.get("WRAPITK_SHOW2D_COMMAND", "imview %s -fork")
+    label_command = os.environ.get("WRAPITK_SHOW2D_LABEL_COMMAND", "imview %s -c regions.lut -fork")
     compress = os.environ.get("WRAPITK_SHOW2D_COMPRESS", "true").lower() in ["on", "true", "yes", "1"]
     extension = os.environ.get("WRAPITK_SHOW2D_EXTENSION", ".tif")
     # use the tempfile module to get a non used file name and to put
@@ -400,17 +401,25 @@ class show2D :
     # get an updated image
     img = output(imageOrFilter)
     img.UpdateOutputInformation()
-    # change the LabelMaps to a color image, so we can look at them easily
+    img.Update()
+    # change the LabelMaps to an Image, so we can look at them easily
     if 'LabelMap' in dir(itk) and img.GetNameOfClass() == 'LabelMap':
+      # retreive the biggest label in the label map
+      maxLabel = img.GetNthLabelObject( img.GetNumberOfLabelObjects() - 1 ).GetLabel()
       # search for a filter to convert the label map
-      rgb_image_type = sorted( [params[1] for params in itk.LabelMapToRGBImageFilter.keys() if params[0] == class_(img) ] )[0]
-      convert = itk.LabelMapToRGBImageFilter[ img, rgb_image_type ].New( img )
+      label_image_type = sorted( [params[1] for params in itk.LabelMapToLabelImageFilter.keys() if params[0] == class_(img) and itk.NumericTraits[itk.template(params[1])[1][0]].max() >= maxLabel ] )[0]
+      convert = itk.LabelMapToLabelImageFilter[ img, label_image_type ].New( img )
       convert.Update()
       img = convert.GetOutput()
+      # this is a label image - force the parameter
+      Label = True
     write(img, self.__tmpFile__.name, compress)
     # now run imview
     import os
-    os.system( command % self.__tmpFile__.name)
+    if Label:
+      os.system( label_command % self.__tmpFile__.name)
+    else:
+      os.system( command % self.__tmpFile__.name)
     #tmpFile.close()
 
 
