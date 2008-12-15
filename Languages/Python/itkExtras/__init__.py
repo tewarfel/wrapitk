@@ -290,7 +290,7 @@ def index_to_physical_point( imageOrFilter, idx ):
   # create the output object
   p = itk.Point[ itk.D, dim ]()
   for i in range( 0, dim ):
-    p.SetElement( i, s.GetElement(i) * idx.GetElement(i) + o.GetElement(i) )
+    p[i] = s[i] * idx[i] + o[i]
   return p
   
 
@@ -314,7 +314,7 @@ def physical_point_to_continuous_index( imageOrFilter, p ):
   # create the output object
   idx = itk.ContinuousIndex[ itk.D, dim ]()
   for i in range( 0, dim ):
-    idx.SetElement( i, ( p.GetElement(i) - o.GetElement(i) ) / s.GetElement(i) )
+    idx.SetElement( i, ( p[i] - o[i] ) / s[i] )
   return idx
   
 
@@ -338,9 +338,9 @@ def physical_point_to_index( imageOrFilter, p ):
   # create the output object
   idx = itk.Index[ dim ]()
   for i in range( 0, dim ):
-    idx.SetElement( i, int( round( ( p.GetElement(i) - o.GetElement(i) ) / s.GetElement(i) ) ) )
+    idx.SetElement( i, int( round( ( p[i] - o[i] ) / s[i] ) ) )
   return idx
-  
+
 
 def search( s, case_sensitive=False): #, fuzzy=True):
   """Search for a class name in itk module.
