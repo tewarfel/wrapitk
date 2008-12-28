@@ -233,7 +233,11 @@ def range(imageOrFilter) :
   img = output(imageOrFilter)
   img.UpdateOutputInformation()
   img.Update()
+  # don't put that calculator in the automatic pipeline
+  tmp_auto_pipeline = auto_pipeline.current
+  auto_pipeline.current = None
   comp = itk.MinimumMaximumImageCalculator[img].New(Image=img)
+  auto_pipeline.current = tmp_auto_pipeline
   comp.Compute()
   return (comp.GetMinimum(), comp.GetMaximum())
 
@@ -586,6 +590,19 @@ class pipeline:
        raise RuntimeError("No attribute %s at position %s." % (name, position))
      
 
+class auto_pipeline(pipeline):
+   current = None
+   
+   def __init__(self, *args, **kargs):
+     pipeline.__init__(self, *args, **kargs)
+     self.Start()
+   
+   def Start(self):
+     auto_pipeline.current = self
+
+   def Stop(self):
+     auto_pipeline.current = None
+     
 
 def down_cast(obj):
   """Down cast an itkLightObject (or a object of a subclass) to its most specialized type.
