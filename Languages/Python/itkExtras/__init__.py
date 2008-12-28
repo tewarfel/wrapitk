@@ -251,7 +251,11 @@ def write(imageOrFilter, fileName, compression=False):
   import itk
   img = output(imageOrFilter)
   img.UpdateOutputInformation()
+  # don't put that writer in the automatic pipeline
+  tmp_auto_pipeline = auto_pipeline.current
+  auto_pipeline.current = None
   writer = itk.ImageFileWriter[img].New(Input=img, FileName=fileName, UseCompression=compression)
+  auto_pipeline.current = tmp_auto_pipeline
   writer.Update()
   
 
