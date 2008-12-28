@@ -374,6 +374,69 @@ def search( s, case_sensitive=False): #, fuzzy=True):
   return res
 
 
+def set_inputs( newItkObject, args, kargs ):
+  # try to get the images from the filters in args
+  args = [output(arg) for arg in args]
+  
+  # args without name are filter used to set input image
+  #
+  # count SetInput calls to call SetInput, SetInput2, SetInput3, ...
+  # usefull with filter which take 2 input (or more) like SubstractImageFiler
+  # Ex: substract image2.png to image1.png and save the result in result.png
+  # r1 = itk.ImageFileReader.US2.New(FileName='image1.png')
+  # r2 = itk.ImageFileReader.US2.New(FileName='image2.png')
+  # s = itk.SubtractImageFilter.US2US2US2.New(r1, r2)
+  # itk.ImageFileWriter.US2.New(s, FileName='result.png').Update()
+  try :
+    for setInputNb, arg  in enumerate(args) :
+      methodName = 'SetInput%i' % (setInputNb+1)
+      if methodName in dir(newItkObject) :
+        # first try to use methods called SetInput1, SetInput2, ...
+        # those method should have more chances to work in case of multiple
+        # input types
+        getattr(newItkObject, methodName)(arg)
+      else :
+        # no method called SetInput?
+        # try with the standard SetInput(nb, input)
+        newItkObject.SetInput(setInputNb, arg)
+  except TypeError, e :
+    # the exception have (at least) to possible reasons:
+    # + the filter don't take the input number as first argument
+    # + arg is an object of wrong type
+    # 
+    # if it's not the first input, re-raise the exception
+    if setInputNb != 0 :
+      raise e
+    # it's the first input, try to use the SetInput() method without input number
+    newItkObject.SetInput(args[0])
+    # but raise an exception if there is more than 1 argument
+    if len(args) > 1 :
+      raise TypeError('Object accept only 1 input.')
+  except AttributeError :
+    # There is no SetInput() method, try SetImage
+    # but before, check the number of inputs
+    if len(args) > 1 :
+      raise TypeError('Object accept only 1 input.')
+    methodList = ['SetImage', 'SetInputImage']
+    methodName = None
+    for m in methodList:
+      if m in dir(newItkObject):
+        methodName = m
+    if methodName :
+      getattr(newItkObject, methodName)(args[0])
+    else:
+      raise AttributeError('No method found to set the input.')
+    
+  # named args : name is the function name, value is argument(s)
+  for attribName, value in kargs.iteritems() :
+    # use Set as prefix. It allow to use a shorter and more intuitive
+    # call (Ex: itk.ImageFileReader.UC2.New(FileName='image.png')) than with the
+    # full name (Ex: itk.ImageFileReader.UC2.New(SetFileName='image.png'))
+    if attribName != "auto_progress" :
+      attrib = getattr(newItkObject, 'Set' + attribName)
+      attrib(value)
+
+
 def show(input, **kargs) :
   """display an image
   """
