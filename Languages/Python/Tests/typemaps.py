@@ -58,6 +58,12 @@ median.SetInput( None )
 assert repr(median.GetInput()) == repr(None)
 
 
+# ImageSource
+
+median2 = itk.MedianImageFilter.IUS2IUS2.New()
+median.SetInput( median2 )
+assert repr(median.GetInput()) == repr(median2.GetOutput())
+
 
 
 

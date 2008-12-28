@@ -266,7 +266,7 @@ MACRO(WRAP_CLASS class)
     WRAP_INCLUDE("${swig_name}.h")
   ENDIF(WRAPPER_AUTO_INCLUDE_HEADERS)
   
-  WRAP_CLASS_ALL_LANGUAGES()
+  WRAP_CLASS_ALL_LANGUAGES("${class}")
 ENDMACRO(WRAP_CLASS)
 
 MACRO(WRAP_NAMED_CLASS class swig_name)
@@ -326,6 +326,8 @@ MACRO(WRAP_NAMED_CLASS class swig_name)
   # clear the wrap parameters
   # TODO: It shouldn't be used with the new architecture!!
   SET(WRAPPER_TEMPLATES)
+  
+  WRAP_NAMED_CLASS_ALL_LANGUAGES("${class}" "${swig_name}")
 ENDMACRO(WRAP_NAMED_CLASS)
 
 MACRO(WRAP_NON_TEMPLATE_CLASS class)

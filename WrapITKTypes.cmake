@@ -30,8 +30,19 @@ MACRO(END_WRAP_TYPE)
    FOREACH(wrap ${WRAPPER_TEMPLATES})
       STRING(REGEX REPLACE "([0-9A-Za-z]*)[ ]*#[ ]*(.*)" "\\1" wrapTpl "${wrap}")
       STRING(REGEX REPLACE "([0-9A-Za-z]*)[ ]*#[ ]*(.*)" "\\2" wrapType "${wrap}")
+      IF("${itk_Wrap_Class}" MATCHES "::")
+        # there's at least one namespace in the name
+        STRING(REGEX REPLACE ".*::" "" base_name "${itk_Wrap_Class}")
+        STRING(REGEX REPLACE "^([^:]*::)?.+" "\\1" top_namespace "${itk_Wrap_Class}")
+        STRING(REGEX REPLACE "::" "" top_namespace "${top_namespace}") # drop the :: from the namespace
+        SET(swig_name "${top_namespace}${base_name}")
+      ELSE("${itk_Wrap_Class}" MATCHES "::")
+        # no namespaces
+        SET(swig_name "${itk_Wrap_Class}")
+      ENDIF("${itk_Wrap_Class}" MATCHES "::")
       SET(ITKT_${itk_Wrap_Prefix}${wrapTpl} "${itk_Wrap_Class}< ${wrapType} >")
       SET(ITKM_${itk_Wrap_Prefix}${wrapTpl} "${itk_Wrap_Prefix}${wrapTpl}")
+      SET(ITKN_${itk_Wrap_Prefix}${wrapTpl} "${swig_name}${wrapTpl}")
    ENDFOREACH(wrap)
 ENDMACRO(END_WRAP_TYPE)
 
