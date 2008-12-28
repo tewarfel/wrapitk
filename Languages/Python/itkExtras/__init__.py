@@ -173,25 +173,6 @@ def region(imageOrFilter) :
   return img.GetLargestPossibleRegion()
   
 
-def add_observer( filter, event, function ):
-  """Add a python function has an observer of an ITK object.
-  
-  filter is the itk object to observe
-  event is the itk event to observe
-  function is the python function to run when the event occurs
-  
-  Ex: dilate = itk.BinaryDilateImageFilter.IUC3IUC3.New()
-      obo = itk.ObjectByObjectLabelMapFilter.LM3.New(input, Filter=dilate)
-      itk.add_observer( obo, itk.IterationEvent(),  lambda : dilate.SetKernel( data[obo.GetLabel()] ) )
-  """
-  import itk
-  # TODO: the single line one should work!
-  # pycommand = itk.PyCommand.New( CommandCallable=function )
-  pycommand = itk.PyCommand.New()
-  pycommand.SetCommandCallable( function )
-  filter.AddObserver( event, pycommand )
-
-
 def strel(dim, radius=1) :
   """A method to create a ball structuring element
   """

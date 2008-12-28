@@ -312,9 +312,7 @@ def New(self, *args, **kargs) :
         # newItkObject and callback are kept referenced with a closure
         callback(self.__name__, newItkObject.GetProgress())
 	
-      command = itk.PyCommand.New()
-      command.SetCommandCallable(progress)
-      newItkObject.AddObserver(itk.ProgressEvent(), command)
+      newItkObject.AddObserver(itk.ProgressEvent(), progress)
     except :
       # it seems that something goes wrong...
       # as this feature is designed for prototyping, it's not really a problem
