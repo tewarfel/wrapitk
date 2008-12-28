@@ -322,6 +322,9 @@ def New(self, *args, **kargs) :
   if itkConfig.NotInPlace and "SetInPlace" in dir(newItkObject) :
     newItkObject.SetInPlace( False )
   
+  if itk.auto_pipeline.current != None:
+    itk.auto_pipeline.current.connect(newItkObject)
+  
   return newItkObject
 
 
