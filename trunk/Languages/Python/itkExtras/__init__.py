@@ -531,6 +531,12 @@ class pipeline:
     if len(self) > 0:
       return self[-1].Update()
   
+  def UpdateLargestPossibleRegion( self ):
+    """Update the pipeline
+    """
+    if len(self) > 0:
+      return self[-1].UpdateLargestPossibleRegion()
+  
   def UpdateOutputInformation( self ):
     if "UpdateOutputInformation" in dir(self[-1]):
       self[-1].UpdateOutputInformation()
@@ -542,6 +548,43 @@ class pipeline:
 
   def __len__( self ):
      return len(self.filter_list)
+
+  def __call__(self, *args, **kargs):
+     import itk
+     itk.set_inputs( self, args, kargs )
+     self.UpdateLargestPossibleRegion()
+     return self
+
+  def expose(self, name, new_name=None, position=-1):
+     """Expose an attribute from a filter of the minipeline.
+     
+     Once called, the pipeline instance has a new Set/Get set of methods to access
+     directly the corresponding method of one of the filter of the pipeline.
+     Ex: p.expose( "Radius" )
+         p.SetRadius( 5 )
+         p.GetRadius( 5 )
+     By default, the attribute usable on the pipeline instance has the same name than
+     the one of the filter, but it can be changed by providing a value to new_name.
+     The last filter of the pipeline is used by default, but another one may be used
+     by giving its position.
+     Ex: p.expose("Radius", "SmoothingNeighborhood", 2)
+         p.GetSmoothingNeighborhood()
+     """
+     if new_name == None:
+       new_name = name
+     src = self[position]
+     ok = False
+     set_name = "Set" + name
+     if set_name in dir(src):
+       setattr(self, "Set" + new_name, getattr(src, set_name))
+       ok = True
+     get_name = "Get" + name
+     if get_name in dir(src):
+       setattr(self, "Get" + new_name, getattr(src, get_name))
+       ok = True
+     if not ok:
+       raise RuntimeError("No attribute %s at position %s." % (name, position))
+     
 
 
 def down_cast(obj):
