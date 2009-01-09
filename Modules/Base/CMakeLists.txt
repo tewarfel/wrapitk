@@ -34,6 +34,9 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkInPlaceImageFilterB
   itkFiniteDifferenceFunction
   itkFiniteDifferenceImageFilter
+  itkPath
+  itkParametricPath
+  itkPolyLineParametricPath
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics)
