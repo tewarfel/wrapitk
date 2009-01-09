@@ -2,7 +2,6 @@ WRAP_LIBRARY(Filtering)
 
 SET(WRAPPER_LIBRARY_GROUPS
   itkRecursiveSeparableImageFilter
-  itkHessianRecursiveGaussianImageFilter
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base)
