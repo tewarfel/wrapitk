@@ -3,6 +3,7 @@ WRAP_LIBRARY(Registration)
 SET(WRAPPER_LIBRARY_GROUPS
   itkPDEDeformableRegistrationFilter
   itkPDEDeformableRegistrationFunction
+  itkESMDemonsRegistrationFunction
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS 
