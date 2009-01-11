@@ -103,7 +103,9 @@ WRAP_TYPE("itk::FixedArray" "FA")
   SET(dims ${WRAP_ITK_DIMS})
   FOREACH(d ${WRAP_ITK_DIMS})
     MATH(EXPR d2 "${d} * 2")
-    SET(dims ${dims} ${d2})
+    # for itk::SymmetricSecondRankTensor
+    MATH(EXPR d3 "${d} * (${d} + 1) / 2")
+    SET(dims ${dims} ${d2} ${d3})
   ENDFOREACH(d)
   UNIQUE(array_sizes "${dims};1;3;4;6")
   # make sure that 1-D FixedArrays are wrapped. Also wrap for each selected

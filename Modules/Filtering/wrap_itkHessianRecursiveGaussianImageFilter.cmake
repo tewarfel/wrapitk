@@ -8,6 +8,8 @@ END_WRAP_CLASS()
 WRAP_CLASS("itk::Image" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("SSRT${ITKM_D}${d}${d}" "itk::SymmetricSecondRankTensor< ${ITKT_D}, ${d} >, ${d}")
+    # TODO: do that in a cleaner way - like in WrapITKTypes.cmake
+    SET(ITKN_ISSRT${ITKM_D}${d}${d} itkImageSSRT${ITKM_D}${d}${d})
   ENDFOREACH(d)
 END_WRAP_CLASS()
 
