@@ -8,4 +8,6 @@ WRAP_CLASS("itk::VectorContainer" POINTER)
     WRAP_TEMPLATE("${ITKM_UL}${ITKM_PD${d}}"    "${ITKT_UL},${ITKT_PD${d}}")
   ENDFOREACH(d)
   WRAP_TEMPLATE("${ITKM_UL}${ITKM_D}"    "${ITKT_UL},${ITKT_D}")
+  # used in FastMarchingExtensionImageFilter
+  WRAP_TEMPLATE("${ITKM_UI}${ITKM_VUC1}"    "${ITKT_UI},${ITKT_VUC1}")
 END_WRAP_CLASS()
