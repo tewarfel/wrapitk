@@ -232,4 +232,13 @@ WRAP_TYPE("itk::SpatialObject" "SO")
 END_WRAP_TYPE()
 SET(itk_Wrap_SpatialObject ${WRAPPER_TEMPLATES})
 
+WRAP_TYPE("itk::Statistics::Histogram" "H")
+  UNIQUE(histogram_dims "1;2;${WRAP_ITK_DIMS}")
+  FOREACH(d ${histogram_dims})
+    ADD_TEMPLATE("${ITKM_F}${d}"  "${ITKT_F}, ${d}")
+    ADD_TEMPLATE("${ITKM_D}${d}"  "${ITKT_D}, ${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_Histogram ${WRAPPER_TEMPLATES})
+
 #------------------------------------------------------------------------------
