@@ -235,6 +235,23 @@ class itkTemplate(object):
         return "Cannot display man page for %s due to exception: %s." %(self.__name__, e)
     else:
       return object.__getattribute__(self, attr)
+  
+  def New(self, *args, **kargs):
+    """TODO: some doc! Don't call it __call__ as it break the __doc__ attribute feature in
+    ipython"""
+    import itk
+    keys = self.keys()
+    if len(args) != 0:
+      # try to find a type suitable for the input provided
+      input_types = [output(f).__class__ for f in args]
+      keys = [k for k in self.keys() if k[0] == input_types[0]]
+    if itk.auto_pipeline.current != None and len(itk.auto_pipeline.current) != 0:
+      # try to find a type suitable for the input provided
+      input_type = output(itk.auto_pipeline.current).__class__
+      keys = [k for k in self.keys() if k[0] == input_type]
+    if len(keys) == 0:
+      raise RuntimeError("No suitable template parameter can be found.")
+    return self[keys[0]].New(*args, **kargs)
 
   def keys(self):
     return self.__template__.keys()
