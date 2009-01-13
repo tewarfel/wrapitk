@@ -230,7 +230,7 @@ class itkTemplate(object):
           # groff does not.
           return commands.getoutput("groff -mandoc -Tascii -c '" + man_path +"'")
         else:
-          return "Cannot find man page for %s in %s." %(self.__name__, itkTemplate.__doxygen_root__)
+          return "Cannot find man page for %s: %s" %(self.__name__, man_path+"[.bz2]")
       except Exception, e:
         return "Cannot display man page for %s due to exception: %s." %(self.__name__, e)
     else:
