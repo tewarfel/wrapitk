@@ -23,15 +23,10 @@ WRAP_CLASS("itk::ImageToImageFilter" POINTER)
   WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_SCALAR}" "${WRAP_ITK_VECTOR}")
 
   # complex <-> scalar
-  IF(WRAP_complex_float AND WRAP_float)
-    WRAP_IMAGE_FILTER_TYPES(CF F)
-    WRAP_IMAGE_FILTER_TYPES(F CF)
-  ENDIF(WRAP_complex_float AND WRAP_float)
+  WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_REAL}" "${WRAP_ITK_COMPLEX_REAL}")
+  WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_COMPLEX_REAL}" "${WRAP_ITK_REAL}")
 
-  IF(WRAP_complex_double AND WRAP_double)
-    WRAP_IMAGE_FILTER_TYPES(CD D)
-    WRAP_IMAGE_FILTER_TYPES(D CD)
-  ENDIF(WRAP_complex_double AND WRAP_double)
+
 
   # Wrap dim=3 -> dim=2, dim=3 -> dim=2, etc.
   FOREACH(d ${WRAP_ITK_DIMS})    
