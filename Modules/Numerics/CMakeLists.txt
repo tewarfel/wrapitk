@@ -4,6 +4,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   ITKCostFunctions
   itkDenseFrequencyContainer
   itkSample
+  itkHistogram
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base VXLNumerics)
