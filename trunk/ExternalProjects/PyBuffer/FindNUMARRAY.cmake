@@ -13,15 +13,19 @@
     )
   ENDIF(PYTHON_EXECUTABLE)
 
+  # TODO The user might want to select between numpy/numarray
   FIND_PATH(PYTHON_NUMARRAY_INCLUDE_DIR arrayobject.h
     "${NUMPY_PATH}/numpy/"
+    /usr/share/pyshared/numpy/core/include/numpy/
     "${PYTHON_INCLUDE_PATH}/numarray/"
     "${PYTHON_INCLUDE_PATH}/Numeric/"
+    /usr/include/python2.6/numarray/
+    /usr/include/python2.5/numarray/
     /usr/include/python2.4/numarray/
     /usr/include/python2.3/numarray/
     /usr/include/python2.2/numarray/
     /usr/include/python2.1/numarray/
-    DOC "Directory where the arrayobject.h header file can be found. This file is part of the numarray package"
+    DOC "Directory where the arrayobject.h header file can be found. This file is part of the numarray or numpy package"
     )
 
   IF(PYTHON_NUMARRAY_INCLUDE_DIR)
