@@ -8,6 +8,7 @@
 %include <std_vector.i>
 %include <std_map.i>
 %include <std_list.i>
+%include <std_set.i>
 
 %exception {
   try {
@@ -84,3 +85,13 @@
 %template(listSL)         std::list< signed long >;
 %template(listF)          std::list< float >;
 %template(listD)          std::list< double >;
+
+%template(setB)          std::set< bool >;
+%template(setUC)         std::set< unsigned char >;
+%template(setUS)         std::set< unsigned short >;
+%template(setUL)         std::set< unsigned long >;
+%template(setSC)         std::set< signed char >;
+%template(setSS)         std::set< signed short >;
+%template(setSL)         std::set< signed long >;
+%template(setF)          std::set< float >;
+%template(setD)          std::set< double >;
