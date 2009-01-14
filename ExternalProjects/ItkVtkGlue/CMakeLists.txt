@@ -1,4 +1,6 @@
 PROJECT(ItkVtkGlue)
+INCLUDE(CPack)
+
 
 OPTION(BUILD_WRAPPERS "Wrap library" OFF)
 OPTION(INSTALL_DEVEL_FILES "Install C++ headers" ON)
