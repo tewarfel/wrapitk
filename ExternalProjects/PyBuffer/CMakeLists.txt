@@ -1,4 +1,6 @@
 PROJECT(PyBuffer)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
+
 FIND_PACKAGE(WrapITK REQUIRED)
 
 # Deal with numarray package  Options
