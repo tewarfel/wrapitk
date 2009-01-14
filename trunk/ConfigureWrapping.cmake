@@ -159,15 +159,9 @@ SET(LANGUAGES_SRC_DIR "${WRAP_ITK_CMAKE_DIR}/Languages" CACHE INTERNAL "language
 ###############################################################################
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/CMakeUtilityFunctions.cmake")
 
-IF(EXTERNAL_WRAP_ITK_PROJECT)
-  MACRO(WRAP_ITK_INSTALL path)
-    INSTALL(FILES ${ARGN} DESTINATION "${WRAP_ITK_INSTALL_LOCATION}${path}")
-  ENDMACRO(WRAP_ITK_INSTALL)
-ELSE(EXTERNAL_WRAP_ITK_PROJECT)
-  MACRO(WRAP_ITK_INSTALL path)
-    INSTALL(FILES ${ARGN} DESTINATION "${WRAP_ITK_INSTALL_PREFIX}${path}")
-  ENDMACRO(WRAP_ITK_INSTALL)
-ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
+MACRO(WRAP_ITK_INSTALL path)
+  INSTALL(FILES ${ARGN} DESTINATION "${WRAP_ITK_INSTALL_PREFIX}${path}")
+ENDMACRO(WRAP_ITK_INSTALL)
 
 ###############################################################################
 # Include needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
