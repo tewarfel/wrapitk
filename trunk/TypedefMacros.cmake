@@ -10,6 +10,20 @@
 # lower_case are local to a given macro.
 ################################################################################
 
+
+SET(WRAPPER_LIBRARY_WRAP_MODULES_STATUS "NOT_EXECUTED" CACHE INTERNAL "status var used to avoid the use of WRAP_MODULES in simple contributions.")
+
+MACRO(WRAP_MODULES)
+  SET(WRAPPER_LIBRARY_WRAP_MODULES_STATUS "EXECUTED" CACHE INTERNAL "status var used to avoid the use of WRAP_MODULES in simple contributions.")
+  WRAP_MODULES_ALL_LANGUAGES()
+ENDMACRO(WRAP_MODULES)
+
+MACRO(END_WRAP_MODULES)
+  END_WRAP_MODULES_ALL_LANGUAGES()
+ENDMACRO(END_WRAP_MODULES)
+
+
+
 # Support for additional include directories of each module
 # WARNING: Each module must set this variable BEFORE calling WRAP_LIBRARY
 # TODO: is this the place place for this?
@@ -86,6 +100,13 @@ MACRO(WRAP_LIBRARY library_name)
       SET(WRAPPER_LIBRARY_${LANG} ON)
     ENDFOREACH(lang)
   ENDIF("${ARGC}" EQUAL 2)
+  
+  IF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "NOT_EXECUTED")
+    WRAP_MODULES()
+    # change the status of WRAPPER_LIBRARY_WRAP_MODULES_STATUS, so we can call END_WRAP_MODULES when
+    # END_WRAP_LIBRARY will be called
+    SET(WRAPPER_LIBRARY_WRAP_MODULES_STATUS "EXECUTED_IN_WRAP_LIBRARY" CACHE INTERNAL "status var used to avoid the use of WRAP_MODULES in simple contributions.")
+  ENDIF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "NOT_EXECUTED")
 
   # Call the language support initialization function
   WRAP_LIBRARY_ALL_LANGUAGES("${library_name}")
@@ -108,6 +129,11 @@ MACRO(END_WRAP_LIBRARY)
       ENDIF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
     ENDFOREACH(dep)
   ENDIF("${PROJECT_NAME}" STREQUAL "WrapITK")
+
+  IF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "EXECUTED_IN_WRAP_LIBRARY")
+    END_WRAP_MODULES()
+  ENDIF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "EXECUTED_IN_WRAP_LIBRARY")
+
   END_WRAP_LIBRARY_ALL_LANGUAGES()
 ENDMACRO(END_WRAP_LIBRARY)
 
