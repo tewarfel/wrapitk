@@ -141,7 +141,7 @@ INCLUDE(ConfigureWrapping.cmake)
 # modules
 ###############################################################################
 
-WRAP_MODULES_ALL_LANGUAGES()
+WRAP_MODULES()
 
 
 ###############################################################################
@@ -156,7 +156,7 @@ ADD_SUBDIRECTORY("${CMAKE_CURRENT_SOURCE_DIR}/Modules" "${CMAKE_CURRENT_BINARY_D
 # modules
 ###############################################################################
 
-END_WRAP_MODULES_ALL_LANGUAGES()
+END_WRAP_MODULES()
 
 ###############################################################################
 # Configure WrapITKConfig.cmake and FindWrapITK.cmake for external projects
