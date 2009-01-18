@@ -12,14 +12,6 @@ ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 SET(WRAP_ITK_DOC_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "doc source dir")
 SET(WRAP_ITK_DOC_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "doc binary dir")
 
-###############################################################################
-# store the preformated path where cmake will search the headers for doxygen
-# *** will be replaced by the right file name before the search
-SET(paths )
-FOREACH(dir ${ITK_INCLUDE_DIRS})
-  SET(paths ${paths} "${dir}/***")
-ENDFOREACH(dir)
-SET(WRAP_ITK_DOC_PATHS "${paths}" CACHE INTERNAL "doc paths")
 
 ###############################################################################
 # the var to store the file to be processed by doxygen
@@ -31,8 +23,12 @@ SET(WRAP_ITK_DOC_DOXYGEN_PAGES "" CACHE INTERNAL "man pages produced by doxygen"
 
 
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
-  STRING(REPLACE "***" "${swig_name}.h" doc_paths "${WRAP_ITK_DOC_PATHS}")
-  FILE(GLOB doc_path ${doc_paths})
+  GET_PROPERTY(dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+  SET(paths )
+  FOREACH(dir ${dirs})
+    SET(paths ${paths} "${dir}/${swig_name}.h")
+  ENDFOREACH(dir)
+  FILE(GLOB doc_path ${paths})
   IF(doc_path AND "${class}" MATCHES "^itk::")
     # store the header
     SET(WRAP_ITK_DOC_DOXYGEN_HEADERS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${doc_path}" CACHE INTERNAL "doxygen headers to process")
