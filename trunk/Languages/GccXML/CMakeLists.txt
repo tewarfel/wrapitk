@@ -1,3 +1,17 @@
+###############################################################################
+# install the files requires for gccxml
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  WRAP_ITK_INSTALL(/Configuration/Languages/GccXML CMakeLists.txt)
+  WRAP_ITK_INSTALL(/Configuration/Languages/GccXML gcc_xml.inc.in)
+  WRAP_ITK_INSTALL(/Configuration/Languages/GccXML wrap_.cxx.in)
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+
+
+###############################################################################
+# store the current dir, so it can be reused later
+SET(WRAP_ITK_GCCXML_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "gccxml source dir")
+SET(WRAP_ITK_GCCXML_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "gccxml binary dir")
+
 
 SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/Typedefs")
 SET(WRAPPER_SWIG_LIBRARY_OUTPUT_DIR "${PROJECT_BINARY_DIR}/SWIG")
@@ -40,7 +54,7 @@ MACRO(END_INCLUDE_WRAP_CMAKE_CABLE_SWIG module)
   SET(CONFIG_WRAPPER_MODULE_NAME "${WRAPPER_MODULE_NAME}")
   SET(CONFIG_WRAPPER_TYPEDEFS "${GCC_XML_TYPEDEFS}")
   SET(CONFIG_WRAPPER_FORCE_INSTANTIATE "${GCC_XML_FORCE_INSTANTIATE}")
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/wrap_.cxx.in"
+  CONFIGURE_FILE("${WRAP_ITK_GCCXML_SOURCE_DIR}/wrap_.cxx.in"
     "${cxx_file}" @ONLY IMMEDIATE)
   
   # generate the xml file
@@ -81,7 +95,7 @@ MACRO(WRAP_LIBRARY_CABLE_SWIG library_name)
   FOREACH(dir ${include_dir_list})
     SET(CONFIG_GCCXML_INC_CONTENTS "${CONFIG_GCCXML_INC_CONTENTS}-I${dir}\n")
   ENDFOREACH(dir)
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/gcc_xml.inc.in" "${gccxml_inc_file}"
+  CONFIGURE_FILE("${WRAP_ITK_GCCXML_SOURCE_DIR}/gcc_xml.inc.in" "${gccxml_inc_file}"
     @ONLY IMMEDIATE)
   SET(GCC_XML_OUTPUT_FILES )
 ENDMACRO(WRAP_LIBRARY_CABLE_SWIG)

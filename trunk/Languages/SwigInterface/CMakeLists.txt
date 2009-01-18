@@ -1,3 +1,47 @@
+###############################################################################
+# install the files requires for swiginterface
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface CMakeLists.txt)
+  WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface Master.mdx.in)
+  WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface empty.in)
+  WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface module.i.in)
+  WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface module.includes.in)
+  
+  INSTALL(DIRECTORY pygccxml-0.8.2
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Languages/SwigInterface"
+    PATTERN ".svn" EXCLUDE
+    PATTERN "CVS" EXCLUDE
+    PATTERN "docs" EXCLUDE
+    PATTERN "unittests" EXCLUDE
+  )
+
+  # create the igenerator.py with the pygccxml path in it
+  SET(PYGCCXML_PATH "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Configuration/Languages/SwigInterface/pygccxml-0.8.2/")
+  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
+    "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
+    @ONLY IMMEDIATE)
+    
+  INSTALL(FILES "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
+    DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Languages/SwigInterface"
+  )
+  
+  # create the igenerator.py with the pygccxml path in it
+  SET(PYGCCXML_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pygccxml-0.8.2/")
+  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
+    "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py"
+    @ONLY IMMEDIATE)
+  
+  SET(IGENERATOR  "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py" CACHE INTERNAL "igenerator.py path")
+
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+
+
+###############################################################################
+# store the current dir, so it can be reused later
+SET(WRAP_ITK_SWIGINTERFACE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "swig interface source dir")
+SET(WRAP_ITK_SWIGINTERFACE_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "swig interface binary dir")
+
+SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/Typedefs" CACHE INTERNAL "typedefs dir")
 
 MACRO(WRAP_LIBRARY_SWIG_INTERFACE library_name)
   # store the content of the mdx file
@@ -110,7 +154,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   # the mdx file
   SET(mdx_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.mdx")
   SET(CONFIG_INDEX_FILE_CONTENT "${SWIG_INTERFACE_MDX_CONTENT}")
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/Master.mdx.in" "${mdx_file}"
+  CONFIGURE_FILE("${WRAP_ITK_SWIGINTERFACE_SOURCE_DIR}/Master.mdx.in" "${mdx_file}"
      @ONLY IMMEDIATE )
   WRAP_ITK_INSTALL("/Configuration/Typedefs" "${mdx_file}")
 
@@ -125,7 +169,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   
   SET(SWIG_INTERFACE_INCLUDES "${deps_includes}#include \"${WRAPPER_LIBRARY_NAME}.includes\"")
   SET(CONFIG_MODULE_INTERFACE_CONTENT ) #"${deps_imports}${SWIG_INTERFACE_MODULE_CONTENT}")
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.i.in" "${module_interface_file}"
+  CONFIGURE_FILE("${WRAP_ITK_SWIGINTERFACE_SOURCE_DIR}/module.i.in" "${module_interface_file}"
     @ONLY IMMEDIATE )
   WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${module_interface_file}")
     
@@ -138,7 +182,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   
   # create the file which store all the includes
   SET(includes_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.includes")
-  CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/module.includes.in"
+  CONFIGURE_FILE("${WRAP_ITK_SWIGINTERFACE_SOURCE_DIR}/module.includes.in"
      ${includes_file}
      @ONLY IMMEDIATE )
   WRAP_ITK_INSTALL("/Configuration/Typedefs/" "${includes_file}")

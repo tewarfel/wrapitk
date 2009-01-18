@@ -167,8 +167,6 @@ ENDMACRO(WRAP_ITK_INSTALL)
 # Include needed macros -- WRAP_ITK_CMAKE_DIR must be set correctly
 ###############################################################################
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/TypedefMacros.cmake")
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateGccXMLInputs.cmake")
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/CreateGenericSwigInterface.cmake")
 
 ADD_SUBDIRECTORY("${WRAP_ITK_CMAKE_DIR}/Languages" "${CMAKE_CURRENT_BINARY_DIR}/Languages")
 # get the porperties from the languages dirs - there should be others than this one

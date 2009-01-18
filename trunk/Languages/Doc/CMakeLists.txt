@@ -1,6 +1,13 @@
 FIND_PACKAGE(Doxygen REQUIRED)
 
 ###############################################################################
+# install the files requires for doxygen
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Doc CMakeLists.txt)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Doc doxygen.config.in)
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+
+###############################################################################
 # store the current dir, so it can be reused later
 SET(WRAP_ITK_DOC_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "doc source dir")
 SET(WRAP_ITK_DOC_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "doc binary dir")
