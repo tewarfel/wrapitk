@@ -20,6 +20,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkContinuousIndex
   itkCovariantVector
   itkRGBPixel
+  itkRGBAPixel
   itkVariableLengthVector
   ITKRegions
   itkMatrix
