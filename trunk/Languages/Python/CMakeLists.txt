@@ -16,24 +16,6 @@ SET(WRAP_ITK_PYTHON_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "pyt
 # create the python directory in the classindex dir
 FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python)
 
-
-###############################################################################
-# Add doxygen support : Experimental
-SET(DOXYGEN_MAN_PATH CACHE PATH "Experimental/Python only: Directory in which doxygen-generated man pages for itk classes are or should be placed.")
-IF(DOXYGEN_MAN_PATH)
-  # Configure the make_doxygen_conf.py script.
-  SET(CONFIG_ITK_PATH)
-  FOREACH(dir ${ITK_INCLUDE_DIRS})
-    SET(CONFIG_ITK_PATH "${CONFIG_ITK_PATH}'${dir}',\n")
-  ENDFOREACH(dir)
-  SET(CONFIG_WRAP_ITK_DOXYGEN_ROOT "${DOXYGEN_MAN_PATH}")
-  SET(CONFIG_ITK_SOURCE_DIR "${ITK_SOURCE_DIR}")
-  CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/make_doxygen_config.py.in" 
-    "${CMAKE_CURRENT_BINARY_DIR}/make_doxygen_config.py"
-    @ONLY IMMEDIATE)
-ENDIF(DOXYGEN_MAN_PATH)
-
-
 ###############################################################################
 # Configure the path-dependent itkConfig.py
 
@@ -224,7 +206,6 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
     WrapITK.pth.in
     itkConfig.py.in
     main_module_ext.i.in
-    make_doxygen_config.py.in
     module_ext.i.in
   )
 ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
