@@ -619,6 +619,48 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%feature(\"director\") itkCommand;\n")
   ENDIF("${swig_name}" STREQUAL "itkCommand")
 
+  IF("${cpp_name}" STREQUAL "itk::ImageBase" AND NOT "${swig_name}" MATCHES "Pointer$")
+    # add the templated method non seen by gccxml, in a more python-friendly way
+    # than the c++ version
+    SET(d ${template_params})
+    SET(text "")
+    SET(text "${text}\n")
+    SET(text "${text}%extend ${swig_name} {\n")
+    SET(text "${text}  itkIndex${d} TransformPhysicalPointToIndex( itkPointD${d} & point ) {\n")
+    SET(text "${text}    itkIndex${d} idx;\n")
+    SET(text "${text}    self->TransformPhysicalPointToIndex<double>( point, idx );\n")
+    SET(text "${text}    return idx;\n")
+    SET(text "${text}  }\n")
+    SET(text "${text}  \n")
+    SET(text "${text}  itkContinuousIndexD${d} TransformPhysicalPointToContinuousIndex( itkPointD${d} & point ) {\n")
+    SET(text "${text}    itkContinuousIndexD${d} idx;\n")
+    SET(text "${text}    self->TransformPhysicalPointToContinuousIndex<double>( point, idx );\n")
+    SET(text "${text}    return idx;\n")
+    SET(text "${text}  }\n")
+    SET(text "${text}  \n")
+    SET(text "${text}  itkPointD${d} TransformContinuousIndexToPhysicalPoint( itkContinuousIndexD${d} & idx ) {\n")
+    SET(text "${text}    itkPointD${d} point;\n")
+    SET(text "${text}    self->TransformContinuousIndexToPhysicalPoint<double>( idx, point );\n")
+    SET(text "${text}    return point;\n")
+    SET(text "${text}  }\n")
+    SET(text "${text}  \n")
+    SET(text "${text}  itkPointD${d} TransformIndexToPhysicalPoint( itkIndex${d} & idx ) {\n")
+    SET(text "${text}    itkPointD${d} point;\n")
+    SET(text "${text}    self->TransformContinuousIndexToPhysicalPoint<double>( idx, point );\n")
+    SET(text "${text}    return point;\n")
+    SET(text "${text}  }\n")
+    SET(text "${text}  \n")
+# TODO: also add that method. But with which types?
+#  template<class TCoordRep>
+#  void TransformLocalVectorToPhysicalVector(
+#    const FixedArray<TCoordRep, VImageDimension> & inputGradient,
+#          FixedArray<TCoordRep, VImageDimension> & outputGradient ) const
+    SET(text "${text}}\n")
+    SET(text "${text}\n")
+
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  ENDIF("${cpp_name}" STREQUAL "itk::ImageBase" AND NOT "${swig_name}" MATCHES "Pointer$")
+  
   IF("${cpp_name}" STREQUAL "itk::ImageRegion")
     SET(text "")
     SET(text "${text}%extend ${swig_name} {\n")
