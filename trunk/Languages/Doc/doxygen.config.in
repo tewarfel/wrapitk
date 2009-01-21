@@ -455,3 +455,6 @@ ALLEXTERNALS          = NO
 
 # Do not generate graphviz output for the wrappers
 HAVE_DOT			  = NO
+
+# Dump the XML structure to be used by swig
+GENERATE_XML           = YES
