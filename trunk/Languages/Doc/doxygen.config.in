@@ -452,3 +452,6 @@ EXPAND_ONLY_PREDEF    = YES
 # will be listed. 
 
 ALLEXTERNALS          = NO
+
+# Do not generate graphviz output for the wrappers
+HAVE_DOT			  = NO
