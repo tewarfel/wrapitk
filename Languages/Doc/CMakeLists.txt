@@ -67,6 +67,7 @@ ENDMACRO(END_WRAP_LIBRARIES_DOC)
 # This macro is called once per module
 # Global variable WRAPPER_MODULE_NAME can be used
 # in the macro to current module name
+MACRO(END_WRAP_MODULE_DOC)
   #
   # run doxygen, TODO
   #
