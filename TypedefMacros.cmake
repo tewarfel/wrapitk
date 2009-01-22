@@ -11,16 +11,16 @@
 ################################################################################
 
 
-SET(WRAPPER_LIBRARY_WRAP_MODULES_STATUS "NOT_EXECUTED" CACHE INTERNAL "status var used to avoid the use of WRAP_MODULES in simple contributions.")
+SET(WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS "NOT_EXECUTED" CACHE INTERNAL "status var used to avoid the use of WRAP_LIBRARIES in simple contributions.")
 
-MACRO(WRAP_MODULES)
-  SET(WRAPPER_LIBRARY_WRAP_MODULES_STATUS "EXECUTED" CACHE INTERNAL "status var used to avoid the use of WRAP_MODULES in simple contributions.")
-  WRAP_MODULES_ALL_LANGUAGES()
-ENDMACRO(WRAP_MODULES)
+MACRO(WRAP_LIBRARIES)
+  SET(WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS "EXECUTED" CACHE INTERNAL "status var used to avoid the use of WRAP_LIBRARIES in simple contributions.")
+  WRAP_LIBRARIES_ALL_LANGUAGES()
+ENDMACRO(WRAP_LIBRARIES)
 
-MACRO(END_WRAP_MODULES)
-  END_WRAP_MODULES_ALL_LANGUAGES()
-ENDMACRO(END_WRAP_MODULES)
+MACRO(END_WRAP_LIBRARIES)
+  END_WRAP_LIBRARIES_ALL_LANGUAGES()
+ENDMACRO(END_WRAP_LIBRARIES)
 
 
 
@@ -37,6 +37,8 @@ SET(WRAPPER_LIBRARY_INCLUDE_DIRECTORIES "" CACHE INTERNAL "additional include di
 ###############################################################################
 MACRO(WRAP_LIBRARY library_name)
   SET(WRAPPER_LIBRARY_NAME "${library_name}")
+
+  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating library.")
 
   # Mark the current source dir for inclusion because it may contain header files.
   INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
@@ -101,12 +103,12 @@ MACRO(WRAP_LIBRARY library_name)
     ENDFOREACH(lang)
   ENDIF("${ARGC}" EQUAL 2)
   
-  IF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "NOT_EXECUTED")
-    WRAP_MODULES()
-    # change the status of WRAPPER_LIBRARY_WRAP_MODULES_STATUS, so we can call END_WRAP_MODULES when
+  IF("${WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS}" STREQUAL "NOT_EXECUTED")
+    WRAP_LIBRARIES()
+    # change the status of WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS, so we can call END_WRAP_LIBRARIES when
     # END_WRAP_LIBRARY will be called
-    SET(WRAPPER_LIBRARY_WRAP_MODULES_STATUS "EXECUTED_IN_WRAP_LIBRARY" CACHE INTERNAL "status var used to avoid the use of WRAP_MODULES in simple contributions.")
-  ENDIF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "NOT_EXECUTED")
+    SET(WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS "EXECUTED_IN_WRAP_LIBRARY" CACHE INTERNAL "status var used to avoid the use of WRAP_LIBRARIES in simple contributions.")
+  ENDIF("${WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS}" STREQUAL "NOT_EXECUTED")
 
   # Call the language support initialization function
   WRAP_LIBRARY_ALL_LANGUAGES("${library_name}")
@@ -124,15 +126,15 @@ MACRO(END_WRAP_LIBRARY)
   IF("${PROJECT_NAME}" STREQUAL "WrapITK")
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       # be sure that the module is selected by the user
-      IF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
+      IF(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${dep}(;|$)")
         MESSAGE(SEND_ERROR "${dep} is required by ${WRAPPER_LIBRARY_NAME} module. Please set WRAP_${dep} to ON, or WRAP_${WRAPPER_LIBRARY_NAME} to OFF.")
-      ENDIF(NOT "${WRAP_ITK_MODULES}" MATCHES "(^|;)${dep}(;|$)")
+      ENDIF(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${dep}(;|$)")
     ENDFOREACH(dep)
   ENDIF("${PROJECT_NAME}" STREQUAL "WrapITK")
 
-  IF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "EXECUTED_IN_WRAP_LIBRARY")
-    END_WRAP_MODULES()
-  ENDIF("${WRAPPER_LIBRARY_WRAP_MODULES_STATUS}" STREQUAL "EXECUTED_IN_WRAP_LIBRARY")
+  IF("${WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS}" STREQUAL "EXECUTED_IN_WRAP_LIBRARY")
+    END_WRAP_LIBRARIES()
+  ENDIF("${WRAPPER_LIBRARY_WRAP_LIBRARIES_STATUS}" STREQUAL "EXECUTED_IN_WRAP_LIBRARY")
 
   END_WRAP_LIBRARY_ALL_LANGUAGES()
 ENDMACRO(END_WRAP_LIBRARY)
@@ -142,11 +144,31 @@ MACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
   END_WRAP_LIBRARY()
 ENDMACRO(WRAPPER_LIBRARY_CREATE_LIBRARY)
 
+MACRO(INCLUDE_LIBRARY library)
+
+  # TODO: that macro is buggy !!!!
+  # it doesn't store the vars where in the lib sub dir 
+
+  WRAP_LIBRARY("${library}")
+  # change some default values
+  
+  # WRAPPER_LIBRARY_SOURCE_DIR. Directory to be scanned for wrap_*.cmake files. 
+  SET(WRAPPER_LIBRARY_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/${library}")
+  
+  # WRAPPER_LIBRARY_OUTPUT_DIR. Directory in which generated cxx, xml, and idx
+  # files will be placed. 
+  SET(WRAPPER_LIBRARY_OUTPUT_DIR "${CMAKE_CURRENT_BINARY_DIR}/${library}")
+
+  ADD_SUBDIRECTORY("${library}")
+  END_WRAP_LIBRARY()
+ENDMACRO(INCLUDE_LIBRARY)
+
+
 ################################################################################
 # Macros for finding and processing wrap_*.cmake files.
 ################################################################################
 
-MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+MACRO(AUTO_INCLUDE_MODULES)
   
   # Include the wrap_*.cmake files in WRAPPER_LIBRARY_SOURCE_DIR. This causes 
   # corresponding wrap_*.cxx files to be generated WRAPPER_LIBRARY_OUTPUT_DIR, 
@@ -164,7 +186,7 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
     # custom cableswig cxx inputs stored in WRAPPER_LIBRARY_CABLESWIG_INPUTS.
     # TODO: rather test for the presence in WRAPPER_LIBRARY_CABLESWIG_INPUTS, so an error message can be sent to help the develper if the file doesn't exist
     IF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
-        INCLUDE_WRAP_CMAKE("${module}")
+        INCLUDE_MODULE("${module}")
     ENDIF(EXISTS "${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
   ENDFOREACH(module)
 
@@ -193,13 +215,19 @@ MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
       # Add the module name to the list. WRITE_MODULE_FILES uses this list
       # to create the master library wrapper file.
       SET(WRAPPER_LIBRARY_GROUPS ${WRAPPER_LIBRARY_GROUPS} "${module}")
-      INCLUDE_WRAP_CMAKE("${module}")
+      INCLUDE_MODULE("${module}")
     ENDIF(${will_include})
   ENDFOREACH(file)
 
+ENDMACRO(AUTO_INCLUDE_MODULES)
+
+MACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
+  MESSAGE("Deprecation warning: WRAPPER_LIBRARY_CREATE_WRAP_FILES is replaced by AUTO_INCLUDE_MODULES.")
+  AUTO_INCLUDE_MODULES()
 ENDMACRO(WRAPPER_LIBRARY_CREATE_WRAP_FILES)
 
-MACRO(INCLUDE_WRAP_CMAKE module)
+
+MACRO(INCLUDE_MODULE module)
   # include a cmake module file and generate the associated wrap_*.cxx file.
   # This basically sets the global vars that will be added to or modified
   # by the commands in the included wrap_*.cmake module.
@@ -209,6 +237,17 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   #                       WRAPPER_INCLUDE_FILES WRAPPER_AUTO_INCLUDE_HEADERS
   #                       WRAPPER_DO_NOT_CREATE_CXX
 
+  WRAP_MODULE(${module})
+
+  # Now include the file.
+  INCLUDE("${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
+
+  END_WRAP_MODULE()
+
+ENDMACRO(INCLUDE_MODULE)
+
+MACRO(WRAP_MODULE module)
+
   # We run into some trouble if there's a module with the same name as the
   # wrapper library. Fix this.
   STRING(TOUPPER "${module}" upper_module)
@@ -217,13 +256,13 @@ MACRO(INCLUDE_WRAP_CMAKE module)
     SET(module "${module}_module")
   ENDIF("${upper_module}" STREQUAL "${upper_lib}")
  
-  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating ${module} wrappers.")
-
-  # call languages specific macros
-  INCLUDE_WRAP_CMAKE_ALL_LANGUAGES("${module}")
+  MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating ${module} module.")
 
   # preset the vars before include the file
   SET(WRAPPER_MODULE_NAME "${module}")
+
+  # call languages specific macros
+  WRAP_MODULE_ALL_LANGUAGES("${module}")
 
   SET(WRAPPER_INCLUDE_FILES )
   FOREACH(inc ${WRAPPER_DEFAULT_INCLUDE})
@@ -232,9 +271,9 @@ MACRO(INCLUDE_WRAP_CMAKE module)
   SET(WRAPPER_AUTO_INCLUDE_HEADERS ON)
 #   SET(WRAPPER_DO_NOT_CREATE_CXX OFF)
 
-  # Now include the file.
-  INCLUDE("${WRAPPER_LIBRARY_SOURCE_DIR}/wrap_${module}.cmake")
+ENDMACRO(WRAP_MODULE)
 
+MACRO(END_WRAP_MODULE)
   # Write the file, inless the included cmake file told us not to.
   # A file might declare WRAPPER_DO_NOT_CREATE_CXX if that cmake file
   # provides a custom wrap_*.cxx file and manually appends it to the 
@@ -245,9 +284,15 @@ MACRO(INCLUDE_WRAP_CMAKE module)
 #   ENDIF(NOT WRAPPER_DO_NOT_CREATE_CXX)
 
   # call languages specific macros
-  END_INCLUDE_WRAP_CMAKE_ALL_LANGUAGES("${module}")
+  END_WRAP_MODULE_ALL_LANGUAGES("${WRAPPER_MODULE_NAME}")
 
-ENDMACRO(INCLUDE_WRAP_CMAKE)
+ENDMACRO(END_WRAP_MODULE)
+
+
+MACRO(INCLUDE_WRAP_CMAKE module)
+  MESSAGE("Deprecation warning: INCLUDE_WRAP_CMAKE is replaced by INCLUDE_MODULE.")
+  INCLUDE_MODULE("${module}")
+ENDMACRO(INCLUDE_WRAP_CMAKE module)
 
 
 ################################################################################

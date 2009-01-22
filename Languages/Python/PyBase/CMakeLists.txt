@@ -6,7 +6,7 @@ WRAP_LIBRARY("ITKPyBase" Python)
   SET(WRAPPER_LIBRARY_SWIG_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/wrap_pyBase.i")
   
   # no wrap_*.cmake file to include, no need to run that
-  # WRAPPER_LIBRARY_CREATE_WRAP_FILES()
+  # AUTO_INCLUDE_MODULES()
   
   # add the vars defined by including std_iostream and std_stream to the python config
   ADD_PYTHON_CONFIG_TEMPLATE("PySwigIterator" "PySwigIterator" "PySwigIterator" "")
