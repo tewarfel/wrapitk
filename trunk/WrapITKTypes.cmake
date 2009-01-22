@@ -145,6 +145,9 @@ WRAP_TYPE("itk::RGBAPixel" "RGBA")
   IF(WRAP_rgba_unsigned_short)
      ADD_TEMPLATE("${ITKM_US}" "${ITKT_US}")
   ENDIF(WRAP_rgba_unsigned_short)
+
+  # required by spatial objects
+  ADD_TEMPLATE("${ITKM_F}" "${ITKT_F}")
 END_WRAP_TYPE()
 SET(itk_Wrap_RGBAPixel ${WRAPPER_TEMPLATES})
 
