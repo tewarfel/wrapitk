@@ -217,7 +217,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
 ENDMACRO(END_WRAP_LIBRARY_JAVA)
 
 ###############################################################################
-MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
+MACRO(END_WRAP_MODULE_JAVA group_name)
   
   # set the package name and path
   STRING(TOLOWER ${WRAPPER_LIBRARY_NAME} java_package_name)
@@ -286,11 +286,11 @@ MACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
 
   SET(WRAP_ITK_JAVA_LIBRARY_DEPS ${WRAP_ITK_JAVA_LIBRARY_DEPS} "${java_file}" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i")
 
-ENDMACRO(END_INCLUDE_WRAP_CMAKE_JAVA group_name)
+ENDMACRO(END_WRAP_MODULE_JAVA group_name)
 
 
 ###############################################################################
-MACRO(INCLUDE_WRAP_CMAKE_JAVA module)
+MACRO(WRAP_MODULE_JAVA module)
 
   SET(text "\n")
   
@@ -298,7 +298,7 @@ MACRO(INCLUDE_WRAP_CMAKE_JAVA module)
   
   SET(WRAP_ITK_JAVA_SWIG_EXT "${text}")
   
-ENDMACRO(INCLUDE_WRAP_CMAKE_JAVA)
+ENDMACRO(WRAP_MODULE_JAVA)
 
 
 ###############################################################################
