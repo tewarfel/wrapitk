@@ -31,6 +31,7 @@ WRAP_CLASS("itk::NumericTraits")
   # the ITK types
   
   # rgb, rgba
+  UNIQUE(rgbs "RGBUC;RGBAUC;RGBAF;${WRAP_ITK_RGB};${WRAP_ITK_RGBA}")
   FOREACH(t ${WRAP_ITK_RGB} ${WRAP_ITK_RGBA})
     WRAP_TEMPLATE("${ITKM_${t}}" "${ITKT_${t}}")
   ENDFOREACH(t)
