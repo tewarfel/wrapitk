@@ -53,19 +53,7 @@ MACRO(END_WRAP_LIBRARIES_DOC)
   CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
     "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
     @ONLY IMMEDIATE)
-  
-  #
-  # run doxygen
-  #
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES}
-    COMMAND "${DOXYGEN_EXECUTABLE}" "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
-#    WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
-    DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS}
-    COMMENT "Generating manpages."
-  )
-  ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES})
-
+    
   #
   # install the produced files
   #
@@ -73,4 +61,20 @@ MACRO(END_WRAP_LIBRARIES_DOC)
     WRAP_ITK_INSTALL(/Doc/man3 "${page}")
   ENDFOREACH(page)
   
+  ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES})
 ENDMACRO(END_WRAP_LIBRARIES_DOC)
+
+# This macro is called once per module
+# Global variable WRAPPER_MODULE_NAME can be used
+# in the macro to current module name
+  #
+  # run doxygen, TODO
+  #
+#  ADD_CUSTOM_COMMAND(
+#    OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES}
+#    COMMAND "${DOXYGEN_EXECUTABLE}" "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
+##    WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
+#    DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS}
+#    COMMENT "Generating manpages."
+#  )
+ENDMACRO(END_WRAP_MODULE_DOC)
