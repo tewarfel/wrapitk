@@ -118,7 +118,7 @@ INSTALL_FILES(/bin FILES ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish)
 # use WrapITK_BINARY_DIR instead of the current bianry dir because tcl search pkgIndex.tcl in 
 # the subdirs before searching in the current dir, and so find the pikIndex.tcl file in InstallOnly
 # first
-SET(WRAP_ITK_TCL_DIR "${WrapITK_BINARY_DIR}")
+SET(WRAP_ITK_TCL_DIR "${WrapITK_BINARY_DIR}/Languages")
 SET(WRAP_ITK_TCL_SWIG_DIR "${LIBRARY_OUTPUT_PATH}")
 SET(WRAP_ITK_TCL_ITKWISH_DIR "${EXECUTABLE_OUTPUT_PATH}")
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
