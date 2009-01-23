@@ -291,7 +291,7 @@ MACRO(END_WRAP_MODULE_TCL group_name)
   STRING(REGEX REPLACE "^(.)(.+)$" "\\2" rest "${group_name}")
   STRING(TOUPPER "${first}" first)
   STRING(TOLOWER "${rest}" rest)
-  SET(capital_group_name "${first}${rest}")
+  SET(capital_group_name "${first}${rest}tcl")
   SET(WRAP_ITK_TCL_LIBRARY_DECLS "${WRAP_ITK_TCL_LIBRARY_DECLS}extern \"C\" int ${capital_group_name}_Init( Tcl_Interp* );\n")
   # and the call of the extern function
   SET(WRAP_ITK_TCL_LIBRARY_CALLS "${WRAP_ITK_TCL_LIBRARY_CALLS}  ${capital_group_name}_Init( interp );\n")
