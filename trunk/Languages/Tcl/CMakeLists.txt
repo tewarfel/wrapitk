@@ -44,9 +44,9 @@ ENDIF(CMAKE_CONFIGURATION_TYPES)
 # configure pkgIndex.tcl for the installed tree
 SET(WRAP_ITK_TCL_PACKAGE_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/lib")
 CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/pkgIndex.tcl.in"
-               "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/pkgIndex.tcl"
+               "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish_wont_find_me_here/pkgIndex.tcl"
                @ONLY IMMEDIATE)
-WRAP_ITK_INSTALL(/Tcl "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/pkgIndex.tcl")
+WRAP_ITK_INSTALL(/Tcl "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish_wont_find_me_here/pkgIndex.tcl")
 
 
 ###############################################################################
