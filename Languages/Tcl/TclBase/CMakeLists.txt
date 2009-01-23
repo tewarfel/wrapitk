@@ -1,0 +1,12 @@
+WRAP_LIBRARY("ITKPyBase" Tcl)
+  
+  SET(WRAPPER_LIBRARY_DEPENDS )
+  SET(WRAPPER_LIBRARY_LINK_LIBRARIES )
+  
+  SET(WRAPPER_LIBRARY_SWIG_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/wrap_tclBase.i")
+  
+  # no wrap_*.cmake file to include, no need to run that
+  # AUTO_INCLUDE_MODULES()
+
+END_WRAP_LIBRARY()
+
