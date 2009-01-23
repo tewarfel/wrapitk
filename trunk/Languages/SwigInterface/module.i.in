@@ -52,6 +52,12 @@
 #ifdef SWIGSEXP
 %module @WRAPPER_LIBRARY_NAME@Sexp
 #endif
+#ifdef SWIGTCL
+%module @WRAPPER_LIBRARY_NAME@Tcl
+#endif
+#ifdef SWIGXML
+%module @WRAPPER_LIBRARY_NAME@Xml
+#endif
 
 %{
 @SWIG_INTERFACE_INCLUDES@
