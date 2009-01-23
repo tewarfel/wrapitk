@@ -66,6 +66,19 @@ ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
 
 ###############################################################################
+# Configure the old style module
+
+SET(WRAP_ITK_PYTHON_OLD_STYLE_IMPORTS )
+FOREACH(lib ${WRAP_ITK_LIBRARIES})
+  SET(WRAP_ITK_PYTHON_OLD_STYLE_IMPORTS "${WRAP_ITK_PYTHON_OLD_STYLE_IMPORTS}from ${lib}Python import *\n")
+ENDFOREACH(lib)
+CONFIGURE_FILE("${WRAP_ITK_PYTHON_SOURCE_DIR}/InsightToolkit.py.in"
+           "${WRAP_ITK_PYTHON_BINARY_DIR}/InsightToolkit.py"
+           @ONLY IMMEDIATE)
+WRAP_ITK_INSTALL(/Python "${WRAP_ITK_PYTHON_BINARY_DIR}/InsightToolkit.py")
+
+
+###############################################################################
 # Copy python files for out-of-source builds, and set up install of same.
 
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
