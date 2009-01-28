@@ -16,12 +16,16 @@ SET(WRAP_ITK_DOC_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "doc bi
 
 
 ###############################################################################
-# the var to store the file to be processed by doxygen
-SET(WRAP_ITK_DOC_DOXYGEN_HEADERS "" CACHE INTERNAL "doxygen headers to process")
+# the var to store the file produced by doxygen
+SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES "" CACHE INTERNAL "man pages produced by doxygen and already installed")
+
 
 ###############################################################################
-# the var to store the file produced by doxygen
-SET(WRAP_ITK_DOC_DOXYGEN_PAGES "" CACHE INTERNAL "man pages produced by doxygen")
+MACRO(WRAP_LIBRARY_DOC library_name)
+  SET(WRAP_ITK_DOC_DOXYGEN_HEADERS )  # doxygen headers to process in this lib
+  SET(WRAP_ITK_DOC_DOXYGEN_PAGES )  # pages produced by doxygen in this lib
+ENDMACRO(WRAP_LIBRARY_DOC)
+
 
 ###############################################################################
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
@@ -33,37 +37,18 @@ MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
   FILE(GLOB doc_path ${paths})
   IF(doc_path AND "${class}" MATCHES "^itk::")
     # store the header
-    SET(WRAP_ITK_DOC_DOXYGEN_HEADERS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${doc_path}" CACHE INTERNAL "doxygen headers to process")
+    SET(WRAP_ITK_DOC_DOXYGEN_HEADERS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${doc_path}")
     # and the produced file
     STRING(REPLACE "::" "_" base_name "${class}")
-    SET(page "${WRAP_ITK_DOC_BINARY_DIR}/man3/${base_name}.3")
-    SET(WRAP_ITK_DOC_DOXYGEN_PAGES "${WRAP_ITK_DOC_DOXYGEN_PAGES};${page}" CACHE INTERNAL "man pages produced by doxygen")
+    SET(page "${CMAKE_CURRENT_BINARY_DIR}/Doc/man3/${base_name}.3")
+    SET(WRAP_ITK_DOC_DOXYGEN_PAGES "${WRAP_ITK_DOC_DOXYGEN_PAGES};${page}")
+    # and in install the manpage, if requested, and if not yet installed from another dir
+    IF(WRAP_ITK_DOC_MAN AND "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${name}(;|$)")
+      WRAP_ITK_INSTALL(/Doc/man3 "${page}")
+      SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES ${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES} "${base_name}.3" CACHE INTERNAL "man pages produced by doxygen and already installed")
+    ENDIF(WRAP_ITK_DOC_MAN AND "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${name}(;|$)")
   ENDIF(doc_path AND "${class}" MATCHES "^itk::")
 ENDMACRO(WRAP_NAMED_CLASS_DOC)
-
-###############################################################################
-MACRO(END_WRAP_LIBRARIES_DOC)
-  #
-  # configure doxygen input file.
-  #
-  # be sure to not include a header several times
-  UNIQUE(headers "${WRAP_ITK_DOC_DOXYGEN_HEADERS}")
-  SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED)
-  FOREACH(header ${headers})
-    SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED "${WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED}           \"${header}\"\\\n")
-  ENDFOREACH(header)
-  CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
-    "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
-    @ONLY IMMEDIATE)
-
-  #
-  # install the produced files
-  #
-  FOREACH(page ${WRAP_ITK_DOC_DOXYGEN_PAGES})
-    WRAP_ITK_INSTALL(/Doc/man3 "${page}")
-  ENDFOREACH(page)
-  
-ENDMACRO(END_WRAP_LIBRARIES_DOC)
 
 ###############################################################################
 MACRO(END_WRAP_LIBRARY_DOC)
@@ -74,8 +59,8 @@ MACRO(END_WRAP_LIBRARY_DOC)
   IF(${headers_exist})
   
     # create the target doc dir
-    SET(library_doc_build_dir "${WrapITK_BINARY_DIR}/Libraries/${WRAPPER_LIBRARY_NAME}/Doc"
-    CACHE INTERNAL "Library documentation interface files building directory") # TODO: direct name of the library dir?
+    SET(library_doc_build_dir "${CMAKE_CURRENT_BINARY_DIR}/Doc") # Library documentation interface files building directory
+                                                                 # TODO: direct name of the library dir?
     file(MAKE_DIRECTORY ${library_doc_build_dir})
     
     # configure doxygen input file.
@@ -87,19 +72,26 @@ MACRO(END_WRAP_LIBRARY_DOC)
       SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED "${WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED}           \"${header}\"\\\n")
     ENDFOREACH(header)
     SET(WRAP_ITK_DOC_GENERATE_MAN "NO")
-    IF(${WRAP_ITK_DOC_MAN})
+    IF(WRAP_ITK_DOC_MAN)
       SET(WRAP_ITK_DOC_GENERATE_MAN "YES")
-    ENDIF(${WRAP_ITK_DOC_MAN})
+    ENDIF(WRAP_ITK_DOC_MAN)
+    SET(WRAP_ITK_DOC_LIBRARY_DIR " ${library_doc_build_dir}")
     CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
       "${library_doxygen_config_file}"
       @ONLY IMMEDIATE)
 
+    # which files are produced?
+    SET(outputs "${library_doc_build_dir}/xml/combine.xslt") # a file which seem to be produced every times with xml outputs
+    IF(WRAP_ITK_DOC_MAN)
+      SET(outputs ${outputs} ${WRAP_ITK_DOC_DOXYGEN_PAGES})
+    ENDIF(WRAP_ITK_DOC_MAN)
+
     # run doxygen
     ADD_CUSTOM_COMMAND(
-      OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES} #!TODO: man pages are not always generated
+      OUTPUT ${outputs}
       COMMAND "${DOXYGEN_EXECUTABLE}" "${library_doxygen_config_file}"
 #      WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
-      DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS}
+      DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${library_doxygen_config_file}"
       COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Constructing documentation xml structure."
     )
     
@@ -109,22 +101,12 @@ MACRO(END_WRAP_LIBRARY_DOC)
     ADD_CUSTOM_COMMAND(
     OUTPUT ${swig_doc_interface_file}
     COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${library_doc_build_dir}/xml ${swig_doc_interface_file}
-#    DEPENDS # xml files
+    DEPENDS "${library_doc_build_dir}/xml/combine.xslt" # xml files
     COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Generating swig interface for inline documentation."
     )
     
-    ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES} ${swig_doc_interface_file})
+    ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Doxygen ALL DEPENDS ${outputs} ${swig_doc_interface_file})
 
-    # install the produced manual pages if necessary
-    IF(${WRAP_ITK_DOC_MAN})
-      FOREACH(page ${WRAP_ITK_DOC_DOXYGEN_PAGES})
-        WRAP_ITK_INSTALL(/Doc/man3 "${page}")
-      ENDFOREACH(page)
-    ENDIF(${WRAP_ITK_DOC_MAN})
-    
-    # reset for the next library iteration
-    SET(WRAP_ITK_DOC_DOXYGEN_PAGES "" CACHE INTERNAL "man pages produced by doxygen")
-  
   ENDIF(${headers_exist})
     
 ENDMACRO(END_WRAP_LIBRARY_DOC)
