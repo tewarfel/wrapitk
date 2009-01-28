@@ -75,7 +75,7 @@ IF(WRAP_unsigned_short AND WRAP_2)
     ${WrapITK_SOURCE_DIR}/images/cthead1.png
     MedianImageFilter.png
     3
-    --compare MeanImageFilter.png ${WrapITK_SOURCE_DIR}/images/MeanImageFilter.png
+    --compare MedianImageFilter.png ${WrapITK_SOURCE_DIR}/images/MedianImageFilter.png
   )
 
   ADD_TEST(TclSigmoidImageFilter
