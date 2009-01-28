@@ -24,6 +24,7 @@ SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES "" CACHE INTERNAL "man pages produced b
 MACRO(WRAP_LIBRARY_DOC library_name)
   SET(WRAP_ITK_DOC_DOXYGEN_HEADERS )  # doxygen headers to process in this lib
   SET(WRAP_ITK_DOC_DOXYGEN_PAGES )  # pages produced by doxygen in this lib
+  SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES )  # xml files produced by doxygen in this lib
 ENDMACRO(WRAP_LIBRARY_DOC)
 
 
@@ -47,7 +48,14 @@ MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
       WRAP_ITK_INSTALL(/Doc/man3 "${page}")
       SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES ${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES} "${base_name}.3" CACHE INTERNAL "man pages produced by doxygen and already installed")
     ENDIF(WRAP_ITK_DOC_MAN AND "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${name}(;|$)")
+    
+    # some simple computations to find the xml file produced for this class
+    STRING(REGEX REPLACE "([A-Z])" "_\\1" xmlname ${class})
+    STRING(REGEX REPLACE ":" "_1" xmlname ${xmlname})
+    STRING(TOLOWER  ${xmlname} xmlname)
+    SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} "${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml")
   ENDIF(doc_path AND "${class}" MATCHES "^itk::")
+    
 ENDMACRO(WRAP_NAMED_CLASS_DOC)
 
 ###############################################################################
@@ -81,7 +89,7 @@ MACRO(END_WRAP_LIBRARY_DOC)
       @ONLY IMMEDIATE)
 
     # which files are produced?
-    SET(outputs "${library_doc_build_dir}/xml/combine.xslt") # a file which seem to be produced every times with xml outputs
+    SET(outputs ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} "${library_doc_build_dir}/xml/combine.xslt") # a file which seem to be produced every times with xml outputs
     IF(WRAP_ITK_DOC_MAN)
       SET(outputs ${outputs} ${WRAP_ITK_DOC_DOXYGEN_PAGES})
     ENDIF(WRAP_ITK_DOC_MAN)
