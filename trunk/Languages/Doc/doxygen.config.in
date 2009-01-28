@@ -293,7 +293,7 @@ GENERATE_RTF          = NO
 # If the GENERATE_MAN tag is set to YES (the default) Doxygen will 
 # generate man pages 
 
-GENERATE_MAN          = @docygen_generate_man@
+GENERATE_MAN          = @WRAP_ITK_DOC_GENERATE_MAN@
 
 # The MAN_OUTPUT tag is used to specify where the man pages will be put. 
 # If a relative path is entered the value of OUTPUT_DIRECTORY will be 
