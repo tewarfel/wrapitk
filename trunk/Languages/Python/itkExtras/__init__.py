@@ -265,6 +265,7 @@ def index_to_physical_point( imageOrFilter, idx ):
   imageOrFilter is the image where the physical point must be computed
   idx is the index used to compute the physical point. It can be a continuous index.
   """
+  print >> sys.stderr, "WrapITK warning: itk.index_to_physical_point() is deprecated. The coresponding templated method is now available in itk::ImageBase."
   from __builtin__ import range # required because range is overladed in this module
   # get the image if needed
   img = output( imageOrFilter )
@@ -289,6 +290,7 @@ def physical_point_to_continuous_index( imageOrFilter, p ):
   imageOrFilter is the image where the physical point must be computed
   p is the point used to compute the index
   """
+  print >> sys.stderr, "WrapITK warning: itk.index_to_physical_point() is deprecated. The coresponding templated method is now available in itk::ImageBase."
   from __builtin__ import range # required because range is overladed in this module
   # get the image if needed
   img = output( imageOrFilter )
@@ -313,6 +315,7 @@ def physical_point_to_index( imageOrFilter, p ):
   image is the image where the physical point must be computed
   p is the point used to compute the index
   """
+  print >> sys.stderr, "WrapITK warning: itk.physical_point_to_index() is deprecated. The coresponding templated method is now available in itk::ImageBase."
   from __builtin__ import range # required because range is overladed in this module
   # get the image if needed
   img = output( imageOrFilter )
@@ -332,7 +335,7 @@ def physical_point_to_index( imageOrFilter, p ):
 
 
 def search( s, case_sensitive=False): #, fuzzy=True):
-  """Search for a class name in itk module.
+  """Search for a class name in the itk module.
   """
   s = s.replace(" ", "")
   if not case_sensitive:
@@ -363,7 +366,22 @@ def search( s, case_sensitive=False): #, fuzzy=True):
   return res
 
 
-def set_inputs( newItkObject, args, kargs ):
+def set_inputs( newItkObject, args=[], kargs={} ):
+  """Set the inputs of the given objects, according to the non named or the named parameters in args and kargs
+  
+  This function tries to assign all the non named parameters in the input of the newItkObject
+  - the first non named parameter in the first input, etc.
+  
+  The named parameters are used by calling the method with the same name prefixed by 'Set'.
+  set_inputs( obj, kargs={'Threshold': 10} ) calls obj.SetThreshold(10)
+  
+  This is the function use in the enhanced New() method to manage the inputs.
+  It can be used to produce a similar behavior:
+  
+  def SetInputs(self, *args, **kargs):
+    import itk
+    itk.set_inputs(self, *args, **kargs)
+  """
   # try to get the images from the filters in args
   args = [output(arg) for arg in args]
   
@@ -421,7 +439,7 @@ def set_inputs( newItkObject, args, kargs ):
     # use Set as prefix. It allow to use a shorter and more intuitive
     # call (Ex: itk.ImageFileReader.UC2.New(FileName='image.png')) than with the
     # full name (Ex: itk.ImageFileReader.UC2.New(SetFileName='image.png'))
-    if attribName != "auto_progress" :
+    if attribName not in ["auto_progress", "template_parameters"] :
       attrib = getattr(newItkObject, 'Set' + attribName)
       attrib(value)
 
@@ -475,6 +493,91 @@ class show2D :
     #tmpFile.close()
 
 
+class templated_class:
+  """This class is used to mimic the behavior of the templated C++ classes.
+  
+  It is used that way:
+  
+  class CustomClass:
+    # class definition here
+  CustomClass = templated_class(CustomClass)
+  
+  customObject = CustomClass[template, parameters].New()
+  
+  The template parameters are passed to the custom class constructor as a named parameter
+  'template_parameters' in a tuple.
+  
+  The custom class may implement a static method check_template_parameters(parameters)
+  which should raise an exception if the template parameters provided are not suitable
+  to instantiate the custom class.
+  """
+  def __init__(self, cls):
+    """cls is the custom class
+    """
+    self.__cls__ = cls
+    
+  def New(self, *args, **kargs):
+    """Use the parameters to infer the types of the template parameters.
+    """
+    # extract the types from the arguments to instantiate the class
+    import itk
+    types = tuple(itk.class_(o) for o in args)
+    return self[types].New(*args, **kargs)
+    
+  def __getitem__(self, template_parameters):
+    """Return a pair class-template parameters ready to be instantiated.
+    
+    The template parameters may be validated if the custom class provide the static
+    method check_template_parameters(parameters).
+    """
+    if not isinstance(template_parameters, tuple):
+      template_parameters = (template_parameters,)
+    return templated_class.__templated_class_and_parameters__(self, template_parameters)
+
+  def check_template_parameters(self, template_parameters):
+    """Check the template parameters passed in parameter. 
+    """
+    # this method is there mainly to make possible to reuse it in the custom class
+    # constructor after having used templated_class(). Without that, the following
+    # example doesn't work:
+    #
+    # class CustomClass:
+    #   def __init__(self, *args, **kargs):
+    #     template_parameters = kargs["template_parameters"]
+    #     CustomClass.check_template_parameters(template_parameters)
+    #     # other init stuff
+    #   def check_template_parameters(template_parameters):
+    #     # check, really
+    #     pass
+    #  CustomClass = templated_class(CustomClass)
+    #
+    self.__cls__.check_template_parameters(template_parameters)
+
+  class __templated_class_and_parameters__:
+    """Inner class used to store the pair class-template parameters ready to instantiate.
+    """
+    def __init__(self, templated_class, template_parameters):
+      self.__templated_class__ = templated_class
+      self.__template_parameters__ = template_parameters
+      if "check_template_parameters" in dir(templated_class.__cls__):
+        templated_class.__cls__.check_template_parameters(template_parameters)
+      
+    def New(self, *args, **kargs):
+      """A New() method to mimic the ITK default behavior, even if the class doesn't provide any New() method.
+      """
+      kargs["template_parameters"] = self.__template_parameters__
+      if "New" in dir(self.__templated_class__.__cls__):
+        obj = self.__templated_class__.__cls__.New(*args, **kargs)
+      else:
+        obj = self.__templated_class__.__cls__(*args, **kargs)
+      setattr(obj, "__template_parameters__", self.__template_parameters__)
+      setattr(obj, "__templated_class__", self.__templated_class__)
+      return obj
+      
+    def __call__(self, *args, **kargs):
+      return self.New(*args, **kargs)
+
+
 class pipeline:
   """A convenient class to store the reference to the filters of a pipeline
   
@@ -483,9 +586,10 @@ class pipeline:
   object act almost like a filter (it has a GetOutput() method) and thus can
   be simply integrated in another pipeline.
   """
-  def __init__( self, input=None ):
+  def __init__( self, *args, **kargs ):
     self.clear()
-    self.SetInput( input )
+    self.input = None
+    set_inputs( self, args, kargs )
 
   def connect( self, filter ):
     """Connect a new filter to the pipeline
@@ -494,7 +598,7 @@ class pipeline:
     one and the filter passed as parameter will be added to the list
     """
     if self.GetOutput() != None:
-      filter.SetInput( self.GetOutput() )
+      set_inputs(filter, [self.GetOutput()] )
     self.append( filter )
 
   def append( self, filter ):
@@ -502,30 +606,30 @@ class pipeline:
     
     The new filter will not be connected. The user must connect it.
     """
-    self.filter_list.append( filter )
+    self.filters.append( filter )
 
   def clear( self ):
     """Clear the filter list
     """
-    self.filter_list = []
+    self.filters = []
 
-  def GetOutput( self ):
+  def GetOutput( self, index=0 ):
     """Return the output of the pipeline
     
     If another output is needed, use
-    pipeline[-1].GetAnotherOutput() instead of this method, or subclass
-    pipeline to implement another GetOutput() method
+    pipeline.filters[-1].GetAnotherOutput() instead of this method, subclass
+    pipeline to implement another GetOutput() method, or use expose()
     """
-    if len(self) == 0:
+    if len(self.filters) == 0:
       return self.GetInput()
     else :
-      return self[-1].GetOutput()
+      return self.filters[-1][index]
 
   def SetInput( self, input ):
     """Set the input of the pipeline
     """
-    if len(self) != 0:
-      self[0].SetInput(input)
+    if len(self.filters) != 0:
+      set_inputs(self.filters[0], [input])
     self.input = input
 
   def GetInput( self ):
@@ -536,30 +640,35 @@ class pipeline:
   def Update( self ):
     """Update the pipeline
     """
-    if len(self) > 0:
-      return self[-1].Update()
+    if len(self.filters) > 0:
+      return self.filters[-1].Update()
   
   def UpdateLargestPossibleRegion( self ):
     """Update the pipeline
     """
-    if len(self) > 0:
-      return self[-1].UpdateLargestPossibleRegion()
+    if len(self.filters) > 0:
+      return self.filters[-1].UpdateLargestPossibleRegion()
   
   def UpdateOutputInformation( self ):
-    if "UpdateOutputInformation" in dir(self[-1]):
-      self[-1].UpdateOutputInformation()
+    if "UpdateOutputInformation" in dir(self.filters[-1]):
+      self.filters[-1].UpdateOutputInformation()
     else:	
       self.Update()
       
-  def __getitem__( self, i ):
-     return self.filter_list[i]
-
-  def __len__( self ):
-     return len(self.filter_list)
-
+  def __len__(self):
+    if len(self.filters) == 0:
+      return 1
+    else:
+      return self.filters[-1].GetNumberOfOutputs()
+      
+  def __getitem__(self, item):
+    if len(self.filters) == 0:
+      return self.input
+    else:
+      return self.filters[-1][item]
+      
   def __call__(self, *args, **kargs):
-     import itk
-     itk.set_inputs( self, args, kargs )
+     set_inputs( self, args, kargs )
      self.UpdateLargestPossibleRegion()
      return self
 
@@ -580,7 +689,7 @@ class pipeline:
      """
      if new_name == None:
        new_name = name
-     src = self[position]
+     src = self.filters[position]
      ok = False
      set_name = "Set" + name
      if set_name in dir(src):
