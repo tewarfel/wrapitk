@@ -74,21 +74,21 @@ MACRO(END_WRAP_LIBRARY_DOC)
   IF(${headers_exist})
   
     # create the target doc dir
-    SET(LIBRARY_DOC_BUILD_DIR "${WrapITK_BINARY_DIR}/Libraries/${WRAPPER_LIBRARY_NAME}/Doc"
+    SET(library_doc_build_dir "${WrapITK_BINARY_DIR}/Libraries/${WRAPPER_LIBRARY_NAME}/Doc"
     CACHE INTERNAL "Library documentation interface files building directory") # TODO: direct name of the library dir?
-    file(MAKE_DIRECTORY ${LIBRARY_DOC_BUILD_DIR})
+    file(MAKE_DIRECTORY ${library_doc_build_dir})
     
     # configure doxygen input file.
     # be sure to not include a header several times
     UNIQUE(headers "${WRAP_ITK_DOC_DOXYGEN_HEADERS}")
-    SET(library_doxygen_config_file ${LIBRARY_DOC_BUILD_DIR}/doxygen.config)
+    SET(library_doxygen_config_file ${library_doc_build_dir}/doxygen.config)
     SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED)
     FOREACH(header ${headers})
       SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED "${WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED}           \"${header}\"\\\n")
     ENDFOREACH(header)
-    SET(docygen_generate_man "NO")
+    SET(WRAP_ITK_DOC_GENERATE_MAN "NO")
     IF(${WRAP_ITK_DOC_MAN})
-      SET(docygen_generate_man "YES")
+      SET(WRAP_ITK_DOC_GENERATE_MAN "YES")
     ENDIF(${WRAP_ITK_DOC_MAN})
     CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
       "${library_doxygen_config_file}"
@@ -105,10 +105,10 @@ MACRO(END_WRAP_LIBRARY_DOC)
     
     # run itk_doxy2swig
     SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
-    SET(swig_doc_interface_file ${LIBRARY_DOC_BUILD_DIR}/doc.i)
+    SET(swig_doc_interface_file ${library_doc_build_dir}/doc.i)
     ADD_CUSTOM_COMMAND(
     OUTPUT ${swig_doc_interface_file}
-    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${LIBRARY_DOC_BUILD_DIR}/xml ${swig_doc_interface_file}
+    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${library_doc_build_dir}/xml ${swig_doc_interface_file}
 #    DEPENDS # xml files
     COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Generating swig interface for inline documentation."
     )
