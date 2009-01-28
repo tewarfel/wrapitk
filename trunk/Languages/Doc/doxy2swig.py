@@ -36,11 +36,11 @@ def my_open_read(source):
     else:
         return open(source)
 
-def my_open_write(dest):
+def my_open_write(dest, mode='w'):
     if hasattr(dest, "write"):
         return dest
     else:
-        return open(dest, 'w')
+        return open(dest, mode)
 
 
 class Doxy2SWIG:    
@@ -314,8 +314,8 @@ class Doxy2SWIG:
             p.generate()
             self.pieces.extend(self.clean_pieces(p.pieces))
 
-    def write(self, fname):
-        o = my_open_write(fname)
+    def write(self, fname, mode='w'):
+        o = my_open_write(fname, mode)
         if self.multi:
             o.write("".join(self.pieces))
         else:

@@ -14,12 +14,14 @@ from doxy2swig import *
 def d2s_dir(in_dir_name, out_swig_i):
 	fpattern = in_dir_name + "/class*.xml"
 	xml_file_names = glob.glob(fpattern)
-	open(out_swig_i, 'w')
+	f = open(out_swig_i, 'w')
 	for xfn in xml_file_names:
 		print("-- Doxygen to SWIG:" + xfn)
 		d2s = Doxy2SWIG(xfn)
 		d2s.generate()
 		d2s.write(out_swig_i, 'a+')
+        else:
+            f.close()
 
 def main(in_dir_name, out_swig_i):
 	d2s_dir(in_dir_name, out_swig_i)

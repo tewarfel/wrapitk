@@ -1,5 +1,7 @@
 FIND_PACKAGE(Doxygen REQUIRED)
 
+OPTION(WRAP_ITK_DOC_MAN "Generate unix manual pages." OFF)
+
 ###############################################################################
 # install the files requires for doxygen
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
@@ -72,47 +74,55 @@ MACRO(END_WRAP_LIBRARY_DOC)
   IF(${headers_exist})
   
     # create the target doc dir
-    SET(LIBRARY_DOC_DIR "${WrapITK_BINARY_DIR}/Libraries/${WRAPPER_LIBRARY_NAME}/Doc"
-    CACHE INTERNAL "Library documentation interface files directory") # TODO: direct name of the library dir?
-    file(MAKE_DIRECTORY ${LIBRARY_DOC_DIR})
+    SET(LIBRARY_DOC_BUILD_DIR "${WrapITK_BINARY_DIR}/Libraries/${WRAPPER_LIBRARY_NAME}/Doc"
+    CACHE INTERNAL "Library documentation interface files building directory") # TODO: direct name of the library dir?
+    file(MAKE_DIRECTORY ${LIBRARY_DOC_BUILD_DIR})
     
     # configure doxygen input file.
     # be sure to not include a header several times
     UNIQUE(headers "${WRAP_ITK_DOC_DOXYGEN_HEADERS}")
-    SET(library_doxygen_config_file ${LIBRARY_DOC_DIR}/doxygen-${WRAPPER_LIBRARY_NAME}.config)
+    SET(library_doxygen_config_file ${LIBRARY_DOC_BUILD_DIR}/doxygen.config)
     SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED)
     FOREACH(header ${headers})
       SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED "${WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED}           \"${header}\"\\\n")
     ENDFOREACH(header)
+    SET(docygen_generate_man "NO")
+    IF(${WRAP_ITK_DOC_MAN})
+      SET(docygen_generate_man "YES")
+    ENDIF(${WRAP_ITK_DOC_MAN})
     CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
       "${library_doxygen_config_file}"
       @ONLY IMMEDIATE)
 
     # run doxygen
     ADD_CUSTOM_COMMAND(
-      OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES}
-      COMMAND "${DOXYGEN_EXECUTABLE}" "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
+      OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES} #!TODO: man pages are not always generated
+      COMMAND "${DOXYGEN_EXECUTABLE}" "${library_doxygen_config_file}"
 #      WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
       DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS}
-      COMMENT "Doxygen: Generating man pages for ${WRAPPER_LIBRARY_NAME}."
+      COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Constructing documentation xml structure."
     )
-    ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES})
-    
-    # install the produced manual pages
-    FOREACH(page ${WRAP_ITK_DOC_DOXYGEN_PAGES})
-      WRAP_ITK_INSTALL(/Doc/man3 "${page}")
-    ENDFOREACH(page)
     
     # run itk_doxy2swig
-#    SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
-#    SET(swig_doc_interface_file )
-#    ADD_CUSTOM_COMMAND(
-#    OUTPUT ${swig_doc_interface_file ${WRAP_ITK_DOC_SOURCE_DIR}/}
-#    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} # TODO: args
-#    DEPENDS ${DEPS} ${idx_file} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
-#    )
+    SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
+    SET(swig_doc_interface_file ${LIBRARY_DOC_BUILD_DIR}/doc.i)
+    ADD_CUSTOM_COMMAND(
+    OUTPUT ${swig_doc_interface_file}
+    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${LIBRARY_DOC_BUILD_DIR}/xml ${swig_doc_interface_file}
+#    DEPENDS # xml files
+    COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Generating swig interface for inline documentation."
+    )
+    
+    ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES} ${swig_doc_interface_file})
 
-    # reset for the next module
+    # install the produced manual pages if necessary
+    IF(${WRAP_ITK_DOC_MAN})
+      FOREACH(page ${WRAP_ITK_DOC_DOXYGEN_PAGES})
+        WRAP_ITK_INSTALL(/Doc/man3 "${page}")
+      ENDFOREACH(page)
+    ENDIF(${WRAP_ITK_DOC_MAN})
+    
+    # reset for the next library iteration
     SET(WRAP_ITK_DOC_DOXYGEN_PAGES "" CACHE INTERNAL "man pages produced by doxygen")
   
   ENDIF(${headers_exist})
