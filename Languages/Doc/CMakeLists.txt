@@ -21,7 +21,7 @@ SET(WRAP_ITK_DOC_DOXYGEN_HEADERS "" CACHE INTERNAL "doxygen headers to process")
 # the var to store the file produced by doxygen
 SET(WRAP_ITK_DOC_DOXYGEN_PAGES "" CACHE INTERNAL "man pages produced by doxygen")
 
-
+###############################################################################
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
   GET_PROPERTY(dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
   SET(paths )
@@ -39,7 +39,7 @@ MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
   ENDIF(doc_path AND "${class}" MATCHES "^itk::")
 ENDMACRO(WRAP_NAMED_CLASS_DOC)
 
-
+###############################################################################
 MACRO(END_WRAP_LIBRARIES_DOC)
   #
   # configure doxygen input file.
@@ -53,7 +53,19 @@ MACRO(END_WRAP_LIBRARIES_DOC)
   CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
     "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
     @ONLY IMMEDIATE)
-    
+  
+  #
+  # run doxygen
+  #
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES}
+    COMMAND "${DOXYGEN_EXECUTABLE}" "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
+#    WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
+    DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS}
+    COMMENT "Generating manpages."
+  )
+  ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES})
+
   #
   # install the produced files
   #
@@ -61,21 +73,58 @@ MACRO(END_WRAP_LIBRARIES_DOC)
     WRAP_ITK_INSTALL(/Doc/man3 "${page}")
   ENDFOREACH(page)
   
-  ADD_CUSTOM_TARGET(Doxygen ALL DEPENDS ${WRAP_ITK_DOC_DOXYGEN_PAGES})
 ENDMACRO(END_WRAP_LIBRARIES_DOC)
 
+###############################################################################
+MACRO(END_WRAP_LIBRARY_DOC)
+  MESSAGE([debug] WRAPPER_LIBRARY_NAME = ${WRAPPER_LIBRARY_NAME})
+ENDMACRO(END_WRAP_LIBRARY_DOC)
+
+###############################################################################
 # This macro is called once per module
 # Global variable WRAPPER_MODULE_NAME can be used
 # in the macro to current module name
+#
 MACRO(END_WRAP_MODULE_DOC)
-  #
-  # run doxygen, TODO
-  #
-#  ADD_CUSTOM_COMMAND(
-#    OUTPUT ${WRAP_ITK_DOC_DOXYGEN_PAGES}
-#    COMMAND "${DOXYGEN_EXECUTABLE}" "${WRAP_ITK_DOC_BINARY_DIR}/doxygen.config"
-##    WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
-#    DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS}
-#    COMMENT "Generating manpages."
-#  )
+
+  # check if we need to generate the doc at all
+  STRING(COMPARE NOTEQUAL "${WRAP_ITK_DOC_DOXYGEN_PAGES}" "" headers_exist)
+  
+  IF(${headers_exist})
+    # create the target doc dir
+    SET(module_doc_dir ${WRAP_ITK_BINARY_DIR}/Modules/${WRAPPER_MODULE_NAME}/Doc) # TODO: direct name of the module dir?
+    MESSAGE(>> module_doc_dir=${module_doc_dir})
+#    file(MAKE_DIRECTORY )
+  
+    #
+    # configure doxygen input file.
+    #
+    # be sure to not include a header several times
+    UNIQUE(headers "${WRAP_ITK_DOC_DOXYGEN_HEADERS}")
+    SET(module_doxygen_config_file ${WRAP_ITK_DOC_BINARY_DIR}/doxygen-${WRAPPER_MODULE_NAME}.config)
+    SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED)
+    FOREACH(header ${headers})
+      SET(WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED "${WRAP_ITK_DOC_DOXYGEN_HEADERS_FORMATED}           \"${header}\"\\\n")
+    ENDFOREACH(header)
+    CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
+      "${module_doxygen_config_file}"
+      @ONLY IMMEDIATE)
+    
+      MESSAGE([debug] WRAPPER_MODULE_NAME = ${WRAPPER_MODULE_NAME}, WRAP_ITK_DOC_DOXYGEN_PAGES = ${WRAP_ITK_DOC_DOXYGEN_PAGES})
+  
+    #
+    # run itk_doxy2swig
+    #
+#    SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
+#    SET(swig_doc_interface_file )
+#    ADD_CUSTOM_COMMAND(
+#    OUTPUT ${swig_doc_interface_file ${WRAP_ITK_DOC_SOURCE_DIR}/}
+#    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} # TODO: args
+#    DEPENDS ${DEPS} ${idx_file} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
+#    )
+
+    # reset for the next module
+    SET(WRAP_ITK_DOC_DOXYGEN_PAGES "" CACHE INTERNAL "man pages produced by doxygen")
+  
+  ENDIF(${headers_exist})
 ENDMACRO(END_WRAP_MODULE_DOC)
