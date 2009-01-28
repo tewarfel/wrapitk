@@ -27,6 +27,24 @@ IF(WRAP_unsigned_short AND WRAP_2)
   
   ADD_TEST(PythonTemplate ${PYTHON_DRIVER} ${CMAKE_CURRENT_SOURCE_DIR}/template.py)
   
+  ADD_TEST(PythonAutoPipeline
+    ${PYTHON_DRIVER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/auto_pipeline.py
+    ${WrapITK_SOURCE_DIR}/images/cthead1.png
+    auto_pipeline.png
+    3
+    --compare auto_pipeline.png ${WrapITK_SOURCE_DIR}/images/MedianImageFilter.png
+  )
+
+  ADD_TEST(PythonTemplatedPipeline
+    ${PYTHON_DRIVER}
+    ${CMAKE_CURRENT_SOURCE_DIR}/templated_pipeline.py
+    ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
+    templated_pipeline.png
+    10
+    --compare templated_pipeline.png ${WrapITK_SOURCE_DIR}/images/templated_pipeline.png
+  )
+
   ADD_TEST(PythonExtras ${PYTHON_DRIVER}
     ${CMAKE_CURRENT_SOURCE_DIR}/extras.py
     ${WrapITK_SOURCE_DIR}/images/cthead1.png out.png
