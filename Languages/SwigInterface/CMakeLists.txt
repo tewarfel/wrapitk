@@ -1,4 +1,10 @@
 ###############################################################################
+# Load the CableSwig settings used by ITK, or find CableSwig otherwise.
+#SET(CableSwig_DIR ${ITK_CableSwig_DIR})
+FIND_PACKAGE(CableSwig REQUIRED)
+SET(CABLE_INDEX ${CableSwig_cableidx_EXE} CACHE INTERNAL "cableidx path")
+
+###############################################################################
 # install the files requires for swiginterface
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface CMakeLists.txt)

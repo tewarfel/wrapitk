@@ -58,36 +58,10 @@ IF("${ITK_VERSION}" STRLESS "${ITK_REQUIRED_VERSION}")
   MESSAGE(FATAL_ERROR "ITK ${ITK_REQUIRED_VERSION} is required to build this version of WrapITK, and you are trying to use version ${ITK_VERSION}. Set ITK_DIR to point to the directory of ITK ${ITK_REQUIRED_VERSION}.")
 ENDIF("${ITK_VERSION}" STRLESS "${ITK_REQUIRED_VERSION}")
 
-#-----------------------------------------------------------------------------
-# Load the CableSwig settings used by ITK, or find CableSwig otherwise.
-#-----------------------------------------------------------------------------
-#
-#SET(CableSwig_DIR ${ITK_CableSwig_DIR})
-FIND_PACKAGE(CableSwig REQUIRED)
-
 SET(CMAKE_VERSION "${CMAKE_CACHE_MAJOR_VERSION}.${CMAKE_CACHE_MINOR_VERSION}.${CMAKE_CACHE_RELEASE_VERSION}")
 IF("${CMAKE_VERSION}" STRGREATER "2.6")
   cmake_policy(SET CMP0003 NEW)
 ENDIF("${CMAKE_VERSION}" STRGREATER "2.6")
-
-# We have found CableSwig.  Use the settings.
-SET(CABLE_INDEX ${CableSwig_cableidx_EXE})
-SET(CSWIG ${CableSwig_cswig_EXE})
-SET(GCCXML ${CableSwig_gccxml_EXE})
-
-SET(CSWIG_MISSING_VALUES)
-IF(NOT CSWIG)
-   SET(CSWIG_MISSING_VALUES "${CSWIG_MISSING_VALUES} CSWIG ")
-ENDIF(NOT CSWIG)
-IF(NOT CABLE_INDEX)
-   SET(CSWIG_MISSING_VALUES "${CSWIG_MISSING_VALUES} CABLE_INDEX ")
-ENDIF(NOT CABLE_INDEX)
-IF(NOT GCCXML)
-   SET(CSWIG_MISSING_VALUES "${CSWIG_MISSING_VALUES} GCCXML ")
-ENDIF(NOT GCCXML)
-IF(CSWIG_MISSING_VALUES)
-  MESSAGE(SEND_ERROR "To use cswig wrapping, CSWIG, CABLE_INDEX, and GCCXML executables must be specified.  If they are all in the same directory, only specifiy one of them, and then run cmake configure again and the others should be found.\nCurrently, you are missing the following:\n ${CSWIG_MISSING_VALUES}")
-ENDIF(CSWIG_MISSING_VALUES)
 
 ###############################################################################
 # Set various variables in order

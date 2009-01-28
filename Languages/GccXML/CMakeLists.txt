@@ -1,4 +1,11 @@
 ###############################################################################
+# Load the CableSwig settings used by ITK, or find CableSwig otherwise.
+#SET(CableSwig_DIR ${ITK_CableSwig_DIR})
+FIND_PACKAGE(CableSwig REQUIRED)
+SET(GCCXML ${CableSwig_gccxml_EXE} CACHE INTERNAL "gccxml path")
+
+
+###############################################################################
 # install the files requires for gccxml
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   WRAP_ITK_INSTALL(/Configuration/Languages/GccXML CMakeLists.txt)
