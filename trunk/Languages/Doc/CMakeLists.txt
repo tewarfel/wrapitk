@@ -1,6 +1,6 @@
 FIND_PACKAGE(Doxygen REQUIRED)
 
-OPTION(WRAP_ITK_DOC_MAN "Generate unix manual pages." OFF)
+OPTION(WRAP_ITK_DOC_MAN "Generate unix manual pages." ON)
 
 ###############################################################################
 # install the files requires for doxygen
