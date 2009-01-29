@@ -1,0 +1,5 @@
+#labels Featured
+Available WrapITK binaries for some platforms
+
+|| *Platform* || *Package type* || *ITK version* || *Wrapped types* || *Files* ||
+|| Ubuntu 8.10 Intrepid || Debian || 3.11 || Unsigned char <br /> Unsigned short <br /> Double <br /> Complex double <br /> Vector double <br /> Co-variant vector double <br /> RGB unsigned short <br /> RGBA unsigned short|| _coming soon_ ||
