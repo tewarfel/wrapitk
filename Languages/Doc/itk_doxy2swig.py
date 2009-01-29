@@ -8,6 +8,7 @@ Usage:
 """
 
 import sys
+import os
 import glob
 from doxy2swig import *
 
@@ -84,12 +85,13 @@ def d2s_dir(in_dir_name, out_swig_i):
     if l != "":
       ls = l.split("\t")
       xfn = ls[0]
-      cpp_name = ls[1]
-      for swig_name in ls[2:]:
-        print("-- Doxygen to SWIG: " + swig_name)
-        d2s = itkDoxy2SWIG(xfn, cpp_name, swig_name)
-        d2s.generate()
-        d2s.write(out_swig_i, 'a+')
+      if os.path.isfile(xfn): # make sure the assumed file exists
+          cpp_name = ls[1]
+          for swig_name in ls[2:]:
+            print("-- Doxygen to SWIG: " + swig_name)
+            d2s = itkDoxy2SWIG(xfn, cpp_name, swig_name)
+            d2s.generate()
+            d2s.write(out_swig_i, 'a+')
   else:
     f.close()
 
