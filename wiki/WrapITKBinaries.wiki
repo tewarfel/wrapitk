@@ -2,4 +2,5 @@
 Available WrapITK binaries for some platforms
 
 || *Platform* || *Package <br> type* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel <br> types* || *Download <br > files* ||
-|| Ubuntu 8.10 Intrepid || Debian || 3.11 || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Double <br> Complex double <br> Vector double <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| _coming soon_ ||
+|| Ubuntu 8.10 Intrepid <br> x86 || Debian || 3.11 || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Double <br> Complex double <br> Vector double <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| _coming soon_ ||
+|| Mandriva Linux 2009 <br> x86 || - || 3.11 || - || 2, 3 || - || _coming soon_ ||
