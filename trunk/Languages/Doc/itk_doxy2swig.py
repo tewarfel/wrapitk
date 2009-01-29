@@ -77,18 +77,21 @@ class itkDoxy2SWIG(Doxy2SWIG):
 
 
 def d2s_dir(in_dir_name, out_swig_i):
-#	fpattern = in_dir_name + "/classitk_1_1_image.xml"
-	fpattern = in_dir_name + "/class*.xml"
-	xml_file_names = glob.glob(fpattern)
-	f = open(out_swig_i, 'w')
-	for xfn in xml_file_names:
-		print("-- Doxygen to SWIG: " + xfn)
-#		d2s = itkDoxy2SWIG(xfn, "itk::Image", "itkImageUC2")
-		d2s = itkDoxy2SWIG(xfn)
-		d2s.generate()
-		d2s.write(out_swig_i, 'a+')
-        else:
-            f.close()
+  conffile = file(in_dir_name)
+  f = open(out_swig_i, 'w')
+  for l in conffile:
+    l = l.strip()
+    if l != "":
+      ls = l.split("\t")
+      xfn = ls[0]
+      cpp_name = ls[1]
+      for swig_name in ls[2:]:
+        print("-- Doxygen to SWIG: " + swig_name)
+        d2s = itkDoxy2SWIG(xfn, cpp_name, swig_name)
+        d2s.generate()
+        d2s.write(out_swig_i, 'a+')
+  else:
+    f.close()
 
 def main(in_dir_name, out_swig_i):
 	d2s_dir(in_dir_name, out_swig_i)

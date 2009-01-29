@@ -25,11 +25,13 @@ MACRO(WRAP_LIBRARY_DOC library_name)
   SET(WRAP_ITK_DOC_DOXYGEN_HEADERS )  # doxygen headers to process in this lib
   SET(WRAP_ITK_DOC_DOXYGEN_PAGES )  # pages produced by doxygen in this lib
   SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES )  # xml files produced by doxygen in this lib
+  SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT )  # the c++ name - swig names definitions
 ENDMACRO(WRAP_LIBRARY_DOC)
 
 
 ###############################################################################
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
+  SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT OFF)
   GET_PROPERTY(dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
   SET(paths )
   FOREACH(dir ${dirs})
@@ -54,9 +56,19 @@ MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
     STRING(REGEX REPLACE ":" "_1" xmlname ${xmlname})
     STRING(TOLOWER  ${xmlname} xmlname)
     SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} "${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml")
+    
+    # the doxy2swig input
+    SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT "${WRAP_ITK_DOC_DOXY2SWIG_INPUT}\n${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml\t${class}")
+    SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT ON)
   ENDIF(doc_path AND "${class}" MATCHES "^itk::")
     
 ENDMACRO(WRAP_NAMED_CLASS_DOC)
+
+MACRO(ADD_ONE_TYPEDEF_DOC wrap_method wrap_class swig_name template_params)
+  IF(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT)
+    SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT "${WRAP_ITK_DOC_DOXY2SWIG_INPUT}\t${swig_name}")
+  ENDIF(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT)
+ENDMACRO(ADD_ONE_TYPEDEF_DOC)
 
 ###############################################################################
 MACRO(END_WRAP_LIBRARY_DOC)
@@ -103,13 +115,18 @@ MACRO(END_WRAP_LIBRARY_DOC)
       COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Constructing documentation xml structure."
     )
     
+    SET(doxy2swig_config_file ${library_doc_build_dir}/itk_doxy2swig.conf)
+    CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.conf.in" 
+      "${doxy2swig_config_file}"
+      @ONLY IMMEDIATE)
+
     # run itk_doxy2swig
     SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
     SET(swig_doc_interface_file ${library_doc_build_dir}/doc.i)
     ADD_CUSTOM_COMMAND(
     OUTPUT ${swig_doc_interface_file}
-    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${library_doc_build_dir}/xml ${swig_doc_interface_file}
-    DEPENDS "${library_doc_build_dir}/xml/combine.xslt" # xml files
+    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${doxy2swig_config_file} ${swig_doc_interface_file}
+    DEPENDS "${library_doc_build_dir}/xml/combine.xslt" ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} ${doxy2swig_config_file}
     COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Generating swig interface for inline documentation."
     )
     
