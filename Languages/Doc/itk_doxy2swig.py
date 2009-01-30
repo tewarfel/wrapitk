@@ -11,7 +11,7 @@ import sys
 import os
 import glob
 from doxy2swig import *
-
+from cStringIO import StringIO
 
 class itkDoxy2SWIG(Doxy2SWIG):
     def __init__(self, src, cpp_name="", swig_name=""):
@@ -24,12 +24,6 @@ class itkDoxy2SWIG(Doxy2SWIG):
           return self.swig_name
         return cpp_name
         
-    def write_to_file(self, file):
-        if self.multi:
-            file.write("".join(self.pieces))
-        else:
-            file.write("".join(self.clean_pieces(self.pieces)))
-
     def do_compoundname(self, node):
         self.add_text('\n\n')
         data = self.cpp_to_swig_name(node.firstChild.data)
@@ -79,7 +73,7 @@ class itkDoxy2SWIG(Doxy2SWIG):
 
 def d2s_dir(in_dir_name, out_swig_i):
   conffile = file(in_dir_name)
-  f = open(out_swig_i, 'w')
+  output = StringIO()
   for l in conffile:
     l = l.strip()
     if l != "":
@@ -91,9 +85,10 @@ def d2s_dir(in_dir_name, out_swig_i):
             print("-- Doxygen to SWIG: " + swig_name)
             d2s = itkDoxy2SWIG(xfn, cpp_name, swig_name)
             d2s.generate()
-            d2s.write(out_swig_i, 'a+')
-  else:
-    f.close()
+            d2s.write_to_file(output)
+  f = open(out_swig_i, 'w')
+  f.write(output.getvalue())
+  f.close()
 
 def main(in_dir_name, out_swig_i):
 	d2s_dir(in_dir_name, out_swig_i)
