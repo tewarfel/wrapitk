@@ -97,7 +97,7 @@ def d2s_dir(in_dir_name, out_swig_i):
           for swig_name in ls[2:]:
             output.write(tpl.replace("@[{(]})@", swig_name))
       else:
-        print >> sys.argv, "Warning: %s does not exist. Ignore it." % xfn
+        print >> sys.stderr, "Warning: %s does not exist. Ignore it." % xfn
   f = open(out_swig_i, 'w')
   f.write(output.getvalue())
   f.close()
