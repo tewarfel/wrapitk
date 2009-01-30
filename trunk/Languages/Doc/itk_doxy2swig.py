@@ -7,6 +7,13 @@ Usage:
 
 """
 
+# silently import psyco
+try:
+  import psyco
+  psyco.full()
+except ImportError:
+  pass
+
 import sys
 import os
 import glob
