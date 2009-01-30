@@ -19,6 +19,12 @@ class itkDoxy2SWIG(Doxy2SWIG):
         self.cpp_name = cpp_name
         self.swig_name = swig_name
     
+    def write_to_file(self, file):
+        if self.multi:
+            file.write("".join(self.pieces))
+        else:
+            file.write("".join(self.clean_pieces(self.pieces)))
+
     def cpp_to_swig_name(self, cpp_name):
         if self.cpp_name == cpp_name:
           return self.swig_name
@@ -81,11 +87,15 @@ def d2s_dir(in_dir_name, out_swig_i):
       xfn = ls[0]
       if os.path.isfile(xfn): # make sure the assumed file exists
           cpp_name = ls[1]
+          print("-- Doxygen to SWIG: " + cpp_name)
+          output2 = StringIO()
+          d2s = itkDoxy2SWIG(xfn, cpp_name, "@[{(]})@")
+          d2s.generate()
+          d2s.write_to_file(output2)
+          tpl = output2.getvalue()
+          output2.close()
           for swig_name in ls[2:]:
-            print("-- Doxygen to SWIG: " + swig_name)
-            d2s = itkDoxy2SWIG(xfn, cpp_name, swig_name)
-            d2s.generate()
-            d2s.write_to_file(output)
+            output.write(tpl.replace("@[{(]})@", swig_name))
   f = open(out_swig_i, 'w')
   f.write(output.getvalue())
   f.close()
