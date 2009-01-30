@@ -242,12 +242,14 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   # Loop over the extra swig input files and add them to the generated files 
   # lists. Guess that the generated cxx output will have the same name as 
   # the .i input file.
+  SET(WRAP_ITK_PYTHON_PROCCESS_SWIG_INPUTS ON)
   FOREACH(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
     GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
     STRING(REPLACE "wrap_" "" base_name "${base_name}")
     WRAP_MODULE_PYTHON("${base_name}")
     END_WRAP_MODULE_PYTHON("${base_name}")
   ENDFOREACH(source)
+  SET(WRAP_ITK_PYTHON_PROCCESS_SWIG_INPUTS OFF)
 
   # create the python config file
   # this file store all the name - type association and a dependencies list for the modules
@@ -336,11 +338,17 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   SET_TARGET_PROPERTIES(${lib} PROPERTIES PREFIX "_")
   TARGET_LINK_LIBRARIES(${lib} ${WRAPPER_LIBRARY_LINK_LIBRARIES} ${PYTHON_LIBRARY})
   ADD_DEPENDENCIES(${lib} ${WRAPPER_LIBRARY_NAME}Swig)
+  IF(WRAP_ITK_DOC)
+    ADD_DEPENDENCIES(${lib} ${WRAPPER_LIBRARY_NAME}Doxygen)
+  ENDIF(WRAP_ITK_DOC)
   INSTALL(TARGETS "${lib}" DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib")
   IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
     # don't depends on the targets from wrapitk in external projects
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
       ADD_DEPENDENCIES(${lib} ${dep}Swig)
+      IF(WRAP_ITK_DOC)
+        ADD_DEPENDENCIES(${lib} ${dep}Doxygen)
+      ENDIF(WRAP_ITK_DOC)
     ENDFOREACH(dep)
   ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
@@ -351,9 +359,18 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
   
   SET(base_name wrap_${group_name})
 
+  # is there a docstring file?
+  IF(WRAP_ITK_DOC AND NOT WRAP_ITK_PYTHON_PROCCESS_SWIG_INPUTS)
+    # yes. Include the docstring file
+    SET(doc_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${WRAPPER_MODULE_NAME}_doc.i")
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "%include wrap_${WRAPPER_MODULE_NAME}_doc.i\n\n${WRAP_ITK_PYTHON_SWIG_EXT}")
+  ELSE(WRAP_ITK_DOC AND NOT WRAP_ITK_PYTHON_PROCCESS_SWIG_INPUTS)
+    # no. Clear the doc_file var
+    SET(doc_file "")
+  ENDIF(WRAP_ITK_DOC AND NOT WRAP_ITK_PYTHON_PROCCESS_SWIG_INPUTS)
+
   # the default typemaps, exception handler, and includes
   SET(WRAP_ITK_PYTHON_SWIG_EXT "%import wrap_pyBase.i\n\n${WRAP_ITK_PYTHON_SWIG_EXT}")
-
   
   # create the swig interface for all the groups in the module
   #
@@ -391,8 +408,8 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
-    WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
-    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_TYPEDEFS_DIRECTORY}/wrap_pyBase.i ${SWIG_EXECUTABLE}
+    WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}
+    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python/${base_name}_ext.i ${WRAP_ITK_TYPEDEFS_DIRECTORY}/wrap_pyBase.i ${doc_file} ${SWIG_EXECUTABLE}
     # ${WRAP_ITK_PYTHON_LIBRARY_DEPS}
   )
   WRAP_ITK_INSTALL("/lib" "${python_file}")

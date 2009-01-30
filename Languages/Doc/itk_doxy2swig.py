@@ -94,7 +94,7 @@ def d2s_dir(in_dir_name, out_swig_i):
       xfn = ls[0]
       if os.path.isfile(xfn): # make sure the assumed file exists
           cpp_name = ls[1]
-          print("-- Doxygen to SWIG: " + cpp_name)
+#          print("-- Doxygen to SWIG: " + cpp_name)
           output2 = StringIO()
           d2s = itkDoxy2SWIG(xfn, cpp_name, "@[{(]})@")
           d2s.generate()
