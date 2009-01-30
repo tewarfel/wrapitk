@@ -14,6 +14,8 @@ ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 SET(WRAP_ITK_DOC_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "doc source dir")
 SET(WRAP_ITK_DOC_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "doc binary dir")
 
+SET(WRAPPER_MASTER_INDEX_OUTPUT_DIR "${PROJECT_BINARY_DIR}/Typedefs" CACHE INTERNAL "typedefs dir")
+
 
 ###############################################################################
 # the var to store the file produced by doxygen
@@ -25,7 +27,7 @@ MACRO(WRAP_LIBRARY_DOC library_name)
   SET(WRAP_ITK_DOC_DOXYGEN_HEADERS )  # doxygen headers to process in this lib
   SET(WRAP_ITK_DOC_DOXYGEN_PAGES )  # pages produced by doxygen in this lib
   SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES )  # xml files produced by doxygen in this lib
-  SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT )  # the c++ name - swig names definitions
+  SET(WRAP_ITK_DOC_DOCSTRING_FILES )  # swig docstring files produced by doxygen in this lib
 ENDMACRO(WRAP_LIBRARY_DOC)
 
 
@@ -72,12 +74,6 @@ ENDMACRO(ADD_ONE_TYPEDEF_DOC)
 
 ###############################################################################
 MACRO(END_WRAP_LIBRARY_DOC)
-
-  # check if we need to generate the doc at all
-  STRING(COMPARE NOTEQUAL "${WRAP_ITK_DOC_DOXYGEN_PAGES}" "" headers_exist)
-  
-  IF(${headers_exist})
-  
     # create the target doc dir
     SET(library_doc_build_dir "${CMAKE_CURRENT_BINARY_DIR}/Doc") # Library documentation interface files building directory
                                                                  # TODO: direct name of the library dir?
@@ -115,26 +111,13 @@ MACRO(END_WRAP_LIBRARY_DOC)
       COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Constructing documentation xml structure."
     )
     
-    SET(doxy2swig_config_file ${library_doc_build_dir}/itk_doxy2swig.conf)
-    CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.conf.in" 
-      "${doxy2swig_config_file}"
-      @ONLY IMMEDIATE)
-
-    # run itk_doxy2swig
-    SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
-    SET(swig_doc_interface_file ${library_doc_build_dir}/doc.i)
-    ADD_CUSTOM_COMMAND(
-    OUTPUT ${swig_doc_interface_file}
-    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${doxy2swig_config_file} ${swig_doc_interface_file}
-    DEPENDS "${library_doc_build_dir}/xml/combine.xslt" ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} ${doxy2swig_config_file}
-    COMMENT "-- Wrapping library ${WRAPPER_LIBRARY_NAME}: Generating swig interface for inline documentation."
-    )
-    
-    ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Doxygen ALL DEPENDS ${outputs} ${swig_doc_interface_file})
-
-  ENDIF(${headers_exist})
+    ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Doxygen ALL DEPENDS ${outputs} ${WRAP_ITK_DOC_DOCSTRING_FILES})
     
 ENDMACRO(END_WRAP_LIBRARY_DOC)
+
+MACRO(WRAP_MODULE_DOC module)
+  SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT )  # the c++ name - swig names definitions
+ENDMACRO(WRAP_MODULE_DOC)
 
 ###############################################################################
 # This macro is called once per module
@@ -142,5 +125,19 @@ ENDMACRO(END_WRAP_LIBRARY_DOC)
 # in the macro to current module name
 #
 MACRO(END_WRAP_MODULE_DOC)
+    SET(doxy2swig_config_file ${CMAKE_CURRENT_BINARY_DIR}/Doc/${WRAPPER_MODULE_NAME}.conf)
+    CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.conf.in" 
+      "${doxy2swig_config_file}"
+      @ONLY IMMEDIATE)
 
+    # run itk_doxy2swig
+    SET(itk_doxy2swig_py "${WRAP_ITK_DOC_SOURCE_DIR}/itk_doxy2swig.py")
+    SET(swig_doc_interface_file ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${WRAPPER_MODULE_NAME}_doc.i)
+    ADD_CUSTOM_COMMAND(
+    OUTPUT ${swig_doc_interface_file}
+    COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${doxy2swig_config_file} ${swig_doc_interface_file}
+    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/combine.xslt" ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} ${doxy2swig_config_file} ${itk_doxy2swig_py}
+#    COMMENT "-- Wrapping library ${WRAPPER_MODULE_NAME}: Generating swig interface for inline documentation."
+    )
+    SET(WRAP_ITK_DOC_DOCSTRING_FILES ${WRAP_ITK_DOC_DOCSTRING_FILES} ${swig_doc_interface_file})
 ENDMACRO(END_WRAP_MODULE_DOC)
