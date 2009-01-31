@@ -118,11 +118,6 @@ class itkTemplate(object):
     # add the attribute to this object
     self.__dict__[attributeName] = cl
     
-    # now replace New method by a custom one
-    if hasattr(cl, 'New') :
-      # the new method needs to call the old one, so keep it with another (hidden) name
-      cl.__New_orig__ = staticmethod( cl.New )
-      cl.New = types.MethodType(New, cl)    
 
   def __find_param__(self, paramSetString):
     """find the parameters of the template
