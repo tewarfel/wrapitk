@@ -19,11 +19,11 @@ FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python)
 ###############################################################################
 # should we use autodoc? swig 1.3.37 produce invalid code with autodoc.
 # see https://sourceforge.net/tracker/index.php?func=detail&aid=2552048&group_id=1645&atid=101645
-IF(${SWIG_VERSION} VERSION_EQUAL 1.3.37)
+IF(${SWIG_VERSION} STREQUAL 1.3.37)
   SET(WRAP_ITK_PYTHON_AUTODOC "" CACHE INTERNAL "python autodoc option")
-ELSE(${SWIG_VERSION} VERSION_EQUAL 1.3.37)
+ELSE(${SWIG_VERSION} STREQUAL 1.3.37)
   SET(WRAP_ITK_PYTHON_AUTODOC -features autodoc=1 CACHE INTERNAL "python autodoc option")
-ENDIF(${SWIG_VERSION} VERSION_EQUAL 1.3.37)
+ENDIF(${SWIG_VERSION} STREQUAL 1.3.37)
 
 ###############################################################################
 # Configure the path-dependent itkConfig.py
