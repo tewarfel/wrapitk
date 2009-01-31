@@ -17,6 +17,15 @@ SET(WRAP_ITK_PYTHON_BINARY_DIR "${CMAKE_CURRENT_BINARY_DIR}" CACHE INTERNAL "pyt
 FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python)
 
 ###############################################################################
+# should we use autodoc? swig 1.3.37 produce invalid code with autodoc.
+# see https://sourceforge.net/tracker/index.php?func=detail&aid=2552048&group_id=1645&atid=101645
+IF(${SWIG_VERSION} VERSION_EQUAL 1.3.37)
+  SET(WRAP_ITK_PYTHON_AUTODOC "" CACHE INTERNAL "python autodoc option")
+ELSE(${SWIG_VERSION} VERSION_EQUAL 1.3.37)
+  SET(WRAP_ITK_PYTHON_AUTODOC -features autodoc=1 CACHE INTERNAL "python autodoc option")
+ENDIF(${SWIG_VERSION} VERSION_EQUAL 1.3.37)
+
+###############################################################################
 # Configure the path-dependent itkConfig.py
 
 # we specify these directories with relative paths  so that the file can be 
@@ -314,7 +323,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O -features autodoc=1 -Werror
+    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O ${WRAP_ITK_PYTHON_AUTODOC} -Werror
 #       -fcompact
     -w508 -w312 -w314 -w509 -w302 -w362
     -w389 # operator[], to be suppressed later...
@@ -395,7 +404,7 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
   # and run swig to produce the c++ file and the .py file
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O -features autodoc=1 -Werror
+    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O ${WRAP_ITK_PYTHON_AUTODOC} -Werror
 #       -fcompact
     -w508 -w312 -w314 -w509 -w302 -w362
     -w389 # operator[], to be suppressed later...
