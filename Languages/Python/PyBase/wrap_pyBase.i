@@ -118,6 +118,26 @@
   %extend class_name {
     %pythoncode {
       def New(*args, **kargs):
+          """New() -> class_name
+          
+          Create a new object of the class class_name and set the input and the parameters if some
+          named or non-named arguments are passed to that method.
+          
+          New() tries to assign all the non named parameters to the input of the new objects - the
+          first non named parameter in the first input, etc.
+          
+          The named parameters are used by calling the method with the same name prefixed by 'Set'.
+          
+          Ex:
+          
+            class_name.New( reader, Threshold=10 ) 
+          
+          is (most of the time) equivalent to:
+          
+            obj = class_name.New()
+            obj.SetInput( 0, reader.GetOutput() )
+            obj.SetThreshold( 10 )
+          """
           obj = class_name.__New_orig__()
           import itkTemplate
           itkTemplate.New(obj, *args, **kargs)
