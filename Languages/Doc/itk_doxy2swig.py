@@ -75,11 +75,12 @@ class itkDoxy2SWIG(Doxy2SWIG):
                 # Get the full function name.
                 anc_node = anc.getElementsByTagName('compoundname')
                 cname = self.cpp_to_swig_name(anc_node[0].firstChild.data)
-                self.add_text(' %s::%s "\n%s'%(cname, name, defn))
+                # self.add_text(' %s::%s "\n%s'%(cname, name, defn))
+                self.add_text(' %s::%s "'%(cname, name))
                 # print "***", name, defn
-
             for n in node.childNodes:
-                if n not in first.values():
+                # if n not in first.values():
+                if n not in first.values() and (n.__class__.__name__ != "Element" or "description" in n.tagName):
                     self.parse(n)
             self.add_text(['";', '\n'])
 
