@@ -73,7 +73,7 @@ except :
 # pass filter as argument for input
 # to a filter with SetInput method
 median = itk.MedianImageFilter[IType, IType].New(reader)
-assert repr(reader.GetOutput()) == repr(median.GetInput())
+assert reader.GetOutput() == median.GetInput()
 
 # to a filter with a SetImage method
 calculator = itk.MinimumMaximumImageCalculator[IType].New(reader)
@@ -81,14 +81,14 @@ calculator = itk.MinimumMaximumImageCalculator[IType].New(reader)
 
 # to a filter with several inputs
 sub = itk.SubtractImageFilter[IType, IType, IType].New(reader, reader2)
-assert repr(reader.GetOutput()) == repr(sub.GetInput(0))
-assert repr(reader2.GetOutput()) == repr(sub.GetInput(1))
+assert reader.GetOutput() == sub.GetInput(0)
+assert reader2.GetOutput() == sub.GetInput(1)
 
 
 # pass image as argument for input
 # to a filter with SetInput method
 median = itk.MedianImageFilter[IType, IType].New(im)
-assert repr(im) == repr(median.GetInput())
+assert im == median.GetInput()
 
 # to a filter with a SetImage method
 calculator = itk.MinimumMaximumImageCalculator[IType].New(im)
@@ -96,8 +96,8 @@ calculator = itk.MinimumMaximumImageCalculator[IType].New(im)
 
 # to a filter with several inputs
 sub = itk.SubtractImageFilter[IType, IType, IType].New(im, im2)
-assert repr(im) == repr(sub.GetInput(0))
-assert repr(im2) == repr(sub.GetInput(1))
+assert im == sub.GetInput(0)
+assert im2 == sub.GetInput(1)
 
 
 # pass invalid input
@@ -116,8 +116,8 @@ except TypeError:
 
 # pass both input and attribute
 recons = itk.ReconstructionByDilationImageFilter[IType, IType].New(reader.GetOutput(), im, FullyConnected=True)
-assert repr(reader.GetOutput()) == repr(recons.GetInput(0))
-assert repr(im) == repr(recons.GetInput(1))
+assert reader.GetOutput() == recons.GetInput(0)
+assert im == recons.GetInput(1)
 assert recons.GetFullyConnected() == True
 
 

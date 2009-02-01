@@ -49,20 +49,18 @@ im = itk.Image.US2.New()
 assert im != None
 
 median.SetInput( im )
-assert repr(median.GetInput()) == repr(im)
-
-median.SetInput( im )
-assert repr(median.GetInput()) == repr(im)
+assert median.GetInput() == im
+assert median.GetInput() != median.GetOutput()
 
 median.SetInput( None )
-assert repr(median.GetInput()) == repr(None)
+assert median.GetInput() == None
 
 
 # ImageSource
 
 median2 = itk.MedianImageFilter.IUS2IUS2.New()
 median.SetInput( median2 )
-assert repr(median.GetInput()) == repr(median2.GetOutput())
+assert median.GetInput() == median2.GetOutput()
 
 
 
