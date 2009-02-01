@@ -51,10 +51,10 @@ except KeyError:
 
 
 # test output
-assert repr(itk.output(reader)) == repr(reader.GetOutput())
+assert itk.output(reader) == reader.GetOutput()
 assert itk.output(1) == 1
 # test the deprecated image
-assert repr(itk.image(reader)) == repr(reader.GetOutput())
+assert itk.image(reader) == reader.GetOutput()
 assert itk.image(1) == 1
 
 
@@ -131,7 +131,7 @@ assert "Index" not in res
 obj = itk.Object.cast(reader)
 assert obj.__class__ == itk.Object  # be sure that the reader is casted to itk::Object
 down_casted = itk.down_cast(obj)
-assert repr(down_casted) == repr(reader)
+assert down_casted == reader
 assert down_casted.__class__ == ReaderType
 
 # pipeline, auto_pipeline and templated class are tested in other files
