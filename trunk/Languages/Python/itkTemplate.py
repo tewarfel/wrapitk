@@ -302,8 +302,7 @@ class itkTemplate(object):
 def New(self, *args, **kargs) :
   import sys, itk
   
-  newItkObject = self.__New_orig__()
-  itk.set_inputs( newItkObject, args, kargs )
+  itk.set_inputs( self, args, kargs )
 
   # now, try to add observer to display progress
   if "auto_progress" in kargs.keys() :
@@ -321,23 +320,23 @@ def New(self, *args, **kargs) :
   if callback :
     try :
       def progress() :
-        # newItkObject and callback are kept referenced with a closure
-        callback(self.__name__, newItkObject.GetProgress())
+        # self and callback are kept referenced with a closure
+        callback(self.__name__, self.GetProgress())
 	
-      newItkObject.AddObserver(itk.ProgressEvent(), progress)
+      self.AddObserver(itk.ProgressEvent(), progress)
     except :
       # it seems that something goes wrong...
       # as this feature is designed for prototyping, it's not really a problem
       # if an object  don't have progress reporter, so adding reporter can silently fail
       pass
 
-  if itkConfig.NotInPlace and "SetInPlace" in dir(newItkObject) :
-    newItkObject.SetInPlace( False )
+  if itkConfig.NotInPlace and "SetInPlace" in dir(self) :
+    self.SetInPlace( False )
   
   if itk.auto_pipeline.current != None:
-    itk.auto_pipeline.current.connect(newItkObject)
+    itk.auto_pipeline.current.connect(self)
   
-  return newItkObject
+  return self
 
 
 def output(input) :
