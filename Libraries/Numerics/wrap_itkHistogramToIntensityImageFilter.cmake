@@ -1,5 +1,6 @@
 WRAP_CLASS("itk::HistogramToIntensityImageFilter" POINTER_WITH_SUPERCLASS)
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_HF${d}}"  "${ITKT_HF${d}}")
+    WRAP_TEMPLATE("${ITKM_HD${d}}"  "${ITKT_HD${d}}")
   ENDFOREACH(d)
 END_WRAP_CLASS()
