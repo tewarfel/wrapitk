@@ -94,7 +94,7 @@ MACRO(END_WRAP_LIBRARY_DOC)
     IF(WRAP_ITK_DOC_MAN)
       SET(WRAP_ITK_DOC_GENERATE_MAN "YES")
     ENDIF(WRAP_ITK_DOC_MAN)
-    SET(WRAP_ITK_DOC_LIBRARY_DIR " ${library_doc_build_dir}")
+    SET(WRAP_ITK_DOC_LIBRARY_DIR "${library_doc_build_dir}")
     CONFIGURE_FILE("${WRAP_ITK_DOC_SOURCE_DIR}/doxygen.config.in" 
       "${library_doxygen_config_file}"
       @ONLY IMMEDIATE)
