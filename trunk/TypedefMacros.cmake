@@ -41,8 +41,8 @@ MACRO(WRAP_LIBRARY library_name)
   MESSAGE(STATUS "${WRAPPER_LIBRARY_NAME}: Creating library.")
 
   # Mark the current source dir for inclusion because it may contain header files.
-  INCLUDE_DIRECTORIES("${CMAKE_CURRENT_SOURCE_DIR}")
-  INCLUDE_DIRECTORIES(${WRAPPER_LIBRARY_INCLUDE_DIRECTORIES})
+  INCLUDE_DIRECTORIES(BEFORE "${CMAKE_CURRENT_SOURCE_DIR}")
+  INCLUDE_DIRECTORIES(BEFORE ${WRAPPER_LIBRARY_INCLUDE_DIRECTORIES})
   
   # WRAPPER_LIBRARY_INCLUDE_DIRECTORIES. List of other include directories that
   # contain the desired header files.
