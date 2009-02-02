@@ -56,7 +56,10 @@ class itkDoxy2SWIG(Doxy2SWIG):
             name = first['name'].firstChild.data
             if name[:8] == 'operator': # Don't handle operators yet.
                 return
-
+            
+            # store self.pieces to be able to restore it if the docstring is empty.
+            pieces_backup = list(self.pieces)
+            
             defn = first['definition'].firstChild.data
             self.add_text('\n')
             self.add_text('%feature("docstring") ')
@@ -78,11 +81,21 @@ class itkDoxy2SWIG(Doxy2SWIG):
                 # self.add_text(' %s::%s "\n%s'%(cname, name, defn))
                 self.add_text(' %s::%s "'%(cname, name))
                 # print "***", name, defn
+                
+            # make sure that the docstring won't be empty before writing any text
+            current_length = len(self.pieces)
+                
             for n in node.childNodes:
                 # if n not in first.values():
                 if n not in first.values() and (n.__class__.__name__ != "Element" or "description" in n.tagName):
                     self.parse(n)
-            self.add_text(['";', '\n'])
+
+            # make sure that the docstring won't be empty before writing any text
+            if current_length == len(self.pieces):
+                # restore the old self.pieces
+                self.pieces = pieces_backup
+            else:
+                self.add_text(['";', '\n'])
 
 
 def d2s_dir(in_dir_name, out_swig_i):
