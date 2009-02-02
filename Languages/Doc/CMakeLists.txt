@@ -7,6 +7,9 @@ OPTION(WRAP_ITK_DOC_MAN "Generate unix manual pages." ON)
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   WRAP_ITK_INSTALL(/Configuration/Languages/Doc CMakeLists.txt)
   WRAP_ITK_INSTALL(/Configuration/Languages/Doc doxygen.config.in)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Doc itk_doxy2swig.conf.in)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Doc doxy2swig.py)
+  WRAP_ITK_INSTALL(/Configuration/Languages/Doc itk_doxy2swig.py)
 ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
 ###############################################################################
@@ -140,4 +143,7 @@ MACRO(END_WRAP_MODULE_DOC)
 #    COMMENT "-- Wrapping library ${WRAPPER_MODULE_NAME}: Generating swig interface for inline documentation."
     )
     SET(WRAP_ITK_DOC_DOCSTRING_FILES ${WRAP_ITK_DOC_DOCSTRING_FILES} ${swig_doc_interface_file})
+    
+    # install the produced file
+    WRAP_ITK_INSTALL(/Configuration/Typedefs "${swig_doc_interface_file}")
 ENDMACRO(END_WRAP_MODULE_DOC)
