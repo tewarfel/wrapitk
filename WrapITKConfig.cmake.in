@@ -63,9 +63,6 @@ SET(WRAP_ITK_CMAKE_DIR "@CONFIG_CMAKE_DIR@")
 IF("${WrapITK_DIR}" MATCHES "^${CMAKE_INSTALL_PREFIX}")
   STRING(REGEX REPLACE "^${CMAKE_INSTALL_PREFIX}" "" prefix "${WrapITK_DIR}")
   SET(WRAP_ITK_INSTALL_PREFIX "${prefix}" CACHE PATH "subpath where where most of WrapITK files will be installed")
-  
-  message("==================")
-  
 ELSE("${WrapITK_DIR}" MATCHES "^${CMAKE_INSTALL_PREFIX}")
   MESSAGE("Warning: the CMAKE_INSTALL_PREFIX doesn't match the WrapITK one. Your installation may not be usable.")
   SET(WRAP_ITK_INSTALL_PREFIX "lib/InsightToolkit/WrapITK/" CACHE PATH "subpath where where most of WrapITK files will be installed")
