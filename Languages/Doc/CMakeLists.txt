@@ -37,7 +37,7 @@ ENDMACRO(WRAP_LIBRARY_DOC)
 ###############################################################################
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
   SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT OFF)
-  GET_DIRECTORY_PROPERTY(dirs PROPERTY INCLUDE_DIRECTORIES)
+  GET_DIRECTORY_PROPERTY(dirs INCLUDE_DIRECTORIES)
   SET(paths )
   FOREACH(dir ${dirs})
     SET(paths ${paths} "${dir}/${swig_name}.h")
@@ -100,14 +100,14 @@ MACRO(END_WRAP_LIBRARY_DOC)
       @ONLY IMMEDIATE)
 
     # which files are produced?
-    SET(outputs ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} "${library_doc_build_dir}/xml/combine.xslt") # a file which seem to be produced every times with xml outputs
+    SET(outputs ${WRAP_ITK_DOC_DOXYGEN_XML_FILES})
     IF(WRAP_ITK_DOC_MAN)
       SET(outputs ${outputs} ${WRAP_ITK_DOC_DOXYGEN_PAGES})
     ENDIF(WRAP_ITK_DOC_MAN)
 
     # run doxygen
     ADD_CUSTOM_COMMAND(
-      OUTPUT ${outputs}
+      OUTPUT ${outputs} "${library_doc_build_dir}/xml/combine.xslt"  # this file is always produced and avoid an error if ${outputs} is empty
       COMMAND "${DOXYGEN_EXECUTABLE}" "${library_doxygen_config_file}"
 #      WORKING_DIRECTORY ${WRAP_ITK_DOC_BINARY_DIR}
       DEPENDS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${library_doxygen_config_file}"
@@ -139,7 +139,7 @@ MACRO(END_WRAP_MODULE_DOC)
     ADD_CUSTOM_COMMAND(
     OUTPUT ${swig_doc_interface_file}
     COMMAND ${PYTHON_EXECUTABLE} ${itk_doxy2swig_py} ${doxy2swig_config_file} ${swig_doc_interface_file}
-    DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/combine.xslt" ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} ${doxy2swig_config_file} ${itk_doxy2swig_py}
+    DEPENDS ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} ${doxy2swig_config_file} ${itk_doxy2swig_py}
 #    COMMENT "-- Wrapping library ${WRAPPER_MODULE_NAME}: Generating swig interface for inline documentation."
     )
     SET(WRAP_ITK_DOC_DOCSTRING_FILES ${WRAP_ITK_DOC_DOCSTRING_FILES} ${swig_doc_interface_file})
