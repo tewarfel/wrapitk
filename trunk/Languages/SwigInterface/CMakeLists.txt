@@ -4,6 +4,25 @@
 FIND_PACKAGE(CableSwig REQUIRED)
 SET(CABLE_INDEX ${CableSwig_cableidx_EXE} CACHE INTERNAL "cableidx path")
 
+IF("${CMAKE_VERSION}" STRLESS "2.6")
+    # cmake 2.4 doesn't provied VERSION
+    IF(SWIG_DIR)
+      SET(SWIG_FOUND 1)
+      SET(SWIG_USE_FILE ${CMAKE_ROOT}/Modules/UseSWIG.cmake)
+      EXECUTE_PROCESS(COMMAND ${SWIG_EXECUTABLE} -version
+        OUTPUT_VARIABLE SWIG_version_output
+        ERROR_VARIABLE SWIG_version_output
+        RESULT_VARIABLE SWIG_version_result)
+      IF(SWIG_version_result)
+        MESSAGE(SEND_ERROR "Command \"${SWIG_EXECUTABLE} -version\" failed with output:\n${SWIG_version_output}")
+      ELSE(SWIG_version_result)
+        STRING(REGEX REPLACE ".*SWIG Version[^0-9.]*\([0-9.]+\).*" "\\1"
+          SWIG_version_output "${SWIG_version_output}")
+        SET(SWIG_VERSION ${SWIG_version_output} CACHE STRING "Swig version" FORCE)
+      ENDIF(SWIG_version_result)
+    ENDIF(SWIG_DIR)
+ENDIF("${CMAKE_VERSION}" STRLESS "2.6")
+
 ###############################################################################
 # install the files requires for swiginterface
 IF(NOT EXTERNAL_WRAP_ITK_PROJECT)

@@ -37,7 +37,7 @@ ENDMACRO(WRAP_LIBRARY_DOC)
 ###############################################################################
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
   SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT OFF)
-  GET_PROPERTY(dirs DIRECTORY PROPERTY INCLUDE_DIRECTORIES)
+  GET_DIRECTORY_PROPERTY(dirs PROPERTY INCLUDE_DIRECTORIES)
   SET(paths )
   FOREACH(dir ${dirs})
     SET(paths ${paths} "${dir}/${swig_name}.h")
