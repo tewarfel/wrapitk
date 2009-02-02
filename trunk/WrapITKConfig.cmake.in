@@ -28,9 +28,6 @@ SET(WrapITK_VERSION_MINOR @WrapITK_VERSION_MINOR@)
 SET(WrapITK_VERSION_PATCH @WrapITK_VERSION_PATCH@)
 
 # Set up the rest of the variables that WrapITK was built with.
-SET(WRAP_ITK_TCL @WRAP_ITK_TCL@ CACHE BOOL "Build cswig Tcl wrapper support (requires CableSwig).")
-SET(WRAP_ITK_PYTHON @WRAP_ITK_PYTHON@ CACHE BOOL "Build cswig Python wrapper support (requires CableSwig).")
-SET(WRAP_ITK_JAVA @WRAP_ITK_JAVA@ CACHE BOOL "Build cswig Java wrapper support (requires CableSwig).")
 SET(WRAP_unsigned_char @WRAP_unsigned_char@ CACHE BOOL "Wrap unsigned char type")
 SET(WRAP_unsigned_short @WRAP_unsigned_short@ CACHE BOOL "Wrap unsigned short type")
 SET(WRAP_unsigned_long @WRAP_unsigned_long@ CACHE BOOL "Wrap unsigned long type")
@@ -82,8 +79,6 @@ SET(WRAP_ITK_TYPEDEFS_DIRECTORY "@CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY@")
 SET(WRAP_ITK_LIB_DIRECTORY "@CONFIG_WRAP_ITK_LIB_DIR@")
 SET(WRAP_ITK_MODULES "@CONFIG_WRAP_ITK_MODULES@")
 
-INCLUDE_DIRECTORIES("@CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY@")
-
 # Tell the world that this is an external project using WrapITK:
 SET(EXTERNAL_WRAP_ITK_PROJECT ON)
 
@@ -92,6 +87,9 @@ SET (LIBRARY_OUTPUT_PATH "${PROJECT_BINARY_DIR}/lib" CACHE INTERNAL "Single outp
 
 # Now include ConfigureWrapping
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/ConfigureWrapping.cmake")
+
+# include must be there to add the path *after* the local path
+INCLUDE_DIRECTORIES("@CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY@")
 
 # If WrapITK has been installed, we need to point the linker at the various
 # language directories, where libSwigRuntime has been installed.
