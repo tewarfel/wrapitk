@@ -226,30 +226,47 @@ ENDMACRO(ADD_SIMPLE_TYPEDEF_ALL_LANGUAGES wrap_class swig_name)
 ###############################################################################
 # build the languages list
 
-# set some of them to on by default
-OPTION(WRAP_ITK_GCCXML "Build gccxml files." ON)
-OPTION(WRAP_ITK_SWIGINTERFACE "Build swig interfaces." ON)
+IF(EXTERNAL_WRAP_ITK_PROJECT)
+  # languages there have been turned on while building wrapitk
+  SET(default ON)
+ELSE(EXTERNAL_WRAP_ITK_PROJECT)
+  # set some of them to on by default
+  OPTION(WRAP_ITK_GCCXML "Build gccxml files." ON)
+  OPTION(WRAP_ITK_SWIGINTERFACE "Build swig interfaces." ON)
+  SET(default OFF)
+ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
 
 SET(WRAP_ITK_LANGUAGES CACHE INTERNAL "Internal languages list.")
 FILE(GLOB local_files *)
+# filter and reorder the list
+SET(languages )
 FOREACH(f ${local_files})
   FILE(RELATIVE_PATH lang "${CMAKE_CURRENT_SOURCE_DIR}" "${f}")
   IF(IS_DIRECTORY "${f}" AND NOT "${lang}" MATCHES "CVS" AND NOT "${lang}" MATCHES ".svn")
-    STRING(TOUPPER "${lang}" lang_upper)
-    
-    # add the language to the options
-    OPTION(WRAP_ITK_${lang_upper} "Build swig ${lang} wrapper support." OFF)
-    
-    # add the language to the list, if the user have turn it on, and include
-    # the subdirectory
-    IF(WRAP_ITK_${lang_upper})
-      SET(WRAP_ITK_LANGUAGES ${WRAP_ITK_LANGUAGES} "${lang}")
-      ADD_SUBDIRECTORY("${lang}")
-      GET_DIRECTORY_PROPERTY(inc DIRECTORY "${lang}" INCLUDE_DIRECTORIES)
-      INCLUDE_DIRECTORIES(${inc})
-    ENDIF(WRAP_ITK_${lang_upper})
+    IF("${lang}" MATCHES "^GccXML$|^SwigInterface$|^Doc$")
+      # put those languages before the others
+      SET(languages ${lang} ${languages})
+    ELSE("${lang}" MATCHES "^GccXML$|^SwigInterface$|^Doc$")
+      SET(languages ${languages} ${lang})
+    ENDIF("${lang}" MATCHES "^GccXML$|^SwigInterface$|^Doc$")
   ENDIF(IS_DIRECTORY "${f}" AND NOT "${lang}" MATCHES "CVS" AND NOT "${lang}" MATCHES ".svn")
 ENDFOREACH(f)
+
+FOREACH(lang ${languages})
+  STRING(TOUPPER "${lang}" lang_upper)
+  
+  # add the language to the options
+  OPTION(WRAP_ITK_${lang_upper} "Build swig ${lang} wrapper support." ${default})
+  
+  # add the language to the list, if the user have turn it on, and include
+  # the subdirectory
+  IF(WRAP_ITK_${lang_upper})
+    SET(WRAP_ITK_LANGUAGES ${WRAP_ITK_LANGUAGES} "${lang}")
+    ADD_SUBDIRECTORY("${lang}")
+    GET_DIRECTORY_PROPERTY(inc DIRECTORY "${lang}" INCLUDE_DIRECTORIES)
+    INCLUDE_DIRECTORIES(${inc})
+  ENDIF(WRAP_ITK_${lang_upper})
+ENDFOREACH(lang)
 SET(WRAP_ITK_LANGUAGES ${WRAP_ITK_LANGUAGES} CACHE INTERNAL "Internal languages list.")
 
 # MESSAGE("WRAP_ITK_LANGUAGES: ${WRAP_ITK_LANGUAGES}")
