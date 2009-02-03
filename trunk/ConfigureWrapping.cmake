@@ -143,14 +143,17 @@ ENDMACRO(WRAP_ITK_INSTALL)
 ###############################################################################
 INCLUDE("${WRAP_ITK_CMAKE_DIR}/TypedefMacros.cmake")
 
+###############################################################################
+# Create wrapper names for simple types to ensure consistent naming
+###############################################################################
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapBasicTypes.cmake")
+INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapITKTypes.cmake")
+
+###############################################################################
+# Lets the target languages do their job
+###############################################################################
 ADD_SUBDIRECTORY("${WRAP_ITK_CMAKE_DIR}/Languages" "${CMAKE_CURRENT_BINARY_DIR}/Languages")
 # get the porperties from the languages dirs - there should be others than this one
 GET_DIRECTORY_PROPERTY(inc DIRECTORY "${WRAP_ITK_CMAKE_DIR}/Languages" INCLUDE_DIRECTORIES)
 INCLUDE_DIRECTORIES(${inc})
 
-
-  ###############################################################################
-# Create wrapper names for simple types to ensure consistent naming
-###############################################################################
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapBasicTypes.cmake")
-INCLUDE("${WRAP_ITK_CMAKE_DIR}/WrapITKTypes.cmake")
