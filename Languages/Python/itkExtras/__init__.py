@@ -515,6 +515,7 @@ class templated_class:
     """cls is the custom class
     """
     self.__cls__ = cls
+    self.__templates__ = {}
     
   def New(self, *args, **kargs):
     """Use the parameters to infer the types of the template parameters.
@@ -553,6 +554,34 @@ class templated_class:
     #
     self.__cls__.check_template_parameters(template_parameters)
 
+  def add_template(self, name, params):
+    if not isinstance(params, list) and not isinstance(params, tuple):
+      params = (params,)
+    params = tuple(params)
+    val = self[params]
+    self.__templates__[params] = val
+    setattr(self, name, val)
+
+  def add_image_templates(self, *args):
+    import itk
+    if args == []:
+      return
+    combinations = [[t] for t in args[0]]
+    for types in args[1:]:
+      temp = []
+      for t in types:
+        for c in combinations: 
+          temp.append(c+[t])
+      combinations = temp
+    for d in itk.DIMS:
+      for c in combinations:
+        parameters = []
+        name = ""
+        for t in c:
+          parameters.append( itk.Image[t, d] )
+          name += "I"+t.short_name+str(d)
+        self.add_template(name, tuple(parameters))
+
   class __templated_class_and_parameters__:
     """Inner class used to store the pair class-template parameters ready to instantiate.
     """
@@ -576,6 +605,54 @@ class templated_class:
       
     def __call__(self, *args, **kargs):
       return self.New(*args, **kargs)
+
+  def keys(self):
+    return self.__templates__.keys()
+
+  # everything after this comment is for dict interface
+  # and is a copy/paste from DictMixin
+  # only methods to edit dictionary are not there
+  def __iter__(self):
+    for k in self.keys():
+      yield k
+
+  def has_key(self,key):
+    try:
+      value=self[key]
+    except KeyError:
+      return False
+    return True
+
+  def __contains__(self,key):
+    return self.has_key(key)
+
+  # third level takes advantage of second level definitions
+  def iteritems(self):
+    for k in self:
+      yield (k,self[k])
+
+  def iterkeys(self):
+    return self.__iter__()
+
+  # fourth level uses definitions from lower levels
+  def itervalues(self):
+    for _,v in self.iteritems():
+      yield v
+
+  def values(self):
+    return [v for _,v in self.iteritems()]
+
+  def items(self):
+    return list(self.iteritems())
+
+  def get(self,key,default=None):
+    try:
+      return self[key]
+    except KeyError:
+      return default
+
+  def __len__(self):
+    return len(self.keys())
 
 
 class pipeline:
