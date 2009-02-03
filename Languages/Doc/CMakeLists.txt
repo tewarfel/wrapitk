@@ -51,10 +51,10 @@ MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
     SET(page "${CMAKE_CURRENT_BINARY_DIR}/Doc/man3/${base_name}.3")
     SET(WRAP_ITK_DOC_DOXYGEN_PAGES "${WRAP_ITK_DOC_DOXYGEN_PAGES};${page}")
     # and in install the manpage, if requested, and if not yet installed from another dir
-    IF(WRAP_ITK_DOC_MAN AND "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${name}(;|$)")
+    IF(WRAP_ITK_DOC_MAN AND NOT "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${base_name}\\.3(;|$)")
       WRAP_ITK_INSTALL(/Doc/man3 "${page}")
       SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES ${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES} "${base_name}.3" CACHE INTERNAL "man pages produced by doxygen and already installed")
-    ENDIF(WRAP_ITK_DOC_MAN AND "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${name}(;|$)")
+    ENDIF(WRAP_ITK_DOC_MAN AND NOT "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${base_name}\\.3(;|$)")
     
     # some simple computations to find the xml file produced for this class
     STRING(REGEX REPLACE "([A-Z])" "_\\1" xmlname ${class})
