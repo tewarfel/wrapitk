@@ -319,9 +319,10 @@ def New(self, *args, **kargs) :
       
   if callback :
     try :
+      name = self.__class__.__name__
       def progress() :
         # self and callback are kept referenced with a closure
-        callback(self.__name__, self.GetProgress())
+        callback(name, self.GetProgress())
 	
       self.AddObserver(itk.ProgressEvent(), progress)
     except :
