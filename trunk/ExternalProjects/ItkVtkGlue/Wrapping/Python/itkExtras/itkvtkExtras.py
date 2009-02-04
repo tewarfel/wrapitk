@@ -184,9 +184,9 @@ class lsm( itkExtras.pipeline ):
     self.connect( vtkImageCast() )
     PType = itk.template(ImageType)[1][0]
     if PType == itk.UC:
-      self[-1].SetOutputScalarTypeToUnsignedChar()
+      self.filters[-1].SetOutputScalarTypeToUnsignedChar()
     elif PType == itk.US:
-      self[-1].SetOutputScalarTypeToUnsignedShort()
+      self.filters[-1].SetOutputScalarTypeToUnsignedShort()
     self.connect( itk.VTKImageToImageFilter[ImageType].New() )
     self.connect( itk.ChangeInformationImageFilter[ImageType].New( ChangeSpacing=True ) )
     # and configure the pipeline
@@ -195,34 +195,34 @@ class lsm( itkExtras.pipeline ):
     self.SetChannel( channel )
 
   def SetFileName( self, fileName ):
-    self[0].SetFileName( fileName )
-    self[0].Update()
+    self.filters[0].SetFileName( fileName )
+    self.filters[0].Update()
     self.UpdateSpacing()
 
   def SetChannel( self, channel ):
-    self[0].SetUpdateChannel( channel )
-    self[0].Update()
+    self.filters[0].SetUpdateChannel( channel )
+    self.filters[0].Update()
     self.UpdateSpacing()
     self.__channel__ = channel
     return self.GetChannelName( channel )
 
   def UpdateSpacing(self):
-    spacing = self[0].GetVoxelSizes()
+    spacing = self.filters[0].GetVoxelSizes()
     spacing = [ v * 1e6 for v in spacing ]
-    self[-1].SetOutputSpacing( spacing )
+    self.filters[-1].SetOutputSpacing( spacing )
 
   def GetFileName(self):
-    return self[0].GetFileName()
+    return self.filters[0].GetFileName()
   
   def GetChannel(self):
     return self.__channel__
   
   def GetNumberOfChannels(self):
-    return self[0].GetNumberOfChannels()
+    return self.filters[0].GetNumberOfChannels()
   
   def GetChannelName(self, channel=None):
     if channel == None:
       channel = self.GetChannel()
-    return self[0].GetChannelName( channel )
+    return self.filters[0].GetChannelName( channel )
   
 del itkExtras
