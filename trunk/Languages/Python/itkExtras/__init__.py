@@ -700,7 +700,16 @@ class pipeline:
     if len(self.filters) == 0:
       return self.GetInput()
     else :
-      return self.filters[-1][index]
+      filter = self.filters[-1]
+      if hasattr(filter, "__getitem__"):
+        return filter[index]
+      try:
+        return filter.GetOutput(index)
+      except:
+        if index == 0:
+          return filter.GetOutput()
+        else:
+          raise ValueError("Index can only be 0 on that object")
 
   def SetInput( self, input ):
     """Set the input of the pipeline
@@ -739,10 +748,7 @@ class pipeline:
       return self.filters[-1].GetNumberOfOutputs()
       
   def __getitem__(self, item):
-    if len(self.filters) == 0:
-      return self.input
-    else:
-      return self.filters[-1][item]
+    self.GetOutput( item )
       
   def __call__(self, *args, **kargs):
      set_inputs( self, args, kargs )
