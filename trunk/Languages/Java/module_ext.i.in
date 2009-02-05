@@ -1,11 +1,8 @@
 
 @WRAP_ITK_JAVA_SWIG_EXT@
 
-//%typemap(javaimports) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*)"
-//@WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@"
-
-%pragma(java) moduleimports = %{
-@WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@%}
+%typemap(javaimports) SWIGTYPE, SWIGTYPE *, SWIGTYPE &, SWIGTYPE [], SWIGTYPE (CLASS::*)"
+@WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@"
 
 %pragma(java) jniclassimports = %{
 @WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@%}

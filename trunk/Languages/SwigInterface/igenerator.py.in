@@ -497,7 +497,7 @@ print >> importFile
 
 
 # finally, really write the output
-content = headerFile.getvalue() + includeFile.getvalue() + importFile.getvalue() + outputFile.getvalue()
+content = headerFile.getvalue()+ importFile.getvalue() + includeFile.getvalue() + outputFile.getvalue()
 
 if args[1] != '-':
   if options.keep and os.path.exists( args[1] ) and file( args[1] ).read() == content:
