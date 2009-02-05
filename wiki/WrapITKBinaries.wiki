@@ -1,6 +1,4 @@
 #labels Featured
-=WrapITK binaries=
-
 ==Ubuntu 8.10 Intrepid==
 || *Architectures* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel types* || *Runtime <br> packages* || *Development <br> packages ||
 || x86 <br> x86_64 || 3.11 _unstable_ || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Float <br> Double <br> Complex double <br> Vector double <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| libitk <br> python-itk <br> python-itk-numpy || libitk-dev ||
@@ -12,8 +10,7 @@ sudo apt-get update
 }}}
   * Installation:
 {{{
-sudo apt-get install libitk
 sudo apt-get install python-itk
-...
 }}}
+  Package libitk-dev may be used for developing custom ITK classes as well as automatically wrapping them. Other packages, such as python-itk-numpy, may be installed for interfacing to external libraries.
   * _Note: The packages are not currently signed, they will be soon._
