@@ -1,6 +1,19 @@
 #labels Featured
-Available WrapITK binaries for some platforms
+=WrapITK binaries=
 
-|| *Platform* || *Package <br> type* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel <br> types* || *Download <br > files* ||
-|| Ubuntu 8.10 Intrepid <br> x86 || Debian || 3.11 || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Float <br> Double <br> Complex double <br> Vector double <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| _coming soon_ ||
-|| Mandriva Linux 2009 <br> x86 || - || 3.11 || - || 2, 3 || - || _coming soon_ ||
+==Ubuntu 8.10 Intrepid==
+|| *Architectures* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel types* || *Runtime <br> packages* || *Development <br> packages ||
+|| x86 <br> x86_64 || 3.11 _unstable_ || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Float <br> Double <br> Complex double <br> Vector double <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| libitk <br> python-itk <br> python-itk-numpy || libitk-dev ||
+
+  * Adding the repository:
+{{{
+sudo wget http://wrapitk.googlecode.com/files/wrapitk-ubuntu-8.10.list -O /etc/apt/sources.list.d/wrapitk.list
+sudo apt-get update
+}}}
+  * Installation:
+{{{
+sudo apt-get install libitk
+sudo apt-get install python-itk
+...
+}}}
+  * _Note: The packages are not currently signed, they will be soon._
