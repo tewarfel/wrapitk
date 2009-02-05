@@ -14,3 +14,4 @@ sudo apt-get install python-itk
 }}}
   Package libitk-dev may be used for developing custom ITK classes as well as automatically wrapping them. Other packages, such as python-itk-numpy, may be installed for interfacing to external libraries.
   * _Note: The packages are not currently signed, they will be soon._
+  * _Note: New versions of packages swig, cableswig and doxygen are available in the repository. They were required in order to perform compilation on opensuse build service and will be removed soon (their existence is due to a problem on the build service). Do *not* try to update these packages as they are not official._
