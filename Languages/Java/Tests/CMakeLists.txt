@@ -4,7 +4,8 @@ FIND_PROGRAM(ITK_TEST_DRIVER itkTestDriver)
 
 SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
   "${JAVA_RUNTIME}"
-  -cp ".:${WrapITK_BINARY_DIR}/Java/${CMAKE_CFG_INTDIR}/InsightToolkit.jar"
+  -cp ".:${WRAP_ITK_JAVA_BINARY_DIR}/Proxies/src"
+  -Djava.library.path=${WrapITK_BINARY_DIR}/lib
 )
   
 
@@ -16,14 +17,28 @@ MACRO(BUILD_JAVA_TEST name)
   # 
   ADD_CUSTOM_COMMAND(
     OUTPUT ${name}.class
-    DEPENDS ${WrapITK_BINARY_DIR}/Java/${CMAKE_CFG_INTDIR}/InsightToolkit.jar
+    DEPENDS ${WrapITK_BINARY_DIR}/lib/org.itk.base.jar
     COMMAND ${JAVA_COMPILE}
-    ARGS -classpath "${WrapITK_BINARY_DIR}/Java/${CMAKE_CFG_INTDIR}/InsightToolkit.jar"
+    ARGS -classpath "${WRAP_ITK_JAVA_BINARY_DIR}/Proxies/src"
     -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
     )
   SET(targets ${targets} ${name}.class)
   
 ENDMACRO(BUILD_JAVA_TEST)
+
+MACRO(BUILD_JAVA_TEST2 name)
+  # a convenient macro to build java tests
+  # 
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${name}.class
+    DEPENDS ${WrapITK_BINARY_DIR}/lib/org.itk.base.jar
+    COMMAND ${JAVA_COMPILE}
+    ARGS -classpath "${WRAP_ITK_JAVA_BINARY_DIR}/Proxies/src"
+    -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
+    )
+  SET(targets ${targets} ${name}.class)
+  
+ENDMACRO(BUILD_JAVA_TEST2)
 
 
 
@@ -47,9 +62,9 @@ FOREACH(JAVA_TEST_IMAGE_DIMENSION ${WRAP_ITK_DIMS})
 
     ADD_CUSTOM_COMMAND(
       OUTPUT ${TEST_FILE_NAME}.class
-      DEPENDS ${WrapITK_BINARY_DIR}/Java/${CMAKE_CFG_INTDIR}/InsightToolkit.jar ${WrapITK_BINARY_DIR}/Java/Tests/${TEST_FILE_NAME}.java
       COMMAND ${JAVA_COMPILE}
-      ARGS -classpath "${WrapITK_BINARY_DIR}/Java/${CMAKE_CFG_INTDIR}/InsightToolkit.jar" -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE_NAME}.java
+      ARGS -classpath "${WRAP_ITK_JAVA_BINARY_DIR}/Proxies/src" -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE_NAME}.java
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${TEST_FILE_NAME}.java
     )
 
     ADD_TEST(JavaSimplePipeline${JAVA_TEST_PIXEL_TYPE}${JAVA_TEST_IMAGE_DIMENSION}
