@@ -37,6 +37,7 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
     CMakeLists.txt
     java.i
     module_ext.i.in
+    manifest.in
   )
 ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
 
@@ -159,16 +160,27 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   # Dependency modules bin path
   #SET(class_path "${class_path}${WRAP_ITK_JAVA_BIN_DIR}${sep}")
   # Dependency modules jar files
+  # manifest content
+  SET(WRAP_ITK_JAVA_MANIFEST )
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     # create the import package commands
-    STRING(TOLOWER ${dep} dep_jar_file)
-    SET(dep_jar_file ${WRAP_ITK_LIB_DIRECTORY}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${dep_jar_file}.jar)
+    STRING(TOLOWER ${dep} ldep)
+    SET(dep_jar_file ${WRAP_ITK_LIB_DIRECTORY}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${ldep}.jar)
     SET(class_path "${class_path}${dep_jar_file}${sep}")
+    SET(WRAP_ITK_JAVA_MANIFEST "${WRAP_ITK_JAVA_MANIFEST} ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${ldep}.jar")
   ENDFOREACH(dep)
   FOREACH(ucp ${WRAP_ITK_JAVA_USER_CLASS_PATH})
     SET(class_path "${class_path}${ucp}${sep}")
   ENDFOREACH(ucp)
-  
+
+  # create the manifest file  
+  IF(WRAP_ITK_JAVA_MANIFEST)
+    SET(WRAP_ITK_JAVA_MANIFEST "Class-Path: ${WRAP_ITK_JAVA_MANIFEST}")
+  ENDIF(WRAP_ITK_JAVA_MANIFEST)
+  CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/manifest.in"
+                "${CMAKE_CURRENT_BINARY_DIR}/manifest"
+                @ONLY IMMEDIATE)
+
   # Add java proxy compilation stuff
   # Only add this if there is any classes to be built
   IF(NOT "${WRAP_ITK_JAVA_CLASS_NAMES}" STREQUAL "")
@@ -189,10 +201,10 @@ MACRO(END_WRAP_LIBRARY_JAVA)
 
     ADD_CUSTOM_COMMAND(
       OUTPUT ${java_jar_file_path}
-      DEPENDS ${java_bin_file}
+      DEPENDS ${java_bin_file} ${CMAKE_CURRENT_BINARY_DIR}/manifest
       COMMAND ${JAVA_ARCHIVE}
       ARGS
-      -cf "${java_jar_file_path}"
+      -cmf "${CMAKE_CURRENT_BINARY_DIR}/manifest" "${java_jar_file_path}"
       "${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name}/*"
       WORKING_DIRECTORY ${WRAP_ITK_JAVA_BIN_DIR}
       COMMENT "Creating java archive: ${java_jar_file_name}"
