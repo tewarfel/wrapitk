@@ -6,3 +6,9 @@
 
 %pragma(java) jniclassimports = %{
 @WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS@%}
+
+%pragma(java) jniclasscode=%{
+  static {
+    System.loadLibrary("@WRAPPER_LIBRARY_NAME@Java");
+  }
+%}
