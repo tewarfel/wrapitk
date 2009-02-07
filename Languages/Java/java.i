@@ -9,6 +9,7 @@
 // Some declarations
 
 // Arrays
+/*
 %include "carrays.i"
 %array_functions(unsigned long, ULArray);
 %array_functions(long, LArray);
@@ -20,6 +21,7 @@
 %array_class(int, IArrayClass);
 %array_class(float, FArrayClass);
 %array_class(double, DArrayClass);
+*/
 
 // String
 //%template(StringVector) std::vector<std::string>;
