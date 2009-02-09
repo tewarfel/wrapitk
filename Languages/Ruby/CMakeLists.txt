@@ -50,12 +50,15 @@ MACRO(END_WRAP_LIBRARY_RUBY)
   FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
     SET(WRAP_ITK_RUBY_CONFIGURATION_DEPENDS "'${dep}', ${WRAP_ITK_RUBY_CONFIGURATION_DEPENDS}")
     SET(WRAP_ITK_RUBY_LIBRARY_IMPORTS "import ${dep}Ruby\n${WRAP_ITK_RUBY_LIBRARY_IMPORTS}")
+    # add the rb_require() calls for the real binary files
+    SET(WRAP_ITK_RUBY_LIBRARY_CALLS "  rb_require_wrapitk(\"${dep}Ruby\");\n${WRAP_ITK_RUBY_LIBRARY_CALLS}")
   ENDFOREACH(dep)
   
   # ITKRbBase is always included, excepted ITKRbBase itself
   IF(NOT "${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKRbBase")
     SET(WRAP_ITK_RUBY_CONFIGURATION_DEPENDS "'ITKRbBase', ${WRAP_ITK_RUBY_CONFIGURATION_DEPENDS}")
     SET(WRAP_ITK_RUBY_LIBRARY_IMPORTS "import ITKRbBaseRuby\n${WRAP_ITK_RUBY_LIBRARY_IMPORTS}")
+    SET(WRAP_ITK_RUBY_LIBRARY_CALLS "  rb_require_wrapitk(\"ITKRbBaseRuby\");\n${WRAP_ITK_RUBY_LIBRARY_CALLS}")
   ENDIF(NOT "${WRAPPER_LIBRARY_NAME}" STREQUAL "ITKRbBase")
 
   # create the ruby customization stuff in the main module
@@ -80,8 +83,8 @@ MACRO(END_WRAP_LIBRARY_RUBY)
 
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${cpp_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -ruby -autorename -O -features autodoc=1 # -Werror
+    OUTPUT ${cpp_file}.rb_require
+    COMMAND ${SWIG_EXECUTABLE} -c++ -ruby -O -features autodoc=1 -autorename # -Werror
 #       -fcompact
     -w362 # operator= ignored
     -w366 # operator-= ignored
@@ -93,13 +96,24 @@ MACRO(END_WRAP_LIBRARY_RUBY)
     -w361 # operator!
     -w365 # operator+=
     -w801 # Wrong class name
-    -o ${cpp_file}
+    -w508 # Declaration of 'Print' shadows declaration accessible via operator->()
+    -w302 # previous definition of 'a_method' (Renamed from 'AMethod')
+    -o ${cpp_file}.rb_require
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/ruby
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby
     DEPENDS ${DEPS} ${WRAP_ITK_RUBY_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_TYPEDEFS_DIRECTORY}/wrap_rbBase.i ${SWIG_EXECUTABLE}
+  )
+
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${cpp_file}
+    COMMAND ${RUBY_EXECUTABLE} ${WRAP_ITK_RUBY_SOURCE_DIR}/fix_require.rb
+    ${cpp_file}.rb_require
+    ${cpp_file}
+    WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby
+    DEPENDS ${cpp_file}.rb_require
   )
 
   # build all the c++ files from this module in a common lib
@@ -151,8 +165,8 @@ MACRO(END_WRAP_MODULE_RUBY group_name)
 
   # and run swig to produce the c++ file and the .rb file
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${cpp_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -ruby -autorename -O -features autodoc=1 # -Werror
+    OUTPUT ${cpp_file}.rb_require
+    COMMAND ${SWIG_EXECUTABLE} -c++ -ruby -O -features autodoc=1 -autorename # -Werror
 #       -fcompact
     -w362 # operator= ignored
     -w366 # operator-= ignored
@@ -164,7 +178,9 @@ MACRO(END_WRAP_MODULE_RUBY group_name)
     -w361 # operator!
     -w365 # operator+=
     -w801 # Wrong class name
-    -o ${cpp_file}
+    -w508 # Declaration of 'Print' shadows declaration accessible via operator->()
+    -w302 # previous definition of 'a_method' (Renamed from 'AMethod')
+    -o ${cpp_file}.rb_require
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/ruby
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
@@ -172,6 +188,15 @@ MACRO(END_WRAP_MODULE_RUBY group_name)
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby
     DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby/${base_name}_ext.i ${WRAP_ITK_TYPEDEFS_DIRECTORY}/wrap_rbBase.i ${SWIG_EXECUTABLE}
     # ${WRAP_ITK_RUBY_LIBRARY_DEPS}
+  )
+  
+  ADD_CUSTOM_COMMAND(
+    OUTPUT ${cpp_file}
+    COMMAND ${RUBY_EXECUTABLE} ${WRAP_ITK_RUBY_SOURCE_DIR}/fix_require.rb
+    ${cpp_file}.rb_require
+    ${cpp_file}
+    WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby
+    DEPENDS ${cpp_file}.rb_require
   )
     
 # gcc visibility can't be used without getting errors when passing objects
@@ -287,7 +312,7 @@ MACRO(WRAP_TEMPLATE_RUBY name types)
     SET(text "${text}    \$1 = 0;\n")
     SET(text "${text}    }\n")
     SET(text "${text}}\n")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
 
   ENDIF("${WRAP_ITK_RUBY_CURRENT_CLASS}" STREQUAL "itk::ImageSource")
 ENDMACRO(WRAP_TEMPLATE_RUBY name types)
@@ -335,7 +360,7 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
 #     SET(text "${text}}\n") 
     SET(text "${text}\n\n")
 
-    SET(text "${text}%template(listitkLightObject) std::list< itkLightObject_Pointer >;\n")
+#    SET(text "${text}%template(listitkLightObject) std::list< itkLightObject_Pointer >;\n")
     ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "listitkLightObject" "itk::LightObject")
 
     SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
@@ -355,7 +380,7 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
     SET(text "${text}%}\n")
     SET(text "${text}\n\n")
 
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
   ENDIF("${swig_name}" STREQUAL "itkObject")
 
 
@@ -385,23 +410,23 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
     SET(text "${text}}\n")
     SET(text "${text}\n\n")
 
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
   ENDIF("${swig_name}" STREQUAL "itkProcessObject")
 
 
   IF("${swig_name}" STREQUAL "itkDataObject")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vectoritkDataObject) std::vector< itkDataObject_Pointer >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itk::DataObject")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vectoritkDataObject) std::vector< itkDataObject_Pointer >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkDataObject" "itk::DataObject")
   ENDIF("${swig_name}" STREQUAL "itkDataObject")
 
   IF("${swig_name}" STREQUAL "itkObjectFactoryBase")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(listitkObjectFactoryBase) std::list< itkObjectFactoryBase * >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "listitkObjectFactoryBase" "itk::ObjectFactoryBase")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(listitkObjectFactoryBase) std::list< itkObjectFactoryBase * >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "listitkObjectFactoryBase" "itk::ObjectFactoryBase")
   ENDIF("${swig_name}" STREQUAL "itkObjectFactoryBase")
 
   IF("${swig_name}" STREQUAL "itkMetaDataDictionary")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vectoritkMetaDataDictionary) std::vector< itkMetaDataDictionary * >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkMetaDataDictionary" "itk::MetaDataDictionary")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vectoritkMetaDataDictionary) std::vector< itkMetaDataDictionary * >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vectoritkMetaDataDictionary" "itk::MetaDataDictionary")
   ENDIF("${swig_name}" STREQUAL "itkMetaDataDictionary")
 
   IF("${swig_name}" STREQUAL "itkCommand")
@@ -452,10 +477,10 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
   ENDIF("${cpp_name}" STREQUAL "itk::ImageBase" AND NOT "${swig_name}" MATCHES "Pointer$")
   
   IF("${cpp_name}" STREQUAL "itk::StatisticsLabelObject" AND NOT "${swig_name}" MATCHES "Pointer$")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(map${swig_name}) std::map< unsigned long, ${swig_name}_Pointer, std::less< unsigned long > >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("map" "std::map" "map${swig_name}" "unsigned long, ${cpp_name}< ${template_params} >")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name}_Pointer >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(map${swig_name}) std::map< unsigned long, ${swig_name}_Pointer, std::less< unsigned long > >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("map" "std::map" "map${swig_name}" "unsigned long, ${cpp_name}< ${template_params} >")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name}_Pointer >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
  ENDIF("${cpp_name}" STREQUAL "itk::StatisticsLabelObject" AND NOT "${swig_name}" MATCHES "Pointer$")
   
   IF("${cpp_name}" STREQUAL "itk::LabelMap" AND NOT "${swig_name}" MATCHES "Pointer$")
@@ -476,7 +501,7 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
     SET(text "${text}}\n")
     SET(text "${text}\n\n")
 
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}${text}")
   ENDIF("${cpp_name}" STREQUAL "itk::LabelMap" AND NOT "${swig_name}" MATCHES "Pointer$")
 
   IF("${cpp_name}" STREQUAL "itk::ImageRegion")
@@ -493,51 +518,51 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
   ENDIF("${cpp_name}" STREQUAL "itk::ImageRegion")
   
   IF("${cpp_name}" STREQUAL "itk::Index")
-    ADD_RUBY_SEQ_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Index")
 
   IF("${cpp_name}" STREQUAL "itk::Size")
-    ADD_RUBY_SEQ_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Size")
 
   IF("${cpp_name}" STREQUAL "itk::RGBPixel")
     # number of elements is not in the template parameters so use the
     # macro which get it with Size() instead
-    ADD_RUBY_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::RGBPixel")
 
   IF("${cpp_name}" STREQUAL "itk::RGBAPixel")
     # number of elements is not in the template parameters so use the
     # macro which get it with Size() instead
-    ADD_RUBY_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::RGBAPixel")
 
   IF("${cpp_name}" STREQUAL "itk::Offset")
-    ADD_RUBY_SEQ_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Offset")
 
   IF("${cpp_name}" STREQUAL "itk::FixedArray")
-    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::FixedArray")
 
   IF("${cpp_name}" STREQUAL "itk::Vector")
-    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Vector")
 
   IF("${cpp_name}" STREQUAL "itk::CovariantVector")
-    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::CovariantVector")
 
   IF("${cpp_name}" STREQUAL "itk::Point")
-    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Point")
 
   IF("${cpp_name}" STREQUAL "itk::ContinuousIndex")
-    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VEC_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::ContinuousIndex")
 
   IF("${cpp_name}" STREQUAL "itk::Array")
-    ADD_RUBY_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
+#    ADD_RUBY_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Array")
     
   IF("${cpp_name}" STREQUAL "itk::VectorContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
@@ -557,8 +582,8 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
       STRING(REPLACE "<" "" superclass_template_param "${superclass_template_param}")
       STRING(REPLACE ">" "" superclass_template_param "${superclass_template_param}")
       STRING(REPLACE "," "" superclass_template_param "${superclass_template_param}")
-      SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(${swig_name}_Superclass) std::vector< ${superclass_template_param} >;\n")
-      ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "${swig_name}_Superclass" "${param}")
+#      SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(${swig_name}_Superclass) std::vector< ${superclass_template_param} >;\n")
+#      ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "${swig_name}_Superclass" "${param}")
     ENDIF("${superclass_template_param}" MATCHES "::")
   ENDIF("${cpp_name}" STREQUAL "itk::VectorContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
 
@@ -579,14 +604,14 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
       STRING(REPLACE "<" "" superclass_template_param "${superclass_template_param}")
       STRING(REPLACE ">" "" superclass_template_param "${superclass_template_param}")
       STRING(REPLACE "," "" superclass_template_param "${superclass_template_param}")
-      SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(${swig_name}_Superclass) std::map< unsigned long, ${superclass_template_param}, std::less< unsigned long > >;\n")
-      ADD_RUBY_CONFIG_TEMPLATE("map" "std::map" "${swig_name}_Superclass" "unsigned long, ${param}")
+#      SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(${swig_name}_Superclass) std::map< unsigned long, ${superclass_template_param}, std::less< unsigned long > >;\n")
+#      ADD_RUBY_CONFIG_TEMPLATE("map" "std::map" "${swig_name}_Superclass" "unsigned long, ${param}")
     ENDIF("${superclass_template_param}" MATCHES "::")
   ENDIF("${cpp_name}" STREQUAL "itk::MapContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
 
   IF("${swig_name}" STREQUAL "itkTransformBase")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "itk::TransformBase")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "itk::TransformBase")
   ENDIF("${swig_name}" STREQUAL "itkTransformBase")
 
   IF("${cpp_name}" STREQUAL "itk::SpatialObjectPoint")
@@ -605,23 +630,23 @@ MACRO(ADD_SIMPLE_TYPEDEF_RUBY wrap_class swig_name)
   ENDIF("${cpp_name}" STREQUAL "itk::SpatialObjectPoint")
 
   IF("${cpp_name}" STREQUAL "itk::ContourSpatialObjectPoint")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
   ENDIF("${cpp_name}" STREQUAL "itk::ContourSpatialObjectPoint")
 
   IF("${cpp_name}" STREQUAL "itk::LineSpatialObjectPoint")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
   ENDIF("${cpp_name}" STREQUAL "itk::LineSpatialObjectPoint")
 
   IF("${cpp_name}" STREQUAL "itk::SurfaceSpatialObjectPoint")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(vector${swig_name}) std::vector< ${swig_name} >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("vector" "std::vector" "vector${swig_name}" "${cpp_name}< ${template_params} >")
   ENDIF("${cpp_name}" STREQUAL "itk::SurfaceSpatialObjectPoint")
 
   IF("${cpp_name}" STREQUAL "itk::SpatialObject" AND NOT "${ext_def}" MATCHES "SmartPointer")
-    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
-    ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "${cpp_name}< ${template_params} >")
+#    SET(WRAP_ITK_RUBY_SWIG_EXT "${WRAP_ITK_RUBY_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")
+#    ADD_RUBY_CONFIG_TEMPLATE("list" "std::list" "list${swig_name}_Pointer" "${cpp_name}< ${template_params} >")
   ENDIF("${cpp_name}" STREQUAL "itk::SpatialObject" AND NOT "${ext_def}" MATCHES "SmartPointer")
 
 ENDMACRO(ADD_SIMPLE_TYPEDEF_RUBY)
