@@ -28,13 +28,13 @@ MACRO(BUILD_JAVA_TEST name cp_var)
   # 
   BUILD_CLASSPATH(${cp_var} ${ARGN})
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${name}.class
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
     COMMAND ${JAVA_COMPILE}
     ARGS -classpath "${${cp_var}}"
     -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
     DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
     )
-  SET(targets ${targets} ${name}.class)
+  SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
   
 ENDMACRO(BUILD_JAVA_TEST)
 
@@ -43,13 +43,13 @@ MACRO(BUILD_JAVA_TEST_BIN name cp_var)
   # 
   BUILD_CLASSPATH(${cp_var} ${ARGN})
   ADD_CUSTOM_COMMAND(
-    OUTPUT ${name}.class
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
     COMMAND ${JAVA_COMPILE}
     ARGS -classpath "${${cp_var}}"
     -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
     DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
     )
-  SET(targets ${targets} ${name}.class)
+  SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
   
 ENDMACRO(BUILD_JAVA_TEST_BIN)
 
