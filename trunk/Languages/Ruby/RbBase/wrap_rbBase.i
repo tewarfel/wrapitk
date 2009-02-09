@@ -3,6 +3,7 @@
 %include <exception.i>
 %include <typemaps.i>
 
+/*
 %include std_alloc.i
 %include std_basic_string.i
 %include std_char_traits.i
@@ -28,7 +29,7 @@
 %include std_vector.i
 // %include std_vectora.i
 // %include std_wstring.i
-
+*/
 
 %exception {
   try {
@@ -54,9 +55,74 @@
 %ignore Register;
 %ignore UnRegister;
 
+// This macro replaces the use of itk::SmartPointer.
+// class_name is class name without namespace qualifiers.
+// Reference: http://www.nabble.com/attachment/16653644/0/SwigRefCount.i
+%define DECLARE_REF_COUNT_CLASS(class_name)
+
+	// pointers and references
+	%typemap(out) class_name *, class_name & {
+		// always tell SWIG_NewPointerObj we're the owner
+		$result = SWIG_NewPointerObj((void *) $1, $1_descriptor, 1);
+		if ($1) {
+			$1->Register();
+		}
+	}
+
+  // transform smart pointers in raw pointers
+	%typemap(out) class_name##_Pointer {
+	  // get the raw pointer from the smart pointer
+	  class_name * ptr = $1;
+		// always tell SWIG_NewPointerObj we're the owner
+		$result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
+		// register the object, it it exists
+		if (ptr) {
+			ptr->Register();
+		}
+	}
+
+  // transform smart pointers in raw pointers
+	%typemap(out) class_name##_Pointer & {
+	  // get the raw pointer from the smart pointer
+	  class_name * ptr = *$1;
+		// always tell SWIG_NewPointerObj we're the owner
+		$result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
+		// register the object, it it exists
+		if (ptr) {
+			ptr->Register();
+		}
+	}
+
+	// make "deletion" in scripting language just decrement ref. count
+	%extend class_name {
+		public:
+		~class_name() {self->UnRegister();};
+	}
+
+	%ignore class_name::~class_name;
+	
+	%ignore class_name##_Pointer;
+     
+	// a cast() static method to downcast objects
+	%extend class_name {
+		public:
+		static class_name * cast( itkLightObject * obj ) {
+		  if( obj == NULL ) {
+		    return NULL;
+		  }
+		  class_name * cast_obj = dynamic_cast<class_name *>(obj);
+		  if( cast_obj == NULL ) {
+		    throw std::bad_cast();
+		  }
+		  return cast_obj;
+		};
+	}
+
+%enddef
+
 
 // some code from stl
-
+/*
 %template(VectorString)   std::vector< std::string >;
 %template(ListString)     std::list< std::string >;
 
@@ -109,3 +175,4 @@
 %template(SetSL)         std::set< signed long >;
 %template(SetF)          std::set< float >;
 %template(SetD)          std::set< double >;
+*/
