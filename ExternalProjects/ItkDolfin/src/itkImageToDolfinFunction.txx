@@ -2,6 +2,7 @@
 #define _itkImageToDolfinFunction_txx
 
 #include "itkImageToDolfinFunction.h"
+#include "itkImageFunctionSpace.h"
 
 namespace itk
 {
@@ -13,7 +14,7 @@ Function DolfinFunction<TImage>::GetOutput()
 	DofMap dofmap; // How to initialise this?
 
 	ImageFunctionSpace ifs(m_Image, element, dofmap);
-	Function func(ifs);
+	dolphin::Function func(ifs);
 
 	return func;
 }
