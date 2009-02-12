@@ -350,7 +350,12 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   SET(lib ${WRAPPER_LIBRARY_NAME}Python)
   SET(python_file "${LIBRARY_OUTPUT_PATH}/${lib}.py")
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Python.cpp")
-
+  
+  # if this is for an external library, let the user add extra swig args
+  IF(EXTERNAL_WRAP_ITK_PROJECT)
+    SET(WRAP_ITK_SWIG_ARGS_PYTHON "" CACHE STRING "Extra user-defined swig arguments to be to the swig executable.")
+  ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
+    
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
@@ -365,6 +370,7 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
+    ${WRAP_ITK_SWIG_ARGS_PYTHON}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python
@@ -446,6 +452,7 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/python
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
+    ${WRAP_ITK_SWIG_ARGS_PYTHON}
     -outdir ${LIBRARY_OUTPUT_PATH}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/python

@@ -264,6 +264,11 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
     SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
   ENDFOREACH(dep)
   
+  # if this is for an external library, let the user add extra swig args
+  IF(EXTERNAL_WRAP_ITK_PROJECT)
+    SET(WRAP_ITK_SWIG_ARGS_JAVA "" CACHE STRING "Extra user-defined swig arguments to be to the swig executable.")
+  ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
+  
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${java_file}
     COMMAND ${SWIG_EXECUTABLE} -c++ -java -O -features autodoc=1
@@ -282,6 +287,7 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
     -I${WRAP_ITK_JAVA_SOURCE_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/java
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
+    ${WRAP_ITK_SWIG_ARGS_JAVA}
     -outdir ${java_package_path}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java
