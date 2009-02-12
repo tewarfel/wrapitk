@@ -80,6 +80,11 @@ MACRO(END_WRAP_LIBRARY_RUBY)
   SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
   SET(lib ${WRAPPER_LIBRARY_NAME}Ruby)
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Ruby.cpp")
+  
+  # if this is for an external library, let the user add extra swig args
+  IF(EXTERNAL_WRAP_ITK_PROJECT)
+    SET(WRAP_ITK_SWIG_ARGS_RUBY "" CACHE STRING "Extra user-defined swig arguments to be to the swig executable.")
+  ENDIF(EXTERNAL_WRAP_ITK_PROJECT)  
 
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
@@ -102,6 +107,7 @@ MACRO(END_WRAP_LIBRARY_RUBY)
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/ruby
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
+    ${WRAP_ITK_SWIG_ARGS_RUBY}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby
     DEPENDS ${DEPS} ${WRAP_ITK_RUBY_LIBRARY_DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby/${WRAPPER_LIBRARY_NAME}_ext.i ${WRAP_ITK_TYPEDEFS_DIRECTORY}/wrap_rbBase.i ${SWIG_EXECUTABLE}
@@ -184,6 +190,7 @@ MACRO(END_WRAP_MODULE_RUBY group_name)
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/ruby
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}
+    ${WRAP_ITK_SWIG_ARGS_RUBY}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby
     DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/ruby/${base_name}_ext.i ${WRAP_ITK_TYPEDEFS_DIRECTORY}/wrap_rbBase.i ${SWIG_EXECUTABLE}
