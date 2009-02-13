@@ -5,21 +5,22 @@
 #include "itkObjectFactory.h"
 #include "itkImportImageFilter.h"
 
+#include "itkDolfinImageFunction.h"
 #if !defined(CABLE_CONFIGURATION)
-// let the compiler do its normal job
-#include <dolfin/Function.h>
-#include <dolfin/FunctionSpace.h>
-#include <dolfin/fem/FiniteElement.h>
+#include <dolfin/function/Function.h>
 #include <dolfin/mesh/UnitSquare.h>
 #include <dolfin/mesh/UnitCube.h>
 #else
-// prevent gccxml to parse dolphin stuff. We give him a fake dolphin::Function class, the only
-// dolphin class exposed.
-namespace dolphin
+namespace dolfin
 {
-  class Function {};
+	class UnitSquare {};
+	class UnitCube {};
 };
-#endif
+namespace itk
+{
+	template<typename TImage> class DolfinImageFunctionSpace {};
+};
+#endif //!defined(CABLE_CONFIGURATION)
 
 namespace itk
 {
@@ -36,6 +37,7 @@ namespace itk
 	 *  finite element can be associated, the default is 'CG'.
 	 *
 	 *	\author Ali Tonddast-Navaei
+	 *	\author Gaetan Lehman
 	 */
 
 	template <typename TImage>
@@ -45,22 +47,52 @@ namespace itk
 		///! Standard "Self" typedef.
 		typedef ImageToDolfinFunction Self;
 
-		/// Type of the image from where the buffer will be converted
 		typedef TImage ImageType;
-		typedef typename ImageType::PixelType PixelType;
 		typedef typename ImageType::SizeType SizeType;
-		typedef typename ImageType::IndexType IndexType;
-		typedef typename ImageType::RegionType RegionType;
-		typedef typename ImageType::PointType PointType;
-		typedef typename ImageType::SpacingType SpacingType;
-		typedef typename ImageType::Pointer ImagePointer;
 
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
 
-		/// Type of the import image filter
-		//		typedef ImportImageFilter< PixelType, ImageDimension> ImporterType;
-		//		typedef typename ImporterType::Pointer ImporterPointer;
+		static DolfinImageFunction< TImage > Convert(ImageType *imageData)
+		{
+			SizeType imageSize = imageData->GetBufferedRegion().GetSize();
+
+			dolfin::Mesh mesh;
+			std::string elemSig;
+			std::string dofSig;
+			if(ImageDimension == 2)
+			{
+				mesh = dolfin::UnitSquare(imageSize[0], imageSize[1]);
+				elemSig = std::string("FiniteElement('Lagrange', 'triangle', 1)");
+				dofSig = std::string("FFC dof map for FiniteElement('Lagrange', 'triangle', 1)");
+			}
+			else if(ImageDimension == 3)
+			{
+				mesh = dolfin::UnitCube(imageSize[0], imageSize[1], imageSize[2]);
+				elemSig = std::string("FiniteElement('Lagrange', 'tetrahedron', 1)");
+				dofSig = std::string("FFC dof map for FiniteElement('Lagrange', 'tetrahedron', 1)");
+			}
+			else
+			{
+				throw std::runtime_error("Input image dimension must be 2 or 3.");
+			}
+
+//			typedef DolfinImageFunctionSpace< ImageType > IFSType;
+//			typedef std::tr1::shared_ptr<const IFSType> IFSPointerType;
+//			IFSPointerType ifs = IFSPointerType(new IFSType(imageData,
+//					typename IFSType::MeshType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
+//					typename IFSType::ElementType(new dolfin::FiniteElement(elemSig)),
+//					typename IFSType::DofMapType(new dolfin::DofMap(dofSig, mesh))));
+//			dolfin::Function func(ifs);
+
+			typedef DolfinImageFunction< ImageType > IFType;
+			dolfin::FiniteElement element(elemSig);
+			dolfin::DofMap dofmap(dofSig, mesh);
+			dolfin::FunctionSpace fs(mesh, element, dofmap);
+			IFType func(imageData, fs);
+
+			return func;
+		}
 
 		/**
 		 * Set the input itk::Image. If the input pixel is not
@@ -68,40 +100,30 @@ namespace itk
 		 * to dolfin::Function.
 		 */
 		void SetInput(ImageType *image)
-		{	m_Image = image;};
+		{
+			m_Image = image;
+		};
 
+#if !defined(CABLE_CONFIGURATION)
 		/**
 		 * Get a dolfin::Function from itk::Image
 		 */
-		typename dolphin::Function GetOutput();
+//		dolfin::Function GetOutput();
 
 		void Update();
-
-		/**
-		 * Get an itk::Image from dolfin::Function
-		 */
-		//		static const ImagePointer GetImageFromFunction( Function func );
+#endif //!defined(CABLE_CONFIGURATION)
 
 	protected:
-    ImageToDolfinFunction() {}
-    virtual ~ImageToDolfinFunction() {}
-	
-	private:
 		ImageToDolfinFunction(const Self&); // Not implemented.
 		void operator=(const Self&); // Not implemented.
 
-		ImagePointer m_Image;
-
+		ImageType *m_Image;
 	};
 
 } // namespace itk
 
-
-// again, prevent gccxml to parse dolphin code
-#if !defined(CABLE_CONFIGURATION)
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkImageToDolfinFunction.txx"
-#endif
 #endif
 
 #endif // _itkImageToDolfinFunction_h
