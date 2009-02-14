@@ -2,7 +2,6 @@
 #define _itkImageToDolfinFunction_txx
 
 #include "itkImageToDolfinFunction.h"
-#include "itkImageFunctionSpace.h"
 
 namespace itk
 {

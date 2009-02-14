@@ -71,7 +71,7 @@ namespace itk
 			{
 				throw std::runtime_error("Input image is null.");
 			}
-			if ((ImageDimension < 2) || (ImageDimension> 3))
+			if ((ImageDimension < 2) || (ImageDimension > 3))
 			{
 				throw std::runtime_error("Input image dimension must be 2 or 3.");
 			}
@@ -80,6 +80,12 @@ namespace itk
 			m_ImageData = (double *) (buffer);
 			m_ImageSize = imageData->GetBufferedRegion().GetSize();
 		};
+
+		DolfinImageFunction(const DolfinImageFunction &v)
+		{
+			std::cerr << "copy ctor\n";
+			 *this = v;
+		}
 
 		void eval(double* values, const double* x) const
 		{

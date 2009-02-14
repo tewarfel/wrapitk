@@ -1,26 +1,44 @@
 #ifndef _itkDolfinImageFunctionSpace_h
 #define _itkDolfinImageFunctionSpace_h
 
-//#if !defined(CABLE_CONFIGURATION)
+#if !defined(CABLE_CONFIGURATION)
 #include <dolfin/function/FunctionSpace.h>
 #include <dolfin/mesh/Mesh.h>
 #include <dolfin/fem/FiniteElement.h>
 #include <dolfin/fem/DofMap.h>
-#include <dolfin/mesh/UnitSquare.h>
-#include <dolfin/mesh/UnitCube.h>
 
 #include <memory>
 //#include <boost/shared_ptr.hpp>
-using namespace dolfin;
-/*#else
- class FunctionSpace;
- class Mesh;
- class FGiniteElement;
- class DofMap;
- class UnitSquare;
- class UnitCube;
- #endif //!defined(CABLE_CONFIGURATION)
- */
+#else
+namespace std
+{
+namespace tr1
+{
+	template<typename T> class shared_ptr
+	{
+		 T& operator*() const;
+	};
+}
+};
+namespace dolfin
+{
+	class FunctionSpace {};
+	class Function
+	{
+		Function(std::tr1::shared_ptr<const dolfin::FunctionSpace>);
+	};
+	class Mesh {};
+	class FiniteElement
+	{
+		FiniteElement(std::string);
+	};
+	class DofMap
+	{
+		DofMap(std::string, Mesh);
+	};
+};
+#endif //!defined(CABLE_CONFIGURATION)
+
 namespace itk
 {
 
@@ -31,8 +49,6 @@ namespace itk
 	 *	\author Gaetan Lehman
 	 */
 
-	class Function;
-
 	template <typename TImage>
 	class DolfinImageFunctionSpace : public dolfin::FunctionSpace
 	{
@@ -40,9 +56,10 @@ namespace itk
 		typedef TImage ImageType;
 		typedef typename ImageType::PixelType PixelType;
 		typedef typename ImageType::SizeType SizeType;
-		typedef typename std::tr1::shared_ptr<const dolfin::Mesh> MeshType;
-		typedef typename std::tr1::shared_ptr<const dolfin::FiniteElement> ElementType;
-		typedef typename std::tr1::shared_ptr<const DofMap> DofMapType;
+
+		typedef typename std::tr1::shared_ptr<const dolfin::Mesh> MeshConstPointerType;
+		typedef typename std::tr1::shared_ptr<const dolfin::FiniteElement> ElementConstPointerType;
+		typedef typename std::tr1::shared_ptr<const dolfin::DofMap> DofMapConstPointerType;
 
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
@@ -53,9 +70,9 @@ namespace itk
 
 	public:
 				DolfinImageFunctionSpace(ImageType* imageData,
-						MeshType mesh,
-						ElementType element,
-						DofMapType dofmap) :
+						MeshConstPointerType mesh,
+						ElementConstPointerType element,
+						DofMapConstPointerType dofmap) :
 				dolfin::FunctionSpace(mesh, element, dofmap)
 				{
 					if(!imageData)
@@ -92,7 +109,7 @@ namespace itk
 //			m_ImageSize = imageData->GetBufferedRegion().GetSize();
 //		};
 
-		void eval(double* values, const double* x, const Function& v) const
+		void eval(double* values, const double* x, const dolfin::Function& v) const
 		{
 			std::cerr << "evaluating image discrete function ...\n";
 			if(ImageDimension == 2)
