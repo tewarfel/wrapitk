@@ -5,7 +5,7 @@
 #include "itkObjectFactory.h"
 #include "itkImportImageFilter.h"
 
-#include "itkDolfinImageFunction.h"
+#include "itkDolfinImageFunctionSpace.h"
 #if !defined(CABLE_CONFIGURATION)
 #include <dolfin/function/Function.h>
 #include <dolfin/mesh/UnitSquare.h>
@@ -13,12 +13,10 @@
 #else
 namespace dolfin
 {
+	template<typename T> class NoDeleter {};
+
 	class UnitSquare {};
 	class UnitCube {};
-};
-namespace itk
-{
-	template<typename TImage> class DolfinImageFunctionSpace {};
 };
 #endif //!defined(CABLE_CONFIGURATION)
 
@@ -50,10 +48,15 @@ namespace itk
 		typedef TImage ImageType;
 		typedef typename ImageType::SizeType SizeType;
 
+		typedef std::tr1::shared_ptr<dolfin::Function> FPointerType;
+		typedef DolfinImageFunctionSpace< ImageType > IFSType;
+		typedef std::tr1::shared_ptr<IFSType> IFSPointerType;
+		typedef std::tr1::shared_ptr<const IFSType> IFSConstPointerType;
+
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
 
-		static DolfinImageFunction< TImage > Convert(ImageType *imageData)
+		static FPointerType Convert(ImageType *imageData)
 		{
 			SizeType imageSize = imageData->GetBufferedRegion().GetSize();
 
@@ -77,21 +80,25 @@ namespace itk
 				throw std::runtime_error("Input image dimension must be 2 or 3.");
 			}
 
-//			typedef DolfinImageFunctionSpace< ImageType > IFSType;
-//			typedef std::tr1::shared_ptr<const IFSType> IFSPointerType;
-//			IFSPointerType ifs = IFSPointerType(new IFSType(imageData,
-//					typename IFSType::MeshType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
-//					typename IFSType::ElementType(new dolfin::FiniteElement(elemSig)),
-//					typename IFSType::DofMapType(new dolfin::DofMap(dofSig, mesh))));
-//			dolfin::Function func(ifs);
+//			IFSConstPointerType ifs = IFSConstPointerType( new IFSType(imageData,
+//					typename IFSType::MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
+//					typename IFSType::ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
+//					typename IFSType::DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh))) );
 
-			typedef DolfinImageFunction< ImageType > IFType;
-			dolfin::FiniteElement element(elemSig);
-			dolfin::DofMap dofmap(dofSig, mesh);
-			dolfin::FunctionSpace fs(mesh, element, dofmap);
-			IFType func(imageData, fs);
+			std::tr1::shared_ptr<const dolfin::FunctionSpace> ifs(new dolfin::FunctionSpace(
+					typename IFSType::MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
+					typename IFSType::ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
+					typename IFSType::DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh))) );
 
-			return func;
+			FPointerType funcp = FPointerType(new dolfin::Function(ifs));
+
+//			dolfin::FiniteElement element(elemSig);
+//			dolfin::DofMap dofmap(dofSig, mesh);
+//			dolfin::FunctionSpace fs(mesh, element, dofmap);
+//			IFType func(imageData, fs);
+//			IFPointerType funcp = IFPointerType(new IFType(imageData, fs));
+
+			return funcp;
 		}
 
 		/**
@@ -104,15 +111,6 @@ namespace itk
 			m_Image = image;
 		};
 
-#if !defined(CABLE_CONFIGURATION)
-		/**
-		 * Get a dolfin::Function from itk::Image
-		 */
-//		dolfin::Function GetOutput();
-
-		void Update();
-#endif //!defined(CABLE_CONFIGURATION)
-
 	protected:
 		ImageToDolfinFunction(const Self&); // Not implemented.
 		void operator=(const Self&); // Not implemented.
@@ -121,6 +119,7 @@ namespace itk
 	};
 
 } // namespace itk
+
 
 #ifndef ITK_MANUAL_INSTANTIATION
 #include "itkImageToDolfinFunction.txx"

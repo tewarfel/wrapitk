@@ -16,16 +16,19 @@ itk2dolfin = itk.ImageToDolfinFunction[inType]
 #itk2dolfin.SetInput(itk2dolfin, reader.GetOutput())
 #itk2dolfin.Update()
 #f = itk2dolfin.GetOutput()
-f = itk2dolfin.Convert(reader.GetOutput())
+f = itk2dolfin.Convert(itk2dolfin, reader.GetOutput())
 
 #imfun = itk.DolfinImageFunction[inType]
 
+#interpolate(f, f.function_space()) # evaluate
+
 t2 = time.time()
+print 'total time =  %f ms per pixel.'% ((t2-t1) * 1e3)
 #print '%i * %i = %i pixels took %0.3f ms transfering from itk to dolfin through numpy'% (shape[0], shape[1], shape[0]*shape[1], (t2-t1)*1e3)
 #print 'That is %f us per pixel.'% ((t2-t1) * 1e6 / (shape[0]*shape[1]))
 
 plot(f) # can viper plot 2d images better than this?
-interactive()
+#interactive()
 
 #v = viper.Viper(f)
 #v.interactive()
