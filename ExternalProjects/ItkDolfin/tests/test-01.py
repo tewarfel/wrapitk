@@ -16,7 +16,7 @@ itk2dolfin = itk.ImageToDolfinFunction[inType]
 #itk2dolfin.SetInput(itk2dolfin, reader.GetOutput())
 #itk2dolfin.Update()
 #f = itk2dolfin.GetOutput()
-f = itk2dolfin.Convert(itk2dolfin, reader.GetOutput())
+f = itk2dolfin.Convert(reader.GetOutput())
 
 #imfun = itk.DolfinImageFunction[inType]
 
