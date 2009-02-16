@@ -66,8 +66,13 @@ namespace itk
 		SizeType m_ImageSize;
 
 	public:
+		DolfinImageFunction(boost::shared_ptr<const dolfin::FunctionSpace> V):
+			dolfin::Function(V)
+		{
+		};
+
 		DolfinImageFunction(ImageType* imageData) :
-		dolfin::Function()
+			dolfin::Function()
 		{
 			// Input verifications
 			if(!imageData)
@@ -86,7 +91,7 @@ namespace itk
 
 			// Create a Function instance
 			FSConstPointerType V = CreateFunctionSpace();
-			dolfin::Function v(V);
+			DolfinImageFunction v(V);
 			*this = v;
 		};
 
