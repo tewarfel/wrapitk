@@ -8,8 +8,6 @@
 #include <dolfin/mesh/Mesh.h>
 #include <dolfin/fem/FiniteElement.h>
 #include <dolfin/fem/DofMap.h>
-#include <dolfin/mesh/UnitSquare.h>
-#include <dolfin/mesh/UnitCube.h>
 #else //!defined(CABLE_CONFIGURATION)
 namespace dolfin
 {
@@ -29,9 +27,6 @@ namespace dolfin
 				boost::shared_ptr<const FiniteElement>,
 				boost::shared_ptr<const DofMap>);
 	};
-	template <typename T> class NoDeleter {};
-	class UnitSquare {};
-	class UnitCube {};
 };
 #endif //!defined(CABLE_CONFIGURATION)
 namespace itk
@@ -52,12 +47,6 @@ namespace itk
 		typedef typename ImageType::PixelType PixelType;
 		typedef typename ImageType::SizeType SizeType;
 
-		typedef boost::shared_ptr<const dolfin::FunctionSpace> FSConstPointerType;
-		typedef dolfin::Mesh MeshType;
-		typedef typename boost::shared_ptr<const dolfin::Mesh> MeshConstPointerType;
-		typedef typename boost::shared_ptr<const dolfin::FiniteElement> ElementConstPointerType;
-		typedef typename boost::shared_ptr<const dolfin::DofMap> DofMapConstPointerType;
-
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
 
@@ -66,13 +55,9 @@ namespace itk
 		SizeType m_ImageSize;
 
 	public:
-		DolfinImageFunction(boost::shared_ptr<const dolfin::FunctionSpace> V):
+//		DolfinImageFunction(ImageType* imageData, boost::shared_ptr<const dolfin::FunctionSpace> V) :
+		DolfinImageFunction(ImageType* imageData, const dolfin::FunctionSpace& V) :
 			dolfin::Function(V)
-		{
-		};
-
-		DolfinImageFunction(ImageType* imageData) :
-			dolfin::Function()
 		{
 			// Input verifications
 			if(!imageData)
@@ -83,19 +68,20 @@ namespace itk
 			{
 				throw std::runtime_error("Input image dimension must be 2 or 3.");
 			}
-
+			std::cerr << "[debug] 05\n";
 			// Variable initialisations
 			PixelType *buffer = const_cast<PixelType *> (imageData->GetBufferPointer());
 			m_ImageData = (double *) (buffer);
 			m_ImageSize = imageData->GetBufferedRegion().GetSize();
 
-			// Create a Function instance
+			std::cerr << "[debug] 06\n";
+/*			// Create a Function instance
 			FSConstPointerType V = CreateFunctionSpace();
 			DolfinImageFunction v(V);
 			*this = v;
-		};
+*/		};
 
-		FSConstPointerType CreateFunctionSpace()
+/*		FSConstPointerType CreateFunctionSpace()
 		{
 			MeshType mesh;
 			std::string elemSig;
@@ -124,14 +110,16 @@ namespace itk
 
 			return V;
 		}
-
+*/
 		void eval(double* values, const double* x) const
 		{
+			std::cerr << "[debug] 04\n";
 			if(ImageDimension == 2)
 			{
 				int i = int((m_ImageSize[0] - 1) * x[0]);
 				int j = int((m_ImageSize[1] - 1) * x[1]);
 				int index = i + (m_ImageSize[0] * j);
+				std::cerr << "\n[" << i << ", " << j << "](" << index << ")" << std::endl;
 				values[0] = m_ImageData[index];
 			}
 			else if(ImageDimension == 3)

@@ -1,15 +1,16 @@
 #ifndef _itkDolfinImageFunctionSpace_h
 #define _itkDolfinImageFunctionSpace_h
 
+#include <boost/shared_ptr.hpp>
 #if !defined(CABLE_CONFIGURATION)
 #include <dolfin/function/FunctionSpace.h>
 #include <dolfin/mesh/Mesh.h>
 #include <dolfin/fem/FiniteElement.h>
 #include <dolfin/fem/DofMap.h>
 
-#include <memory>
-//#include <boost/shared_ptr.hpp>
+//#include <memory>
 #else
+/*
 namespace std
 {
 namespace tr1
@@ -19,13 +20,13 @@ namespace tr1
 		 T& operator*() const;
 	};
 }
-};
+};*/
 namespace dolfin
 {
 	class FunctionSpace {};
 	class Function
 	{
-		Function(std::tr1::shared_ptr<const dolfin::FunctionSpace>);
+		Function(boost::shared_ptr<const dolfin::FunctionSpace>);
 	};
 	class Mesh {};
 	class FiniteElement
@@ -57,9 +58,9 @@ namespace itk
 		typedef typename ImageType::PixelType PixelType;
 		typedef typename ImageType::SizeType SizeType;
 
-		typedef typename std::tr1::shared_ptr<const dolfin::Mesh> MeshConstPointerType;
-		typedef typename std::tr1::shared_ptr<const dolfin::FiniteElement> ElementConstPointerType;
-		typedef typename std::tr1::shared_ptr<const dolfin::DofMap> DofMapConstPointerType;
+		typedef typename boost::shared_ptr<const dolfin::Mesh> MeshConstPointerType;
+		typedef typename boost::shared_ptr<const dolfin::FiniteElement> ElementConstPointerType;
+		typedef typename boost::shared_ptr<const dolfin::DofMap> DofMapConstPointerType;
 
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
