@@ -5,7 +5,8 @@
 #include "itkObjectFactory.h"
 #include "itkImportImageFilter.h"
 
-#include "itkDolfinImageFunctionSpace.h"
+#include "itkDolfinImageFunction.h"
+//#include <boost/shared_ptr.hpp>
 #if !defined(CABLE_CONFIGURATION)
 #include <dolfin/function/Function.h>
 #include <dolfin/mesh/UnitSquare.h>
@@ -48,15 +49,18 @@ namespace itk
 		typedef TImage ImageType;
 		typedef typename ImageType::SizeType SizeType;
 
-		typedef std::tr1::shared_ptr<dolfin::Function> FPointerType;
-		typedef DolfinImageFunctionSpace< ImageType > IFSType;
-		typedef std::tr1::shared_ptr<IFSType> IFSPointerType;
-		typedef std::tr1::shared_ptr<const IFSType> IFSConstPointerType;
+		typedef DolfinImageFunction< ImageType > IFType;
+		typedef boost::shared_ptr< IFType > IFPointerType;
+		typedef boost::shared_ptr< const dolfin::FunctionSpace > FSConstPointerType;
+		typedef dolfin::Mesh MeshType;
+		typedef typename boost::shared_ptr< const dolfin::Mesh > MeshConstPointerType;
+		typedef typename boost::shared_ptr< const dolfin::FiniteElement > ElementConstPointerType;
+		typedef typename boost::shared_ptr< const dolfin::DofMap > DofMapConstPointerType;
 
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
 
-		static FPointerType Convert(ImageType *imageData)
+		static IFPointerType Convert(ImageType *imageData)
 		{
 			SizeType imageSize = imageData->GetBufferedRegion().GetSize();
 
@@ -65,7 +69,7 @@ namespace itk
 			std::string dofSig;
 			if(ImageDimension == 2)
 			{
-				mesh = dolfin::UnitSquare(imageSize[0], imageSize[1]);
+				mesh = dolfin::UnitSquare(imageSize[0] - 1, imageSize[1] - 1);
 				elemSig = std::string("FiniteElement('Lagrange', 'triangle', 1)");
 				dofSig = std::string("FFC dof map for FiniteElement('Lagrange', 'triangle', 1)");
 			}
@@ -79,26 +83,19 @@ namespace itk
 			{
 				throw std::runtime_error("Input image dimension must be 2 or 3.");
 			}
-
-//			IFSConstPointerType ifs = IFSConstPointerType( new IFSType(imageData,
-//					typename IFSType::MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
-//					typename IFSType::ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
-//					typename IFSType::DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh))) );
-
-			std::tr1::shared_ptr<const dolfin::FunctionSpace> ifs(new dolfin::FunctionSpace(
-					typename IFSType::MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
-					typename IFSType::ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
-					typename IFSType::DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh))) );
-
-			FPointerType funcp = FPointerType(new dolfin::Function(ifs));
-
-//			dolfin::FiniteElement element(elemSig);
-//			dolfin::DofMap dofmap(dofSig, mesh);
-//			dolfin::FunctionSpace fs(mesh, element, dofmap);
-//			IFType func(imageData, fs);
-//			IFPointerType funcp = IFPointerType(new IFType(imageData, fs));
-
-			return funcp;
+			std::cerr << "[debug] 00\n";
+//			FSConstPointerType V(new dolfin::FunctionSpace(
+//							MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
+//							ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
+//							DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh))) );
+			dolfin::FunctionSpace V(
+					MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
+					ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
+					DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh)));
+			std::cerr << "[debug] 01\n";
+			IFPointerType v(new IFType(imageData, V));
+			std::cerr << "[debug] 02\n";
+			return v;
 		}
 
 		/**
