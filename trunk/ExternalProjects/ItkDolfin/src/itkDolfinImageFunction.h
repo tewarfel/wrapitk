@@ -1,23 +1,39 @@
 #ifndef _itkDolfinImageFunction_h
 #define _itkDolfinImageFunction_h
 
+#include <boost/shared_ptr.hpp>
 #if !defined(CABLE_CONFIGURATION)
 #include <dolfin/function/Function.h>
 #include <dolfin/function/FunctionSpace.h>
 #include <dolfin/mesh/Mesh.h>
 #include <dolfin/fem/FiniteElement.h>
 #include <dolfin/fem/DofMap.h>
-#else
+#include <dolfin/mesh/UnitSquare.h>
+#include <dolfin/mesh/UnitCube.h>
+#else //!defined(CABLE_CONFIGURATION)
 namespace dolfin
 {
 	class Function {};
-	class FunctionSpace {};
 	class Mesh {};
-	class FiniteElement {};
-	class DofMap {};
+	class FiniteElement
+	{
+		FiniteElement(std::string);
+	};
+	class DofMap
+	{
+		DofMap(const std::string, const Mesh&);
+	};
+	class FunctionSpace
+	{
+		FunctionSpace(boost::shared_ptr<const Mesh>,
+				boost::shared_ptr<const FiniteElement>,
+				boost::shared_ptr<const DofMap>);
+	};
+	template <typename T> class NoDeleter {};
+	class UnitSquare {};
+	class UnitCube {};
 };
 #endif //!defined(CABLE_CONFIGURATION)
-
 namespace itk
 {
 
@@ -28,22 +44,6 @@ namespace itk
 	 *	\author Gaetan Lehman
 	 */
 
-//	class ImageFunctionSpace : public dolfin::FunctionSpace
-//	{
-//	public:
-//		typedef typename std::tr1::shared_ptr<const dolfin::Mesh> MeshPointerType;
-//		typedef typename std::tr1::shared_ptr<const dolfin::FiniteElement> ElementPointerType;
-//		typedef typename std::tr1::shared_ptr<const DofMap> DofMapPointerType;
-//
-//		ImageFunctionSpace(const dolfin::Mesh& mesh)
-//		: dolfin::FunctionSpace(MeshPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
-//				ElementPointerType element, DofMapPointerType dofmap)
-//		{
-//			// Do nothing
-//		}
-//
-//	};
-
 	template <typename TImage>
 	class DolfinImageFunction : public dolfin::Function
 	{
@@ -52,9 +52,11 @@ namespace itk
 		typedef typename ImageType::PixelType PixelType;
 		typedef typename ImageType::SizeType SizeType;
 
-//		typedef typename std::tr1::shared_ptr<const dolfin::Mesh> MeshPointerType;
-//		typedef typename std::tr1::shared_ptr<const dolfin::FiniteElement> ElementPointerType;
-//		typedef typename std::tr1::shared_ptr<const DofMap> DofMapPointerType;
+		typedef boost::shared_ptr<const dolfin::FunctionSpace> FSConstPointerType;
+		typedef dolfin::Mesh MeshType;
+		typedef typename boost::shared_ptr<const dolfin::Mesh> MeshConstPointerType;
+		typedef typename boost::shared_ptr<const dolfin::FiniteElement> ElementConstPointerType;
+		typedef typename boost::shared_ptr<const dolfin::DofMap> DofMapConstPointerType;
 
 		/** Image dimension. */
 		itkStaticConstMacro(ImageDimension, unsigned int, ImageType::ImageDimension);
@@ -64,27 +66,58 @@ namespace itk
 		SizeType m_ImageSize;
 
 	public:
-		DolfinImageFunction(ImageType* imageData, dolfin::FunctionSpace& V) :
-			dolfin::Function(V)
+		DolfinImageFunction(ImageType* imageData) :
+		dolfin::Function()
 		{
+			// Input verifications
 			if(!imageData)
 			{
 				throw std::runtime_error("Input image is null.");
 			}
-			if ((ImageDimension < 2) || (ImageDimension > 3))
+			if ((ImageDimension < 2) || (ImageDimension> 3))
 			{
 				throw std::runtime_error("Input image dimension must be 2 or 3.");
 			}
 
+			// Variable initialisations
 			PixelType *buffer = const_cast<PixelType *> (imageData->GetBufferPointer());
 			m_ImageData = (double *) (buffer);
 			m_ImageSize = imageData->GetBufferedRegion().GetSize();
+
+			// Create a Function instance
+			FSConstPointerType V = CreateFunctionSpace();
+			dolfin::Function v(V);
+			*this = v;
 		};
 
-		DolfinImageFunction(const DolfinImageFunction &v)
+		FSConstPointerType CreateFunctionSpace()
 		{
-			std::cerr << "copy ctor\n";
-			 *this = v;
+			MeshType mesh;
+			std::string elemSig;
+			std::string dofSig;
+			if(ImageDimension == 2)
+			{
+				mesh = dolfin::UnitSquare(m_ImageSize[0] - 1, m_ImageSize[1] - 1);
+				elemSig = std::string("FiniteElement('Lagrange', 'triangle', 1)");
+				dofSig = std::string("FFC dof map for FiniteElement('Lagrange', 'triangle', 1)");
+			}
+			else if(ImageDimension == 3)
+			{
+				mesh = dolfin::UnitCube(m_ImageSize[0], m_ImageSize[1], m_ImageSize[2]);
+				elemSig = std::string("FiniteElement('Lagrange', 'tetrahedron', 1)");
+				dofSig = std::string("FFC dof map for FiniteElement('Lagrange', 'tetrahedron', 1)");
+			}
+			else
+			{
+				throw std::runtime_error("Input image dimension must be 2 or 3.");
+			}
+
+			FSConstPointerType V(new dolfin::FunctionSpace(
+							MeshConstPointerType(&mesh, dolfin::NoDeleter<const dolfin::Mesh>()),
+							ElementConstPointerType(new dolfin::FiniteElement(elemSig)),
+							DofMapConstPointerType(new dolfin::DofMap(dofSig, mesh))) );
+
+			return V;
 		}
 
 		void eval(double* values, const double* x) const
