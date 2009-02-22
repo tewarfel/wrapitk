@@ -361,10 +361,9 @@ ENDMACRO(ADD_ONE_TYPEDEF_JAVA wrap_method wrap_class swig_name template_params)
 ###############################################################################
 # Create the JavaUtils library
 
-IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
-  SUBDIRS(Tests)
-  
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)  
   MACRO(END_WRAP_LIBRARIES_JAVA)
+    ADD_SUBDIRECTORY(${WRAP_ITK_JAVA_SOURCE_DIR}/Tests)
 #    ADD_SUBDIRECTORY(${WRAP_ITK_JAVA_SOURCE_DIR}/JavaUtils)
   ENDMACRO(END_WRAP_LIBRARIES_JAVA)
 

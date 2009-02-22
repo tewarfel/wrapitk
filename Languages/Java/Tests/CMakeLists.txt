@@ -4,9 +4,15 @@ FIND_PROGRAM(ITK_TEST_DRIVER itkTestDriver)
 
 SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
   "${JAVA_RUNTIME}"
-  -Djava.library.path=${WrapITK_BINARY_DIR}/lib
+  -Djava.library.path=${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}
 )
-  
+
+# windows doesn't use the same separator than the others  
+IF(WIN32)
+  SET(sep "\;")
+ELSE(WIN32)
+  SET(sep ":")
+ENDIF(WIN32)
 
 # put all generated files in this list
 SET(targets "")
@@ -15,10 +21,14 @@ SET(depends "")
 
 MACRO(BUILD_CLASSPATH var)
   SET(${var} ".")
+  SET(LAST_TEST_DEPS_OK ON)
   FOREACH(lib ${ARGN})
     STRING(TOLOWER ${lib} lower_lib)
-    SET(${var} "${${var}}:${WrapITK_BINARY_DIR}/lib/org.itk.${lower_lib}.jar")
+    SET(${var} "${${var}}${sep}${WrapITK_BINARY_DIR}/lib/org.itk.${lower_lib}.jar")
     SET(depends ${depends} ${lib}JavaJar)
+    IF(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${lib}(;|$)")
+      SET(LAST_TEST_DEPS_OK OFF)
+    ENDIF(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${lib}(;|$)")
   ENDFOREACH(lib)
 ENDMACRO(BUILD_CLASSPATH)
 
@@ -27,33 +37,43 @@ MACRO(BUILD_JAVA_TEST name cp_var)
   # a convenient macro to build java tests
   # 
   BUILD_CLASSPATH(${cp_var} ${ARGN})
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
-    COMMAND ${JAVA_COMPILE}
-    ARGS -classpath "${${cp_var}}"
-    -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
-    DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
-    )
-  SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
-  
+  IF(LAST_TEST_DEPS_OK)
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
+      COMMAND ${JAVA_COMPILE}
+      ARGS -classpath "${${cp_var}}"
+      -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
+      DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
+      )
+    SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
+  ELSE(LAST_TEST_DEPS_OK)
+    MESSAGE("Warning: Can't buid java test ${name}.")
+  ENDIF(LAST_TEST_DEPS_OK)
 ENDMACRO(BUILD_JAVA_TEST)
 
 MACRO(BUILD_JAVA_TEST_BIN name cp_var)
   # a convenient macro to build java tests
   # 
   BUILD_CLASSPATH(${cp_var} ${ARGN})
-  ADD_CUSTOM_COMMAND(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
-    COMMAND ${JAVA_COMPILE}
-    ARGS -classpath "${${cp_var}}"
-    -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
-    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
-    )
-  SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
-  
+  IF(LAST_TEST_DEPS_OK)
+    ADD_CUSTOM_COMMAND(
+      OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
+      COMMAND ${JAVA_COMPILE}
+      ARGS -classpath "${${cp_var}}"
+      -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
+      DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
+      )
+    SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
+  ELSE(LAST_TEST_DEPS_OK)
+    MESSAGE("Warning: Can't buid java test ${name}.")
+  ENDIF(LAST_TEST_DEPS_OK)
 ENDMACRO(BUILD_JAVA_TEST_BIN)
 
-
+MACRO(JAVA_ADD_TEST)
+  IF(LAST_TEST_DEPS_OK)
+    ADD_TEST(${ARGN})
+  ENDIF(LAST_TEST_DEPS_OK)
+ENDMACRO(JAVA_ADD_TEST)
 
 
 # configure the tests
@@ -77,7 +97,7 @@ FOREACH(d ${WRAP_ITK_DIMS})
 
     BUILD_JAVA_TEST_BIN(${test_base_name} class_path IO)
 
-    ADD_TEST(JavaSimplePipeline${t}${d}
+    JAVA_ADD_TEST(JavaSimplePipeline${t}${d}
       ${JAVA_DRIVER} -classpath ${class_path}
       ${test_base_name}
       ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -89,7 +109,7 @@ FOREACH(d ${WRAP_ITK_DIMS})
 ENDFOREACH(d)
 
 BUILD_JAVA_TEST(MedianImageFilter class_path IO Denoising)
-ADD_TEST(JavaMedianImageFilter
+JAVA_ADD_TEST(JavaMedianImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   MedianImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -99,7 +119,7 @@ ADD_TEST(JavaMedianImageFilter
 )
 
 BUILD_JAVA_TEST(MeanImageFilter class_path IO Denoising)
-ADD_TEST(JavaMeanImageFilter
+JAVA_ADD_TEST(JavaMeanImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   MeanImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -109,7 +129,7 @@ ADD_TEST(JavaMeanImageFilter
 )
 
 BUILD_JAVA_TEST(BinaryDilateImageFilter class_path IO SimpleFilters BinaryMorphology)
-ADD_TEST(JavaBinaryDilateImageFilter
+JAVA_ADD_TEST(JavaBinaryDilateImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   BinaryDilateImageFilter
   ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
@@ -118,7 +138,7 @@ ADD_TEST(JavaBinaryDilateImageFilter
 )
 
 BUILD_JAVA_TEST(BinaryErodeImageFilter class_path IO SimpleFilters BinaryMorphology)
-ADD_TEST(JavaBinaryErodeImageFilter
+JAVA_ADD_TEST(JavaBinaryErodeImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   BinaryErodeImageFilter
   ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
@@ -127,7 +147,7 @@ ADD_TEST(JavaBinaryErodeImageFilter
 )
 
 BUILD_JAVA_TEST(BinaryThresholdImageFilter class_path IO BinaryMorphology)
-ADD_TEST(JavaBinaryThresholdImageFilter
+JAVA_ADD_TEST(JavaBinaryThresholdImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   BinaryThresholdImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -138,7 +158,7 @@ ADD_TEST(JavaBinaryThresholdImageFilter
 )
 
 BUILD_JAVA_TEST(CastImageFilter class_path IO SimpleFilters)
-ADD_TEST(JavaCastImageFilter
+JAVA_ADD_TEST(JavaCastImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   CastImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -149,7 +169,7 @@ ADD_TEST(JavaCastImageFilter
 )
 
 BUILD_JAVA_TEST(CurvatureAnisotropicDiffusionImageFilter class_path IO SimpleFilters Denoising IntensityFilters)
-ADD_TEST(JavaCurvatureAnisotropicDiffusionImageFilter
+JAVA_ADD_TEST(JavaCurvatureAnisotropicDiffusionImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   CurvatureAnisotropicDiffusionImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -160,7 +180,7 @@ ADD_TEST(JavaCurvatureAnisotropicDiffusionImageFilter
 BUILD_JAVA_TEST(CurvatureFlowImageFilter class_path IO SimpleFilters Denoising IntensityFilters)
 
 BUILD_JAVA_TEST(GradientAnisotropicDiffusionImageFilter class_path IO SimpleFilters Denoising IntensityFilters)
-ADD_TEST(JavaCurvatureFlowImageFilter
+JAVA_ADD_TEST(JavaCurvatureFlowImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   CurvatureFlowImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -169,7 +189,7 @@ ADD_TEST(JavaCurvatureFlowImageFilter
 )
 
 BUILD_JAVA_TEST(SigmoidImageFilter class_path IO  IntensityFilters)
-ADD_TEST(JavaSigmoidImageFilter
+JAVA_ADD_TEST(JavaSigmoidImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   SigmoidImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
@@ -179,7 +199,7 @@ ADD_TEST(JavaSigmoidImageFilter
 )
 
 BUILD_JAVA_TEST(ThresholdImageFilter class_path IO SegmentationAndThreshold)
-ADD_TEST(JavaThresholdImageFilter
+JAVA_ADD_TEST(JavaThresholdImageFilter
   ${JAVA_DRIVER} -classpath ${class_path}
   ThresholdImageFilter
   ${WrapITK_SOURCE_DIR}/images/cthead1.png
