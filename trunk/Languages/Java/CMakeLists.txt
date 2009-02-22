@@ -1,5 +1,3 @@
-SUBDIRS(Tests)
-
 ###############################################################################
 
 SET(WRAP_ITK_JAVA_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "java source dir")
@@ -78,6 +76,16 @@ ENDMACRO(WRAP_LIBRARY_JAVA library_name)
 ###############################################################################
 MACRO(END_WRAP_LIBRARY_JAVA)
 
+  # Loop over the extra swig input files and add them to the generated files 
+  # lists. Guess that the generated cxx output will have the same name as 
+  # the .i input file.
+  FOREACH(source ${WRAPPER_LIBRARY_SWIG_INPUTS})
+    GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
+    STRING(REPLACE "wrap_" "" base_name "${base_name}")
+    WRAP_MODULE_JAVA("${base_name}")
+    END_WRAP_MODULE_JAVA("${base_name}")
+  ENDFOREACH(source)
+  
   # set the package name and path
   STRING(TOLOWER ${WRAPPER_LIBRARY_NAME} _java_package_name)
   SET(java_package_path ${WRAP_ITK_JAVA_SRC_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name})
@@ -143,7 +151,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   INSTALL(TARGETS "${lib}" DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib")
   IF(EXTERNAL_WRAP_ITK_PROJECT)
     # don't depends on the targets from wrapitk in external projects
-    FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+    FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} ITKJavaBase)
       ADD_DEPENDENCIES(${lib} ${dep}Swig)
     ENDFOREACH(dep)
   ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
@@ -162,7 +170,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   # Dependency modules jar files
   # manifest content
   SET(WRAP_ITK_JAVA_MANIFEST )
-  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} ITKJavaBase)
     # create the import package commands
     STRING(TOLOWER ${dep} ldep)
     SET(dep_jar_file ${WRAP_ITK_LIB_DIRECTORY}/${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${ldep}.jar)
@@ -215,7 +223,7 @@ MACRO(END_WRAP_LIBRARY_JAVA)
     ADD_DEPENDENCIES(${lib_jar} ${lib})
     IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
       # don't depends on the targets from wrapitk in external projects
-      FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+      FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} ITKJavaBase)
         ADD_DEPENDENCIES(${lib_jar} ${dep}Java)
         ADD_DEPENDENCIES(${lib_jar} ${dep}JavaJar)
       ENDFOREACH(dep)
@@ -230,6 +238,7 @@ ENDMACRO(END_WRAP_LIBRARY_JAVA)
 
 ###############################################################################
 MACRO(END_WRAP_MODULE_JAVA group_name)
+  SET(WRAP_ITK_JAVA_CLASS_NAMES ${WRAP_ITK_JAVA_CLASS_NAMES} ${group_name}Java)
   
   # set the package name and path
   STRING(TOLOWER ${WRAPPER_LIBRARY_NAME} java_package_name)
@@ -254,7 +263,7 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
   # prepare dependencies
   SET(DEPS )
   SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS )
-  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
+  FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS} ITKJavaBase)
     # library dependencies
     SET(DEPS ${DEPS} ${${dep}SwigFiles})
     
@@ -296,11 +305,12 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
   )
   # ${WRAP_ITK_JAVA_LIBRARY_DEPS} 
   
-   CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
-    "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i"
+  CONFIGURE_FILE("${WRAP_ITK_JAVA_SOURCE_DIR}/module_ext.i.in"
+    "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${group_name}_ext.i"
     @ONLY IMMEDIATE)
- WRAP_ITK_INSTALL("/Configuration/Typedefs/java"
-   "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${module}_ext.i")
+
+  WRAP_ITK_INSTALL("/Configuration/Typedefs/java"
+   "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/wrap_${group_name}_ext.i")
 
   SET(WRAP_ITK_JAVA_LIBRARY_DEPS ${WRAP_ITK_JAVA_LIBRARY_DEPS} "${java_file}" "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i")
 
@@ -347,3 +357,28 @@ MACRO(ADD_ONE_TYPEDEF_JAVA wrap_method wrap_class swig_name template_params)
 
 ENDMACRO(ADD_ONE_TYPEDEF_JAVA wrap_method wrap_class swig_name template_params)
 
+
+###############################################################################
+# Create the JavaUtils library
+
+IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  SUBDIRS(Tests)
+  
+  MACRO(END_WRAP_LIBRARIES_JAVA)
+#    ADD_SUBDIRECTORY(${WRAP_ITK_JAVA_SOURCE_DIR}/JavaUtils)
+  ENDMACRO(END_WRAP_LIBRARIES_JAVA)
+
+  MACRO(WRAP_LIBRARIES_JAVA)
+    ADD_SUBDIRECTORY(${WRAP_ITK_JAVA_SOURCE_DIR}/JavaBase)
+  ENDMACRO(WRAP_LIBRARIES_JAVA)
+
+ELSE(NOT EXTERNAL_WRAP_ITK_PROJECT)
+  MACRO(END_WRAP_LIBRARIES_JAVA)
+    # just do nothing
+  ENDMACRO(END_WRAP_LIBRARIES_JAVA)
+
+  MACRO(WRAP_LIBRARIES_JAVA)
+    # just do nothing
+  ENDMACRO(WRAP_LIBRARIES_JAVA)
+
+ENDIF(NOT EXTERNAL_WRAP_ITK_PROJECT)
