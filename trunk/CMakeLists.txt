@@ -165,6 +165,15 @@ END_WRAP_LIBRARIES()
 # Configure WrapITKConfig.cmake and FindWrapITK.cmake for external projects
 ###############################################################################
 # First, configure for use directly from the build dir.
+# we must add the options for the languages for the build dir case, so the
+# external project won't find all the languages, even the usued ones.
+# In the installed case, this feature is useful to let the packagers make several
+# subpackages for wrapitk.
+SET(CONFIG_WRAP_ITK_MORE_OPTIONS)
+FOREACH(lang ${WRAP_ITK_LANGUAGES} ${WRAP_ITK_UNUSED_LANGUAGES})
+  STRING(TOUPPER "${lang}" lang_upper)
+  SET(CONFIG_WRAP_ITK_MORE_OPTIONS "${CONFIG_WRAP_ITK_MORE_OPTIONS}SET(WRAP_ITK_${lang_upper} ${WRAP_ITK_${lang_upper}} CACHE BOOL \"Build swig ${lang} wrapper support.\")\n")
+ENDFOREACH(lang)
 SET(CONFIG_CONFIG_DIR "${WrapITK_SOURCE_DIR}/ConfigurationInputs")
 SET(CONFIG_CMAKE_DIR "${WrapITK_SOURCE_DIR}")
 SET(CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Typedefs")
@@ -173,7 +182,7 @@ SET(CONFIG_WRAP_ITK_MODULES "${WRAP_ITK_MODULES}")
 SET(CONFIG_WRAP_ITK_PYTHON_MODULE "${WrapITK_BINARY_DIR}/Python/\\\${CTEST_CONFIGURATION_TYPE}")
 SET(CONFIG_WRAP_ITK_PYTHON_LIBS "${LIBRARY_OUTPUT_PATH}/\\\${CTEST_CONFIGURATION_TYPE}")
 SET(CONFIG_WRAP_ITK_LIB_DIR  "${LIBRARY_OUTPUT_PATH}")
-SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_BINARY_DIR}/igenerator.py")
+SET(CONFIG_WRAP_ITK_IGENERATOR  "${WrapITK_BINARY_DIR}/Languages/SwigInterface/igenerator.py")
 CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/WrapITKConfig.cmake.in"
                "${WrapITK_BINARY_DIR}/WrapITKConfig.cmake"
                @ONLY IMMEDIATE)
@@ -185,6 +194,7 @@ CONFIGURE_FILE("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
 
 # Second, configure for installed use. Ensure that no absolute paths
 # go into the installed config file, so that it is as portable as possible.
+SET(CONFIG_WRAP_ITK_MORE_OPTIONS)
 SET(CONFIG_CONFIG_DIR "\${WrapITK_DIR}/Configuration/Inputs")
 SET(CONFIG_CMAKE_DIR "\${WrapITK_DIR}/Configuration")
 SET(CONFIG_WRAP_ITK_TYPEDEFS_DIRECTORY "\${WrapITK_DIR}/Configuration/Typedefs")
