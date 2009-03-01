@@ -14,7 +14,9 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
 = Class coverage =
 
-filters, rgba, itk::Statistics::*, ...
+WrapITK can now manipulates RGBAPixel types, and the classes in the itk::Statistics namespace are now usable.
+
+The filter coverage has raised to 75% with 279 filters available.
 
 = Target languages changes =
 
@@ -29,7 +31,7 @@ SmartPointers are not wrapped anymore in python. There are several consequences:
   * Load time is greatly decreased;
   * GetPointer() is no more needed, to pass a smart pointed object to a function which require a super class of the object. GetPointer() is still available for backward compatibility but display a warning when used. It should disappear in one of the next release;
 
-=== No optional patch -- the features are available by default ===
+=== No optional patch — the features are available by default ===
 
 In previous versions, python integration was enhanced by patching ITK code. The integration is now made with the standard swig mechanisms and doesn't require any patch. Everything is there by default.
 
@@ -111,13 +113,21 @@ but a single one which is the result of the dmap filter with input3 as input.
 True
 }}}
 
-=== Python observer ===
+=== Python callbacks ===
+
+WrapITK now hides the complexity of the PyCommand class. Adding a python callback can be done in a single line. The following example display the progress of the median filter on stderr:
+
+{{{
+median.AddObserver(itk.ProgressEvent(), lambda: sys.stderr.write(str(median.GetProgress())+"\n"))
+}}}
 
 === itk.pipeline, auto_pipeline, templated_class ===
 
+=== Doc integration ===
+
 === psyco ===
 
-=== Doc integration ===
+WrapITK loads psyco, if available, to improve the performances.
 
 
 == Java ==
