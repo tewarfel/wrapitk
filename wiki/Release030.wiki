@@ -25,11 +25,44 @@ SmartPointers are not wrapped anymore in python. There are several consequences:
 
 === No optional patch -- the features are available by default ===
 
+In previous versions, python integration was enhanced by patching ITK code. The integration is now made with the standard swig mechanisms and doesn't require any patch. Everything is there by default.
+
 === No unusable std::basic_string anymore ===
+
+Many methods were not usable in python because the were requiring std::basic_string instead of std::string. Several users have reported that problem when trying to use dicom reader from python. All those methods are now plainly usable.
 
 === Better repr() for simple types ===
 
+Even with optional patches, it was quite difficult to read the content of simple types like itk::Index. The simplest way to do that (with optional patch) was to make a print — repr was the standard swig one:
+{{{
+>>> print idx
+[0, 0, 0]
+>>> idx
+<C itk::Index<(3u)> instance at _401df009_p_itk__IndexT3u_t>
+}}}
+repr is now much better:
+{{{
+>>> idx
+itkIndex3([0, 0, 0])
+}}}
+and makes useless the use of the print command in the interpreter.
+
 === Casting ===
+
+All the subclasses of LightObject now provide a cast() static method which let the user convert objects at run time.
+{{{
+>>> median = itk.MedianImageFilter.IUS3IUS3.New()
+>>> obj = itk.LightObject.cast(median)
+>>> obj
+<ITKCommonBasePython.itkLightObject; proxy of <Swig Object of type 'itkLightObject *' at 0xa5f4990> >
+>>> itk.ImageSource.IUS3.cast(obj)
+<itkImageSourcePython.itkImageSourceIUS3; proxy of <Swig Object of type 'itkImageSourceIUS3 *' at 0xa5f4990> >
+}}}
+Additionnaly, itk module provides the down_cast() which automatically cast the object to the most specialized know type:
+{{{
+>>> itk.down_cast(obj)
+<itkMedianImageFilterPython.itkMedianImageFilterIUS3IUS3; proxy of <Swig Object of type 'itkMedianImageFilterIUS3IUS3 *' at 0xa5f4990> >
+}}}
 
 === `[]` is a better GetOutput() ===
 
