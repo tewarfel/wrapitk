@@ -2,9 +2,15 @@ WrapITK release page for version 0.3.0.
 
 = Introduction =
 
-Add your content here.
+For the first time since its integration in ITK, WrapITK is releasing a new version. This is the result of hard work to enhance the whole wrapping process, the class coverage, the target languages integration and the user experience.
 
 = Wrapping process enhancements =
+
+* native swig;
+* full separation of types declaration and code generation;
+* code generation based on callback macros
+
+= Class coverage =
 
 = Target languages changes =
 
@@ -17,6 +23,15 @@ Add your content here.
 == New languages ==
 
 = Supported platforms =
+
+WrapITK is tested on the following platforms:
+
+* Mac OS X 10.5 Intel
+* GNU/Linux
+* OpenSolaris
+* Microsoft Windows
+
+It may also work on other platforms, but has not been tested yet.
 
 = Known issues =
 
