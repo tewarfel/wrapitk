@@ -1,3 +1,4 @@
+#labels Featured
 WrapITK release page for version 0.3.0.
 
 = Introduction =
@@ -163,6 +164,23 @@ It may also work on other platforms, but has not been tested yet.
   * BinaryDilateImageFilter has no SetKernel() method in Tcl. No know reason yet. Other classes may be affected.
 
 = Binary downloads and installation =
+
+== Mac OS X ==
+
+WrapITK binaries are available at http://voxel.jouy.inra.fr/itk/wrapitk-0.3.0/ . For a standard installation, you'll need:
+  * ITK-3.12.0-Darwin.dmg — contains ITK libs;
+  * WrapITK-0.3.0-Darwin.dmg — contains WrapITK binaries for python, java and tcl.
+Simply download those files, open them, and run the installer.
+
+You'll then have to edit your environment to make it fully usable. Simply copy
+{{{
+export DYLD_LIBRARY_PATH=/usr/local/lib/InsightToolkit/:$DYLD_LIBRARY_PATH
+export PYTHONPATH=/usr/local/lib/InsightToolkit/WrapITK/Python/:$PYTHONPATH
+}}}
+at the end of your ~/.profile file.
+
+== Microsoft windows ==
+
 
 = Source downloads and build =
 
