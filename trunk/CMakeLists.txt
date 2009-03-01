@@ -8,17 +8,6 @@ INCLUDE("CMakeUtilityFunctions.cmake")
 
 ENABLE_TESTING()
 
-# work around cmake problem (bug ?) on some solaris systems
-IF(SUNOS_STDCXX_FIX)
-  IF(CMAKE_COMPILER_IS_GNUCXX)
-    IF(CMAKE_COMPILER_IS_GNUCC)
-      SET(CMAKE_CXX_CREATE_SHARED_LIBRARY
-          "<CMAKE_C_COMPILER> <CMAKE_SHARED_LIBRARY_CXX_FLAGS> <LINK_FLAGS> <CMAKE_SHARED_LIBRARY_CREATE_CXX_FLAGS>  <CMAKE_SHARED_LIBRARY_SONAME_CXX_FLAG><TARGET_SONAME> -o <TARGET> <OBJECTS> <LINK_LIBRARIES>")
-    ENDIF(CMAKE_COMPILER_IS_GNUCC)
-  ENDIF(CMAKE_COMPILER_IS_GNUCXX)
-ENDIF(SUNOS_STDCXX_FIX)
-
-
 ###############################################################################
 # Config ITKWrap
 ###############################################################################
