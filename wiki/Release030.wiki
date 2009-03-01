@@ -8,9 +8,13 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
   * native swig;
   * full separation of types declaration and code generation;
-  * code generation based on callback macros.
+  * code generation based on callback macros;
+  * options in installed tree
+  * cpack
 
 = Class coverage =
+
+filters, rgba, itk::Statistics::*, ...
 
 = Target languages changes =
 
@@ -107,12 +111,24 @@ but a single one which is the result of the dmap filter with input3 as input.
 True
 }}}
 
+=== Python observer ===
+
+=== itk.pipeline, auto_pipeline, templated_class ===
+
+=== psyco ===
+
 === Doc integration ===
 
 
 == Java ==
 
 === No SmartPointers anymore ===
+
+=== One jar per library ===
+
+=== toString() ===
+
+=== External projects ===
 
 
 == Tcl ==
