@@ -1,0 +1,27 @@
+WrapITK release page for version 0.3.0.
+
+= Introduction =
+
+Add your content here.
+
+= Wrapping process enhancements =
+
+= Target languages changes =
+
+== Python ==
+
+== Java ==
+
+== Tcl ==
+
+== New languages ==
+
+= Supported platforms =
+
+= Known issues =
+
+= Binary downloads and installation =
+
+= Source downloads and build =
+
+= Bug reports =
