@@ -45,6 +45,7 @@ excluded = set([
   "FFTWComplexConjugateToRealImageFilter",
   "FFTRealToComplexConjugateImageFilter",
   "FFTComplexConjugateToRealImageFilter",
+  "FFTWComplexToComplexImageFilter",
   "SCSLComplexConjugateToRealImageFilter",
   "SCSLRealToComplexConjugateImageFilter",
   "BinaryMorphologyImageFilter",
@@ -102,6 +103,7 @@ excluded = set([
   "WarpJacobianDeterminantFilter",
   "MatrixIndexSelectionImageFilter",
   "HistogramToImageFilter",
+  "AttributeMorphologyBaseImageFilter",
 ])
 
 
