@@ -14,6 +14,8 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
 = Target languages changes =
 
+Even if most of the changes are focused on python, all the target languages have some differences since the last version.
+
 == Python ==
 
 === No SmartPointers anymore ===
@@ -65,6 +67,21 @@ Additionnaly, itk module provides the down_cast() which automatically cast the o
 }}}
 
 === `[]` is a better GetOutput() ===
+
+Up to now, the user had to use GetOutput() to get the images produced by a filter. However, the GetOutput() method is not bounded (one can use it with a higher value than the actual number of outputs in that filter. GetOutput() also produce a non casted output and may fail to give a valid if the outputs of the filter are of different types.
+
+The `[]` notation check the bounds, cast the output to its real type, and also accept the slice notation.
+{{{
+>>> dmap = itk.DanielssonDistanceMapImageFilter.IUS3IF3.New()
+>>> dmap[0]
+<itkImagePython.itkImageF3; proxy of <Swig Object of type 'itkImageF3 *' at 0xacd0718> >
+>>> dmap[10]
+IndexError: index out of range
+>>> dmap[:]
+[<itkImagePython.itkImageF3; proxy of <Swig Object of type 'itkImageF3 *' at 0xacd0718> >,
+ <itkImagePython.itkImageF3; proxy of <Swig Object of type 'itkImageF3 *' at 0xacd0508> >,
+ <itkImagePython.itkImageO33; proxy of <Swig Object of type 'itkImageO33 *' at 0xacd0918> >]
+}}}
 
 === () is a better UpdateLargestPossibleRegion() ===
 
