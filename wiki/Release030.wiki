@@ -8,7 +8,7 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
   * native swig;
   * full separation of types declaration and code generation;
-  * code generation based on callback macros
+  * code generation based on callback macros.
 
 = Class coverage =
 
@@ -16,7 +16,25 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
 == Python ==
 
+=== No SmartPointers anymore ===
+
+=== No unusable std::basic_string anymore ===
+
+=== Better repr() for simple types ===
+
+=== Casting ===
+
+=== `[]` is a better GetOutput() ===
+
+=== () is a better UpdateLargestPossibleRegion() ===
+
+=== Doc integration ===
+
+
 == Java ==
+
+=== No SmartPointers anymore ===
+
 
 == Tcl ==
 
