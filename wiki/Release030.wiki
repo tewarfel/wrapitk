@@ -85,6 +85,28 @@ IndexError: index out of range
 
 === () is a better UpdateLargestPossibleRegion() ===
 
+One thing the user quickly note when using WrapITK is the required usage of UpdateLargestPossibleRegion() when working with several size of images. The simpler Update() can't work, because it doesn't trigger the renegociation of the regions in the pipeline. UpdateLargestPossibleRegion() is the right method to use, but is painfully long to write.
+
+WrapITK provide the () notation to make the update of the pipeline less verbose. This notation also allow to change some input values before the update, as in the New() method, and return the filter to make easier to get a specific output.
+
+The following example change the input of the filter dmap, change UseImageSpacing to True, update the pipeline and return the first input of dmap.
+{{{
+>>> dmap(img, UseImageSpacing=True)[0]
+<itkImagePython.itkImageF3; proxy of <Swig Object of type 'itkImageF3 *' at 0xacd0718> >
+}}}
+
+Keep in mind that this notation doesn't change at all the pipeline behavior. In accordance with the pipeline model, the following example doesn't produce 3 different images:
+{{{
+>>> img1 = dmap(input1)[0]
+>>> img2 = dmap(input2)[0]
+>>> img3 = dmap(input3)[0]
+}}}
+but a single one which is the result of the dmap filter with input3 as input.
+{{{
+>>> img1 == img2 == img3
+True
+}}}
+
 === Doc integration ===
 
 
