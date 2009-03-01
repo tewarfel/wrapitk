@@ -3,6 +3,7 @@
 FIND_PROGRAM(ITK_TEST_DRIVER itkTestDriver)
 
 SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
+  --add-before-libpath "${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}"
   "${JAVA_RUNTIME}"
   -Djava.library.path=${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}
 )
