@@ -94,7 +94,7 @@ excluded = set([
   "VanHerkGilWermanErodeDilateImageFilter",
   "VanHerkGilWermanErodeImageFilter",
   "GradientImageToBloxBoundaryPointImageFilter",
-  "JoinImageFilter",
+  "InterpolateImageFilter",
   "MaskedMovingHistogramImageFilter",
   "SimpleFuzzyConnectednessRGBImageFilter",
   "SimpleFuzzyConnectednessScalarImageFilter",
