@@ -112,7 +112,10 @@ SET(WRAP_ITK_TCL_ITKWISH_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
                ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish
                @ONLY IMMEDIATE )
-INSTALL_FILES(/bin FILES ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/itkwish
+  DESTINATION bin
+  PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+)
 
 # configure a itkwish usable in build tree
 # use WrapITK_BINARY_DIR instead of the current bianry dir because tcl search pkgIndex.tcl in 
@@ -127,8 +130,10 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/itkwish.in
 
 
 #install the actual executable
-INSTALL_TARGETS("${WRAP_ITK_INSTALL_PREFIX}/bin" itkwish)
-INSTALL_FILES("${WRAP_ITK_INSTALL_PREFIX}/Tcl" .tcl itkinteraction itktesting itkdata itkutils)
+INSTALL(TARGETS itkwish DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/bin")
+INSTALL(FILES itkinteraction.tcl itktesting.tcl itkdata.tcl itkutils.tcl
+  DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Tcl"
+)
 
 
 
