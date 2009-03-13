@@ -1,7 +1,7 @@
 #labels Featured
-#sidebar TableOfContents
-
 WrapITK release page for version 0.3.0.
+
+<wiki:toc max_depth="2" />
 
 = Introduction =
 
@@ -28,7 +28,7 @@ Even if most of the changes are focused on python, all the target languages have
 
 == Common ==
 
-=== itk::SmartPointer is not wrapped anymore ===
+=== `itk::SmartPointer` is not wrapped anymore ===
 
 SmartPointers are not wrapped anymore in all languages. Here are some significant improvements:
   * Binary size is about 50% smaller than before
