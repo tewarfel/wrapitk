@@ -1,4 +1,6 @@
 #labels Featured
+#sidebar TableOfContents
+
 WrapITK release page for version 0.3.0.
 
 = Introduction =
@@ -7,11 +9,12 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
 = Wrapping process enhancements =
 
-  * native swig;
-  * full separation of types declaration and code generation;
-  * code generation based on callback macros;
-  * options in installed tree
-  * cpack
+  * Native swig
+  * Full separation of types declaration and code generation
+  * Code generation based on callback macros
+  * Inline documentation generation from c++ to target language using Doxygen
+  * Options in installed tree
+  * CPack
 
 = Class coverage =
 
@@ -23,14 +26,16 @@ The filter coverage has raised to 75% with 279 filters available.
 
 Even if most of the changes are focused on python, all the target languages have some differences since the last version.
 
+== Common ==
+
+=== itk::SmartPointer is not wrapped anymore ===
+
+SmartPointers are not wrapped anymore in all languages. Here are some significant improvements:
+  * Binary size is about 50% smaller than before
+  * Load time is remarkably decreased
+  * GetPointer() is no more needed, to pass a smart pointed object to a function which require a super class of the object. GetPointer() is still available for backward compatibility but display a warning when used. It should disappear in one of the next release
+
 == Python ==
-
-=== No SmartPointers anymore ===
-
-SmartPointers are not wrapped anymore in python. There are several consequences:
-  * Binary are about 50% smaller than before;
-  * Load time is greatly decreased;
-  * GetPointer() is no more needed, to pass a smart pointed object to a function which require a super class of the object. GetPointer() is still available for backward compatibility but display a warning when used. It should disappear in one of the next release;
 
 === No optional patch — the features are available by default ===
 
@@ -133,9 +138,9 @@ WrapITK loads psyco, if available, to improve the performances.
 
 == Java ==
 
-=== No SmartPointers anymore ===
+=== Wrapping to multiple java packages ===
 
-=== One jar per library ===
+Each ITK shared library is now automatically wrapped to a separate java package. For instance, the IO library is wrapped to `org.itk.io`. If you have developed your own library based on ITK and wish to wrap it to java, it is possible to it to your own package name.
 
 === toString() ===
 
