@@ -265,6 +265,7 @@ def index_to_physical_point( imageOrFilter, idx ):
   imageOrFilter is the image where the physical point must be computed
   idx is the index used to compute the physical point. It can be a continuous index.
   """
+  import sys
   print >> sys.stderr, "WrapITK warning: itk.index_to_physical_point() is deprecated. The coresponding templated method is now available in itk::ImageBase."
   from __builtin__ import range # required because range is overladed in this module
   # get the image if needed
@@ -290,6 +291,7 @@ def physical_point_to_continuous_index( imageOrFilter, p ):
   imageOrFilter is the image where the physical point must be computed
   p is the point used to compute the index
   """
+  import sys
   print >> sys.stderr, "WrapITK warning: itk.index_to_physical_point() is deprecated. The coresponding templated method is now available in itk::ImageBase."
   from __builtin__ import range # required because range is overladed in this module
   # get the image if needed
@@ -315,6 +317,7 @@ def physical_point_to_index( imageOrFilter, p ):
   image is the image where the physical point must be computed
   p is the point used to compute the index
   """
+  import sys
   print >> sys.stderr, "WrapITK warning: itk.physical_point_to_index() is deprecated. The coresponding templated method is now available in itk::ImageBase."
   from __builtin__ import range # required because range is overladed in this module
   # get the image if needed
