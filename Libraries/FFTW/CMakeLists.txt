@@ -1,4 +1,5 @@
-SET(CMAKE_MODULE_PATH ${ITK_SOURCE_DIR}/CMake) # Path to FINDFFTW
+
+INCLUDE(FindFFTW.cmake)
 
 WRAP_LIBRARY("FFTW")
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base FFT)
@@ -7,8 +8,6 @@ SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base FFT)
 SET(libs ITKCommon ITKAlgorithms)
 
 IF(WRAP_complex_float AND WRAP_float)
-  OPTION(USE_FFTWF "Use single precision FFTW if found" ON)
-  FIND_PACKAGE(FFTW)
   IF(FFTWF_LIB)
     SET(libs ${libs} ${FFTWF_LIB})
   ELSE(FFTWF_LIB)
@@ -17,8 +16,6 @@ IF(WRAP_complex_float AND WRAP_float)
 ENDIF(WRAP_complex_float AND WRAP_float)
 
 IF(WRAP_complex_double AND WRAP_double)
-  OPTION(USE_FFTWD "Use double precision FFTW if found" ON)
-  FIND_PACKAGE(FFTW)
   IF(FFTWD_LIB)
     SET(libs ${libs} ${FFTWD_LIB})
   ELSE(FFTWD_LIB)
