@@ -220,7 +220,9 @@ def generate_class( typedef, indent=0 ):
   info("Generating interface for %s." % typedef.name)
   super_classes = []
   for super_class in typedef.type.declaration.bases:
-    super_classes.append( "%s %s" % ( super_class.access, get_alias(super_class.related_class.decl_string) ) )
+    # exclude non wrappable stuff on msvc++
+    if get_alias(super_class.related_class.decl_string) not in ["_C_float_complex", "_C_double_complex", "_C_ldouble_complex"]:
+      super_classes.append( "%s %s" % ( super_class.access, get_alias(super_class.related_class.decl_string) ) )
   s = ""
   if super_classes:
     s = " : " + ", ".join( super_classes )
