@@ -421,19 +421,23 @@ MACRO(WRAP_NON_TEMPLATE_CLASS class)
 ENDMACRO(WRAP_NON_TEMPLATE_CLASS class)
 
 
-# MACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class swig_name)
-#   # Similar to WRAP_NAMED_CLASS in that it generates typedefs for CableSwig input.
-#   # However, since no templates need to be declared, there's no need for 
-#   # WRAP_CLASS ... (declare templates) .. END_WRAP_CLASS. Instead
-#   # WRAP_NAMED_NON_TEMPLATE_CLASS takes care of it all.
-#   # A fully-qualified 'class' parameter is required as above. The swig name for
-#   # this class is provided by the second parameter.
-#   # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
-#   # POINTER and POINTER_WITH_SUPERCLASS.
-# 
-#   WRAP_NAMED_CLASS("${class}" "${swig_name}" ${ARGN})
-#   ADD_ONE_TYPEDEF("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
-# ENDMACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class)
+MACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class swig_name)
+  # Similar to WRAP_NAMED_CLASS in that it generates typedefs for CableSwig input.
+  # However, since no templates need to be declared, there's no need for 
+  # WRAP_CLASS ... (declare templates) .. END_WRAP_CLASS. Instead
+  # WRAP_NAMED_NON_TEMPLATE_CLASS takes care of it all.
+  # A fully-qualified 'class' parameter is required as above. The swig name for
+  # this class is provided by the second parameter.
+  # Lastly, this class takes an optional 'wrap method' parameter. Valid values are:
+  # POINTER and POINTER_WITH_SUPERCLASS.
+
+  WRAP_NAMED_CLASS("${class}" "${swig_name}" ${ARGN})
+  # to avoid useless warning: no template can be defined in 
+  SET(WRAPPER_WARN_ABOUT_NO_TEMPLATE OFF)
+  ADD_ONE_TYPEDEF("${WRAPPER_WRAP_METHOD}" "${WRAPPER_CLASS}" "${WRAPPER_SWIG_NAME}")
+
+  WRAP_NAMED_NON_TEMPLATE_CLASS_ALL_LANGUAGES("${class}" "${swig_name}")
+ENDMACRO(WRAP_NAMED_NON_TEMPLATE_CLASS class)
 
 
 MACRO(WRAP_INCLUDE include_file)
