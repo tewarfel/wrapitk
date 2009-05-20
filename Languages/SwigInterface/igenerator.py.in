@@ -72,6 +72,7 @@ notWrapped = [
   "itk::PolygonGroupOrientation", # cableidx must generate something for the enums before wrapping this one
   "itk::SpatialOrientation::ValidCoordinateOrientationFlags",  # the same for this one
   "itk::Functor::.+",
+  "itk::SmartPointer< itk::Functor::.+",
   "itk::Function::.+",
   "itk::.+Function.*",  # Level set functions
   "itk::dsr", # a struct which shouldn't be exposed in analyze IO code ?
