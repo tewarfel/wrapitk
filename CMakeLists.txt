@@ -7,7 +7,12 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.2 FATAL_ERROR)
 INCLUDE("CMakeUtilityFunctions.cmake")
 
 ENABLE_TESTING()
-
+INCLUDE(CTest)
+IF(BUILD_TESTING)
+  SET(BUILDNAME "${BUILDNAME}" CACHE STRING "Name of build on the dashboard")
+  MARK_AS_ADVANCED(BUILDNAME)
+ENDIF(BUILD_TESTING)
+  
 ###############################################################################
 # Config ITKWrap
 ###############################################################################
