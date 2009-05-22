@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import itk
+import itk, sys, gc
 
 # create some vars used later
 
@@ -63,5 +63,13 @@ median.SetInput( median2 )
 assert median.GetInput() == median2.GetOutput()
 
 
+#   ----- keep that at the end! -----
+
+# pycommand masked
+median2.AddObserver(itk.DeleteEvent(), lambda: sys.exit(0))
+del median
+
+# we shouldn't reach that point
+sys.exit(1)
 
 
