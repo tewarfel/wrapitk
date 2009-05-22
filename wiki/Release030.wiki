@@ -15,6 +15,7 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
   * Inline documentation generation from c++ to target language using Doxygen
   * Options in installed tree
   * CPack
+  * ccache
 
 = Class coverage =
 
