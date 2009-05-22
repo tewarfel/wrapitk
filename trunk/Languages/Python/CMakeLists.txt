@@ -6,6 +6,12 @@ FIND_PACKAGE(PythonInterp)
 MARK_AS_ADVANCED(PYTHON_EXECUTABLE)
 INCLUDE_DIRECTORIES(${PYTHON_INCLUDE_PATH})
 
+OPTION(WRAP_ITK_PYTHON_USE_CCACHE "Use ccache to cache swig output and speedup the rebuild." OFF)
+MARK_AS_ADVANCED(WRAP_ITK_PYTHON_USE_CCACHE)
+IF(WRAP_ITK_PYTHON_USE_CCACHE)
+  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
+ENDIF(WRAP_ITK_PYTHON_USE_CCACHE)
+
 
 ###############################################################################
 # store the current dir, so it can be reused later
@@ -358,9 +364,14 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   ENDIF(EXTERNAL_WRAP_ITK_PROJECT)
     
   # and generate c++ code from the main module swig interface.
+  SET(swig_command ${SWIG_EXECUTABLE})
+  IF(WRAP_ITK_PYTHON_USE_CCACHE)
+    SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
+  ENDIF(WRAP_ITK_PYTHON_USE_CCACHE)
+  
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O ${WRAP_ITK_PYTHON_AUTODOC} -Werror
+    COMMAND ${swig_command} -c++ -python -O ${WRAP_ITK_PYTHON_AUTODOC} -Werror
 #       -fcompact
     -w508 -w312 -w314 -w509 -w302 -w362
     -w389 # operator[], to be suppressed later...
@@ -444,9 +455,14 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
   ENDFOREACH(dep)
 
   # and run swig to produce the c++ file and the .py file
+  SET(swig_command ${SWIG_EXECUTABLE})
+  IF(WRAP_ITK_PYTHON_USE_CCACHE)
+    SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
+  ENDIF(WRAP_ITK_PYTHON_USE_CCACHE)
+  
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${python_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -python -O ${WRAP_ITK_PYTHON_AUTODOC} -Werror
+    COMMAND ${swig_command} -c++ -python -O ${WRAP_ITK_PYTHON_AUTODOC} -Werror
 #       -fcompact
     -w508 -w312 -w314 -w509 -w302 -w362
     -w389 # operator[], to be suppressed later...
