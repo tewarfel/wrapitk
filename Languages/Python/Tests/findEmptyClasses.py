@@ -12,17 +12,18 @@ count = 0
 
 def exploreTpl(tpl):
     for cl in tpl.itervalues():
-	exploreMethods(cl)
-	# try to instanciate the class
-	try :
-	    obj = cl.New()
-	    exploreMethods(obj)
-	except:
-	    pass
-	try :
-	    exploreMethods(cl())
-	except:
-	    pass
+        print cl
+        exploreMethods(cl)
+        # try to instanciate the class
+        try :
+            obj = cl.New()
+            exploreMethods(obj)
+        except:
+            pass
+        try :
+            exploreMethods(cl())
+        except:
+            pass
     
 def exploreMethods(obj):
     global count
@@ -31,7 +32,7 @@ def exploreMethods(obj):
     if attrNameList == [] :
       count += 1
       print obj
-	
+        
       
 excluded = set([
   "PeriodicBoundaryCondition",
@@ -43,25 +44,44 @@ excluded = set([
   "SparseFieldLevelSetNode",
   "ParallelSparseFieldLevelSetNode",
   "PySwigIterator",
+  "SwigPyIterator",
+  "COLORS",
+  "VECTOR_REALS",
+  "SCALARS",
+  "ALL_TYPES",
+  "COMPLEX_REALS",
+  "RGBS",
+  "RGBAS",
+  "REALS",
+  "USIGN_INTS",
+  "DIMS",
+  "SIGN_INTS",
+  "VECTORS",
+  "INTS",
+  "COV_VECTOR_REALS",
+  "FFTComplexToComplexImageFilter",
   ])
+
 
 attrNameList = set([i for i in dir(itk) if i[0].isupper() and len(i) > 2]) - excluded
 
 for name in attrNameList:
+    if name != "FFTComplexToComplexImageFilter":
+      continue
     # use it because of lazy loading
     exec "attr = itk."+name
-    # print "-----------", name, "-----------"
+    print "-----------", name, "-----------"
     if isinstance(attr, itkTemplate) :
-	exploreTpl(attr)
+        exploreTpl(attr)
     else :
-	exploreMethods(attr)
+        exploreMethods(attr)
         try :
-	    exploreMethods(cl.New())
-	except:
-	    pass
-	try :
-	    exploreMethods(cl())
-	except:
-	    pass
-								
+            exploreMethods(cl.New())
+        except:
+            pass
+        try :
+            exploreMethods(cl())
+        except:
+            pass
+                                                                
 sys.exit(count)
