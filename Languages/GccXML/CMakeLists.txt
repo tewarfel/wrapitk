@@ -92,6 +92,7 @@ MACRO(END_WRAP_MODULE_GCCXML module)
             ${CONFIG_GCCXML_INC_CONTENTS}
             -DCSWIG
             -DCABLE_CONFIGURATION
+            -DITK_MANUAL_INSTANTIATION
             ${cxx_file}
       DEPENDS ${GCCXML} ${cxx_file}
     )
@@ -104,6 +105,7 @@ MACRO(END_WRAP_MODULE_GCCXML module)
             --gccxml-gcc-options ${gccxml_inc_file}
             -DCSWIG
             -DCABLE_CONFIGURATION
+            -DITK_MANUAL_INSTANTIATION
             ${cxx_file}
       DEPENDS ${GCCXML} ${cxx_file} ${gccxml_inc_file}
     )
