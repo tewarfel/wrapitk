@@ -1,23 +1,34 @@
 #labels Featured
-<wiki:toc max_depth="2" />
+<wiki:toc max_depth="3" />
 
 = Linux =
-==Ubuntu 8.10 Intrepid==
+==Ubuntu==
+===9.04 Jaunty===
+===8.10 Intrepid===
+==Debian==
+===5.0 Lenny===
 || *Architectures* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel types* || *Runtime <br> packages* || *Development <br> packages ||
-|| x86 <br> x86_64 || 3.11 _unstable_ || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Float <br> Double <br> Complex float <br> Complex double <br> Vector float <br> Vector double <br> Co-variant vector float <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| libitk <br> python-itk <br> python-itk-numpy || libitk-dev ||
+|| x86 <br> x86_64 || 3.14 || Python 2.5 || 2, 3 || Unsigned char <br /> Unsigned short <br> Float <br> Double <br> Complex float <br> Complex double <br> Vector float <br> Vector double <br> Co-variant vector float <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| libitk <br> python-itk <br> python-itk-numpy || libitk-dev ||
 
   * Adding the repository:
+    * Ubuntu 9.04 Jaunty, _coming soon_
+{{{
+sudo wget http://wrapitk.googlecode.com/files/wrapitk-ubuntu-9.04.list -O /etc/apt/sources.list.d/wrapitk.list
+}}}
+    * Ubuntu 8.10 Intrepid
 {{{
 sudo wget http://wrapitk.googlecode.com/files/wrapitk-ubuntu-8.10.list -O /etc/apt/sources.list.d/wrapitk.list
-sudo apt-get update
+}}}
+    * Debian 5.0 Lenny, _coming soon_
+{{{
+sudo wget http://wrapitk.googlecode.com/files/wrapitk-debian-5.0.list -O /etc/apt/sources.list.d/wrapitk.list
 }}}
   * Installation:
 {{{
+sudo apt-get update
 sudo apt-get install python-itk
 }}}
   Package libitk-dev may be used for developing custom ITK classes as well as automatically wrapping them. Other packages, such as python-itk-numpy, may be installed for interfacing to external libraries.
-  * _Note: The packages are not currently signed, they will be soon._
-  * _Note: New versions of packages swig, cableswig and doxygen are available in the repository. They were required in order to perform compilation on opensuse build service and will be removed soon (their existence is due to a problem on the build service). Do *not* try to update these packages as they are not official._
 
 = Mac OS X =
 || *Architectures* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel types* || *Runtime and Development <br> packages ||
