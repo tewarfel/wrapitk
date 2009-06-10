@@ -33,6 +33,16 @@ ELSE("${SWIG_VERSION}" STREQUAL "1.3.37")
 ENDIF("${SWIG_VERSION}" STREQUAL "1.3.37")
 
 ###############################################################################
+# python 2.6 search for the modules in a "64" subdirectory, and don't provide
+# any obvious way to find that. Create a link 64 -> . to make it find its
+# files.
+# TODO: file a bug report at opensolaris
+IF(CMAKE_SYSTEM MATCHES "SunOS-." AND NOT EXISTS "${LIBRARY_OUTPUT_PATH}/64")
+  EXEC_PROGRAM(ln ARGS -sf . "${LIBRARY_OUTPUT_PATH}/64")
+ENDIF(CMAKE_SYSTEM MATCHES "SunOS-." AND NOT EXISTS "${LIBRARY_OUTPUT_PATH}/64")
+
+
+###############################################################################
 # Configure the path-dependent itkConfig.py
 
 # we specify these directories with relative paths  so that the file can be 
