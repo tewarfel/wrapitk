@@ -14,11 +14,6 @@ ENDFOREACH(entry)
 
 INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
-OPTION(WRAP_ITK_TCL_USE_CCACHE "Use ccache to cache swig output and speedup the rebuild." OFF)
-MARK_AS_ADVANCED(WRAP_ITK_TCL_USE_CCACHE)
-IF(WRAP_ITK_TCL_USE_CCACHE)
-  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
-ENDIF(WRAP_ITK_TCL_USE_CCACHE)
 
 ###############################################################################
 # store the current dir, so it can be reused later
@@ -190,9 +185,9 @@ MACRO(END_WRAP_LIBRARY_TCL)
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Tcl.cpp")
 
   SET(swig_command ${SWIG_EXECUTABLE})
-  IF(WRAP_ITK_TCL_USE_CCACHE)
+  IF(WRAP_ITK_USE_CCACHE)
     SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
-  ENDIF(WRAP_ITK_TCL_USE_CCACHE)  
+  ENDIF(WRAP_ITK_USE_CCACHE)  
 
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
@@ -262,9 +257,9 @@ MACRO(END_WRAP_MODULE_TCL group_name)
   ENDFOREACH(dep)
 
   SET(swig_command ${SWIG_EXECUTABLE})
-  IF(WRAP_ITK_TCL_USE_CCACHE)
+  IF(WRAP_ITK_USE_CCACHE)
     SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
-  ENDIF(WRAP_ITK_TCL_USE_CCACHE)  
+  ENDIF(WRAP_ITK_USE_CCACHE)  
 
   # and run swig to produce the c++ file and the .tcl file
   ADD_CUSTOM_COMMAND(
