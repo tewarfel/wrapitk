@@ -168,7 +168,10 @@ It may also work on other platforms, but has not been tested yet.
   * Because of swig bug #2583160, python modules can't be loaded with python 2.6 when built with swig 1.3.37 or 1.3.38. Workaround: use swig 1.3.39 or newer, or swig 1.3.36 or older, or python 2.5 or older;
   * Because of swig bug #2552048, python generated doc doesn't contain method signature when built with swig 1.3.37. Workaround: use another version of swig;
   * BinaryDilateImageFilter has no SetKernel() method in Tcl. No know reason yet. Other classes may be affected. Workaround: no one known; 
-  * Because of OpenSolaris bug #6634042, WrapITK generates a core dump on (Open)Solaris x86 when built in 64 bits with gcc. Workaround: Use Sun Studio, or preload libgcc_s.so with {{{export LD_PRELOAD=/usr/sfw/lib/amd64/libgcc_s.so.1}}} on Solaris, or {{{export LD_PRELOAD=/usr/lib/amd64/libgcc_s.so.1}}} on OpenSolaris.
+  * Because of OpenSolaris bug #6634042, WrapITK generates a core dump on (Open)Solaris x86 when built in 64 bits with gcc. Workaround: Use Sun Studio, or preload libgcc_s.so.1 with 
+{{{
+export LD_PRELOAD=libgcc_s.so.1
+}}}
 
 = Binary downloads and installation =
 
