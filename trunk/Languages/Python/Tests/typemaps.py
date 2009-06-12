@@ -63,6 +63,14 @@ median.SetInput( median2 )
 assert median.GetInput() == median2.GetOutput()
 
 
+# catching exception
+try:
+  median.Update()
+  print >> sys.stderr, "Exception not throwed!"
+  sys.exit(1)
+except RuntimeError, e:
+  print "Exception catched as expected", e
+
 #   ----- keep that at the end! -----
 
 # pycommand masked
