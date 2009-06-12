@@ -26,7 +26,7 @@
 namespace itk
 {
 
-/** \Class PyCommand
+/** \class PyCommand
  *  \brief Command subclass that calls a Python callable object, e.g.
  *  a Python function.
  * 
