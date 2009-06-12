@@ -8,6 +8,12 @@ FIND_PACKAGE(Java)
 FIND_PACKAGE(JNI)
 INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
 
+OPTION(WRAP_ITK_JAVA_USE_CCACHE "Use ccache to cache swig output and speedup the rebuild." OFF)
+MARK_AS_ADVANCED(WRAP_ITK_JAVA_USE_CCACHE)
+IF(WRAP_ITK_JAVA_USE_CCACHE)
+  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
+ENDIF(WRAP_ITK_JAVA_USE_CCACHE)
+
 # create the java directory in the classindex dir
 FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
 
@@ -281,6 +287,11 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
     SET(WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS ${WRAP_ITK_JAVA_TYPEMAP_JAVAIMPORTS} "import ${java_import_package_name}.*;")
   ENDFOREACH(dep)
   
+  SET(swig_command ${SWIG_EXECUTABLE})
+  IF(WRAP_ITK_JAVA_USE_CCACHE)
+    SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
+  ENDIF(WRAP_ITK_JAVA_USE_CCACHE)  
+
   # if this is for an external library, let the user add extra swig args
   IF(EXTERNAL_WRAP_ITK_PROJECT)
     SET(WRAP_ITK_SWIG_ARGS_JAVA "" CACHE STRING "Extra user-defined swig arguments to be to the swig executable.")
@@ -288,7 +299,7 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
   
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file} ${java_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -java -O -features autodoc=1
+    COMMAND ${swig_command} -c++ -java -O -features autodoc=1
 #    -Werror
     -package ${java_package_name}
 #       -fcompact
