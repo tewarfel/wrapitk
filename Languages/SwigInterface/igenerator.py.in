@@ -67,8 +67,8 @@ notWrapped = [
   "itk::VectorImageNeighborhoodAccessorFunctor<.+>",
   "itk::.*Iterator.*",  # TODO: remove this one ?
   "itk::Neighborhood<.+>", # TODO: remove this one
-  "itk::VectorContainer<.+>",  # some of those types are quite difficult some ignore them all
-  "itk::MapContainer<.+>",  # some of those types are quite difficult some ignore them all
+#  "itk::VectorContainer<.+>",  # some of those types are quite difficult some ignore them all
+#  "itk::MapContainer<.+>",  # some of those types are quite difficult some ignore them all
   "itk::ThreadFunctionType",
   "itk::ThreadProcessIDType",
   "itk::PolygonGroupOrientation", # cableidx must generate something for the enums before wrapping this one
