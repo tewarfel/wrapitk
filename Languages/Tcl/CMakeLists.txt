@@ -14,6 +14,12 @@ ENDFOREACH(entry)
 
 INCLUDE_DIRECTORIES(${TCL_INCLUDE_PATH} ${TK_INCLUDE_PATH})
 
+OPTION(WRAP_ITK_TCL_USE_CCACHE "Use ccache to cache swig output and speedup the rebuild." OFF)
+MARK_AS_ADVANCED(WRAP_ITK_TCL_USE_CCACHE)
+IF(WRAP_ITK_TCL_USE_CCACHE)
+  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
+ENDIF(WRAP_ITK_TCL_USE_CCACHE)
+
 ###############################################################################
 # store the current dir, so it can be reused later
 SET(WRAP_ITK_TCL_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}" CACHE INTERNAL "tcl source dir")
@@ -183,10 +189,15 @@ MACRO(END_WRAP_LIBRARY_TCL)
   SET(lib ${WRAPPER_LIBRARY_NAME}Tcl)
   SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${WRAPPER_LIBRARY_NAME}Tcl.cpp")
 
+  SET(swig_command ${SWIG_EXECUTABLE})
+  IF(WRAP_ITK_TCL_USE_CCACHE)
+    SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
+  ENDIF(WRAP_ITK_TCL_USE_CCACHE)  
+
   # and generate c++ code from the main module swig interface.
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -tcl -O -features autodoc=1 # -Werror
+    COMMAND ${swig_command} -c++ -tcl -O -features autodoc=1 # -Werror
 #       -fcompact
     -w509 # Overloaded method
     -w365 # operator+= ignored
@@ -250,10 +261,15 @@ MACRO(END_WRAP_MODULE_TCL group_name)
     SET(DEPS ${DEPS} ${${dep}SwigFiles})
   ENDFOREACH(dep)
 
+  SET(swig_command ${SWIG_EXECUTABLE})
+  IF(WRAP_ITK_TCL_USE_CCACHE)
+    SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
+  ENDIF(WRAP_ITK_TCL_USE_CCACHE)  
+
   # and run swig to produce the c++ file and the .tcl file
   ADD_CUSTOM_COMMAND(
     OUTPUT ${cpp_file}
-    COMMAND ${SWIG_EXECUTABLE} -c++ -tcl -O -features autodoc=1 # -Werror
+    COMMAND ${swig_command} -c++ -tcl -O -features autodoc=1 # -Werror
 #       -fcompact
     -w509 # Overloaded method
     -w365 # operator+= ignored
