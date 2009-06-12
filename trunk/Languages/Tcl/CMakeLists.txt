@@ -202,6 +202,9 @@ MACRO(END_WRAP_LIBRARY_TCL)
     -w378 # operator!= ignored
     -w503 # Can't wrap 'operator []' unless renamed to a valid identifier.
     -w508 # Declaration of '???' shadows declaration accessible via operator->()
+    ### TODO: remove that once the bug for std::vector is fixed ###
+    -w401 # Maybe you forgot to instantiate 'XXX' using %template.
+    ###
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/tcl
@@ -274,6 +277,9 @@ MACRO(END_WRAP_MODULE_TCL group_name)
     -w378 # operator!= ignored
     -w503 # Can't wrap 'operator []' unless renamed to a valid identifier
     -w508 # Declaration of '???' shadows declaration accessible via operator->()
+    ### TODO: remove that once the bug for std::vector is fixed ###
+    -w401 # Maybe you forgot to instantiate 'XXX' using %template.
+    ###
     -o ${cpp_file}
     -I${LANGUAGES_SRC_DIR}
     -I${WRAP_ITK_TYPEDEFS_DIRECTORY}/tcl
