@@ -37,14 +37,16 @@ usedTypes = set()
 typedefSource = {}
 
 
-error = False
+warnings = set()
 
 def warn( id, msg ):
-  global error
   if str(id) not in options.warnings:
+    if not options.verbose and (id, msg) in warnings:
+      # just do nothing
+      return
+    warnings.add((id, msg))
     if options.warningError:
       print >> sys.stderr, "Error(%s): %s" % (str(id), msg)
-      error = True
     else:
       print >> sys.stderr, "Warning(%s): %s" % (str(id), msg)
 
@@ -478,7 +480,7 @@ for typedef in typedefs:
   generate_class( typedef )
 
 
-if error:
+if len(warnings) > 0 and options.warningError:
   sys.exit(1)
   
 
