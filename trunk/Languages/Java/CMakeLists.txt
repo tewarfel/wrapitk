@@ -8,12 +8,6 @@ FIND_PACKAGE(Java)
 FIND_PACKAGE(JNI)
 INCLUDE_DIRECTORIES(${JAVA_INCLUDE_PATH} ${JAVA_INCLUDE_PATH2})
 
-OPTION(WRAP_ITK_JAVA_USE_CCACHE "Use ccache to cache swig output and speedup the rebuild." OFF)
-MARK_AS_ADVANCED(WRAP_ITK_JAVA_USE_CCACHE)
-IF(WRAP_ITK_JAVA_USE_CCACHE)
-  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
-ENDIF(WRAP_ITK_JAVA_USE_CCACHE)
-
 # create the java directory in the classindex dir
 FILE(MAKE_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java)
 
@@ -288,9 +282,9 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
   ENDFOREACH(dep)
   
   SET(swig_command ${SWIG_EXECUTABLE})
-  IF(WRAP_ITK_JAVA_USE_CCACHE)
+  IF(WRAP_ITK_USE_CCACHE)
     SET(swig_command ${CCACHE_EXECUTABLE} ${swig_command})
-  ENDIF(WRAP_ITK_JAVA_USE_CCACHE)  
+  ENDIF(WRAP_ITK_USE_CCACHE)  
 
   # if this is for an external library, let the user add extra swig args
   IF(EXTERNAL_WRAP_ITK_PROJECT)

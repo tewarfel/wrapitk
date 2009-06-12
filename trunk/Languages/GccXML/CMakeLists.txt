@@ -3,12 +3,6 @@
 #SET(CableSwig_DIR ${ITK_CableSwig_DIR})
 FIND_PACKAGE(CableSwig REQUIRED)
 
-OPTION(WRAP_ITK_GCCXML_USE_CCACHE "Use ccache to cache gccxml output and speedup the rebuild." OFF)
-MARK_AS_ADVANCED(WRAP_ITK_GCCXML_USE_CCACHE)
-IF(WRAP_ITK_GCCXML_USE_CCACHE)
-  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
-ENDIF(WRAP_ITK_GCCXML_USE_CCACHE)
-
 SET(GCCXML ${CableSwig_gccxml_EXE} CACHE INTERNAL "gccxml path" FORCE)
 
 ###############################################################################
@@ -82,7 +76,7 @@ MACRO(END_WRAP_MODULE_GCCXML module)
   SET(gccxml_inc_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/gcc_xml.inc")
   SET(xml_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.xml")
   
-  IF(WRAP_ITK_GCCXML_USE_CCACHE)
+  IF(WRAP_ITK_USE_CCACHE)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${xml_file}
       COMMAND "${CCACHE_EXECUTABLE}" "${GCCXML}"
@@ -96,7 +90,7 @@ MACRO(END_WRAP_MODULE_GCCXML module)
             ${cxx_file}
       DEPENDS ${GCCXML} ${cxx_file}
     )
-  ELSE(WRAP_ITK_GCCXML_USE_CCACHE)
+  ELSE(WRAP_ITK_USE_CCACHE)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${xml_file}
       COMMAND ${GCCXML}
@@ -109,7 +103,7 @@ MACRO(END_WRAP_MODULE_GCCXML module)
             ${cxx_file}
       DEPENDS ${GCCXML} ${cxx_file} ${gccxml_inc_file}
     )
-  ENDIF(WRAP_ITK_GCCXML_USE_CCACHE)
+  ENDIF(WRAP_ITK_USE_CCACHE)
 
   SET(GCC_XML_OUTPUT_FILES ${GCC_XML_OUTPUT_FILES} ${xml_file})
   
@@ -131,12 +125,12 @@ MACRO(WRAP_LIBRARY_GCCXML library_name)
   SET(CONFIG_GCCXML_INC_CONTENTS)
   GET_DIRECTORY_PROPERTY(include_dir_list INCLUDE_DIRECTORIES)
   
-  IF(WRAP_ITK_GCCXML_USE_CCACHE)
+  IF(WRAP_ITK_USE_CCACHE)
     # it is used on the command line
     FOREACH(dir ${include_dir_list})
       SET(CONFIG_GCCXML_INC_CONTENTS ${CONFIG_GCCXML_INC_CONTENTS} -I${dir})
     ENDFOREACH(dir)
-  ELSE(WRAP_ITK_GCCXML_USE_CCACHE)
+  ELSE(WRAP_ITK_USE_CCACHE)
     # really create the content of the file
     FOREACH(dir ${include_dir_list})
       SET(CONFIG_GCCXML_INC_CONTENTS "${CONFIG_GCCXML_INC_CONTENTS}-I${dir}\n")
@@ -144,7 +138,7 @@ MACRO(WRAP_LIBRARY_GCCXML library_name)
     # and the file.
     CONFIGURE_FILE("${WRAP_ITK_GCCXML_SOURCE_DIR}/gcc_xml.inc.in" "${gccxml_inc_file}"
       @ONLY IMMEDIATE)
-  ENDIF(WRAP_ITK_GCCXML_USE_CCACHE)
+  ENDIF(WRAP_ITK_USE_CCACHE)
   SET(GCC_XML_OUTPUT_FILES )
 ENDMACRO(WRAP_LIBRARY_GCCXML)
 

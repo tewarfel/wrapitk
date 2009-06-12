@@ -232,6 +232,15 @@ ENDMACRO(ADD_SIMPLE_TYPEDEF_ALL_LANGUAGES wrap_class swig_name)
 
 
 
+###############################################################################
+# ccache management. This option is shared by most of languages, so put it here.
+OPTION(WRAP_ITK_USE_CCACHE "Use ccache to cache swig/gccxml/... output and speedup the rebuild." OFF)
+MARK_AS_ADVANCED(WRAP_ITK_USE_CCACHE)
+IF(WRAP_ITK_USE_CCACHE)
+  FIND_PROGRAM(CCACHE_EXECUTABLE NAMES ccache-swig ccache DOC "ccache executable.")
+ENDIF(WRAP_ITK_USE_CCACHE)
+
+
 
 ###############################################################################
 # build the languages list
