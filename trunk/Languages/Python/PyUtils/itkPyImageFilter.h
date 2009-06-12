@@ -26,15 +26,9 @@
 namespace itk
 {
 
-/** \Class PyImageFilter
- *  \brief Command subclass that calls a Python callable object, e.g.
+/** \class PyImageFilter
+ *  \brief ImageToImageFilter subclass that calls a Python callable object, e.g.
  *  a Python function.
- * 
- * With this class, arbitrary Python callable objects (e.g. functions)
- * can be associated with an instance to be used in AddObserver calls.
- * This is analogous to itk::TclCommand, but then a tad more flexible. ;)
- *
- * This class was contributed by Charl P. Botha <cpbotha |AT| ieee.org>
  */
 
 
