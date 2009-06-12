@@ -25,11 +25,6 @@ SET(WrapITK_VERSION_MINOR 3)
 SET(WrapITK_VERSION_PATCH 0)
 
 
-OPTION(WRAP_ITK_TCL "Build cswig Tcl wrapper support." OFF)
-OPTION(WRAP_ITK_PYTHON "Build cswig Python wrapper support." OFF)
-OPTION(WRAP_ITK_JAVA "Build cswig Java wrapper support." OFF)
-# OPTION(WRAP_ITK_PERL "Build cswig Perl wrapper support." OFF)
-
 OPTION(WRAP_unsigned_char "Wrap unsigned char type" OFF)
 OPTION(WRAP_unsigned_short "Wrap unsigned short type" ON)
 OPTION(WRAP_unsigned_long "Wrap unsigned long type" OFF)
