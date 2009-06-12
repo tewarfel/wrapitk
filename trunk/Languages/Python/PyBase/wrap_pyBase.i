@@ -197,12 +197,15 @@
 %template(listF)          std::list< float >;
 %template(listD)          std::list< double >;
 
-%template(setB)          std::set< bool >;
-%template(setUC)         std::set< unsigned char >;
-%template(setUS)         std::set< unsigned short >;
-%template(setUL)         std::set< unsigned long >;
-%template(setSC)         std::set< signed char >;
-%template(setSS)         std::set< signed short >;
-%template(setSL)         std::set< signed long >;
-%template(setF)          std::set< float >;
-%template(setD)          std::set< double >;
+%template(setB)          std::set< bool, std::less< bool > >;
+%template(setUC)         std::set< unsigned char, std::less< unsigned char > >;
+%template(setUS)         std::set< unsigned short, std::less< unsigned short > >;
+%template(setUL)         std::set< unsigned long, std::less< unsigned long > >;
+%template(setSC)         std::set< signed char, std::less< signed char > >;
+%template(setSS)         std::set< signed short, std::less< signed short > >;
+%template(setSL)         std::set< signed long, std::less< signed long > >;
+%template(setF)          std::set< float, std::less< float > >;
+%template(setD)          std::set< double, std::less< double > >;
+
+%template(vectorsetUL)   std::vector< std::set< unsigned long, std::less< unsigned long > > >;
+%template(mapsetUL)      std::map< unsigned long, std::set< unsigned long, std::less< unsigned long > > >;
