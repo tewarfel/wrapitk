@@ -77,8 +77,9 @@ notWrapped = [
 #  "itk::MapContainer<.+>",  # some of those types are quite difficult some ignore them all
   "itk::ThreadFunctionType",
   "itk::ThreadProcessIDType",
-  "itk::PolygonGroupOrientation", # cableidx must generate something for the enums before wrapping this one
-  "itk::SpatialOrientation::ValidCoordinateOrientationFlags",  # the same for this one
+#  "itk::PolygonGroupOrientation", # cableidx must generate something for the enums before wrapping this one
+#  "itk::SpatialOrientation::ValidCoordinateOrientationFlags",  # the same for this one
+#  "itk::Statistics::TextureFeatureName",
   "itk::Functor::.+",
   "itk::SmartPointer< itk::Functor::.+",
   "itk::Function::.+",
