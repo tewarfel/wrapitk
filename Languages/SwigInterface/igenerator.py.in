@@ -45,14 +45,20 @@ def warn( id, msg ):
       # just do nothing
       return
     warnings.add((id, msg))
-    if options.warningError:
-      print >> sys.stderr, "Error(%s): %s" % (str(id), msg)
+    if options.verbose:
+      if options.warningError:
+        print >> sys.stderr, "error(%s): %s" % (str(id), msg)
+      else:
+        print >> sys.stderr, "warning(%s): %s" % (str(id), msg)
     else:
-      print >> sys.stderr, "Warning(%s): %s" % (str(id), msg)
+      if options.warningError:
+        print >> sys.stderr, "%s: error(%s): %s" % (args[0], str(id), msg)
+      else:
+        print >> sys.stderr, "%s: warning(%s): %s" % (args[0], str(id), msg)
 
 def info( msg ):
   if options.verbose:
-      print >> sys.stderr, "Info: %s" % msg
+      print >> sys.stderr, "info: %s" % msg
 
 notWrapped = [
   "itk::SmartPointerForwardReference<.+>",
@@ -342,6 +348,7 @@ pygccxml_config = pygccxml.parser.config.config_t("I:/dev/itk/CableSwig-ITK-3.6.
 # create a reader
 pygccxml_reader = pygccxml.parser.source_reader.source_reader_t(pygccxml_config)
 # and read a xml file
+info("Processing %s." % args[0])
 res = pygccxml_reader.read_xml_file(args[0])
 
 global_ns = pygccxml.declarations.get_global_namespace( res )
