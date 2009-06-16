@@ -172,6 +172,7 @@ It may also work on other platforms, but has not been tested yet.
 {{{
 export LD_PRELOAD=libgcc_s.so.1
 }}}
+  * ITK 3.14 must be patched with http://public.kitware.com/cgi-bin/viewcvs.cgi/Code/Algorithms/itkVoronoiSegmentationImageFilterBase.h?root=Insight&r1=1.30&r2=1.31&sortby=date to build with Microsoft Visual Studio.
 
 = Binary downloads and installation =
 
