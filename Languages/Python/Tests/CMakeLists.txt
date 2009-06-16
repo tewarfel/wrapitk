@@ -7,6 +7,8 @@ SET(PYTHON_DRIVER "${ITK_TEST_DRIVER}"
   --add-before-env PYTHONPATH "${WRAP_ITK_PYTHON_BINARY_DIR}"
   --add-before-env PYTHONPATH "${LIBRARY_OUTPUT_PATH}/\${CTEST_CONFIGURATION_TYPE}"
   --add-before-env PYTHONPATH "${LIBRARY_OUTPUT_PATH}"
+  --add-before-libpath "${ITK_DIR}/bin/\${CTEST_CONFIGURATION_TYPE}"
+  --add-before-libpath "${ITK_DIR}"
   "${PYTHON_EXECUTABLE}"
 )
 
