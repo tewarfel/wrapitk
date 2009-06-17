@@ -4,13 +4,15 @@ FIND_PROGRAM(ITK_TEST_DRIVER itkTestDriver)
 
 SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
   --add-before-libpath "${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}"
+  --add-before-libpath "${ITK_DIR}/bin/\\\${CTEST_CONFIGURATION_TYPE}"
+  --add-before-libpath "${ITK_DIR}"
   "${JAVA_RUNTIME}"
   -Djava.library.path=${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}
 )
 
 # windows doesn't use the same separator than the others  
 IF(WIN32)
-  SET(sep "\;")
+  SET(sep "\\\;")
 ELSE(WIN32)
   SET(sep ":")
 ENDIF(WIN32)
