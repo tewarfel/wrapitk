@@ -7,7 +7,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   vnl_unary_function
 )
 
-SET(WRAPPER_LIBRARY_LINK_LIBRARIES itkvnl itkvnl_inst)
+SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 
 # don't include all the default include for that module
 SET(include_save ${WRAPPER_DEFAULT_INCLUDE})
