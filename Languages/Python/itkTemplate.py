@@ -166,6 +166,11 @@ class itkTemplate(object):
         # the parameter is a number
         # convert the string to a number !
         param = int(param)
+      
+      elif param in ["_C_ldouble_complex", "_C_double_complex", "_C_float_complex"]:
+        # those type are discardes in igenerator.py to avoid errors. We can't use them here.
+        # just discard it
+        pass
         
       else :
         # unable to convert the parameter
