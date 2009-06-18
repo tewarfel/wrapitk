@@ -1,0 +1,104 @@
+Setting up nightly tests of WrapITK
+
+= Introduction =
+
+This page describe how to run nightly tests of WrapITK.
+
+Because WrapITK developments and bug fixes are closely related to ITK ones, testing last versions of WrapITK from the subversion repository implies to use the last version of ITK from CVS repository. The most easy way to go is to set up both ITK and WrapITK nightly builds, and to use ITK build to build WrapITK. 
+
+= Required tools =
+
+  * CVS - It's the tool used to manage changes in ITK.
+  * subversion - It's the tool used to manage changes in WrapITK.
+  * a C++ compiler.
+  * swig - The C++ code generator in charge of the code genaration in WrapITK. You'll have to use a fairly recent version to avoid reporting already fixed warning or errors caused by bugs in swig.
+  * cmake - It's the tool used by WrapITK to manage the template instantiations according to the user options, to manage the build, and to run the tests.
+  * CableSwig - gccxml, cableidx TODO: document those tools
+
+= Getting a working copy of last versions of ITK and WrapITK =
+
+There is no fixed way to organize the directory layout of sources and build directories. Here, we will assume that all the tests are made in a directory "tests" in home directory of the user. The build directory are subdirs of the working copy.
+
+== Getting ITK sources ==
+{{{
+cd tests
+cvs -d :pserver:anonymous@www.itk.org:/cvsroot/Insight login
+}}}
+When asked for a password, reply "insight". 
+{{{
+cvs -d :pserver:anonymous@www.itk.org:/cvsroot/Insight co Insight
+cd Insight
+mkdir build
+}}}
+
+== Getting WrapITK sources ==
+
+{{{
+cd tests
+svn checkout http://wrapitk.googlecode.com/svn/trunk/ wrapitk
+cd wrapitk
+mkdir build
+}}}
+
+= Builds configurations =
+
+The configuration is made with cmake (or ccmake or similar tools, depending on the OS).
+
+You are free to use the configuration options you like. The more diversity we have, the best coverage we'll have for WrapITK!
+
+A few ones must have some specific values though, and some may be useful for enhancing the test efficiency, like the use of ccache.
+
+== ITK configuration ==
+
+In addition to the options required in ITK to build WrapITK, the ITK should be configured with ITK_LEGACY_SILENT set to ON to avoid reporting ITK's deprecation warnings in WrapITK builds.
+
+ccache can be used to greatly reduce the rebuild time of ITK. It is compatible with gcc (TODO: maybe others - icc?). To you it, the environment variables CC and CXX must be set properly before running cmake. It is simply used as follow:
+{{{
+export CC="ccache-swig gcc"
+export CXX="ccache-swig c++"
+cmake ..
+}}}
+
+== WrapITK configuration ==
+
+A few configuration parameters are important:
+ * SITE - the name of your build host
+ * BUILDNAME - the name of the build is used to describe in a very short way the configuration used for your build. It must begin with "WrapITK", to be able to find WrapITK builds easily on the ITK dashboard. For example, "WrapITK-Darwin-c++-4.2" is a WrapITK build on Mac OS X with gcc 4.2.
+
+Using ccache both for c++, with in the same way than with ITK, and for other cachable outputs within WrapITK (gccxml and swig) can highly reduce the rebuild time. To use is for WrapITK non C++ files, simply turn WRAP_ITK_USE_CCACHE on.
+
+= Experimental builds =
+
+First test your build with
+
+{{{
+ctest -D Experimental
+}}}
+
+or
+
+{{{
+ctest -D Experimental -C Release
+}}}
+
+depending on the generator used by cmake.
+
+TODO: say more!
+
+= Nightly builds =
+
+Then the nightly builds are run with
+
+{{{
+make clean
+ctest -D Nightly
+}}}
+
+or
+
+{{{
+make clean
+ctest -D Nightly -C Release
+}}}
+
+TODO: say more, add visual studio case
