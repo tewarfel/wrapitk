@@ -173,6 +173,7 @@ It may also work on other platforms, but has not been tested yet.
 export LD_PRELOAD=libgcc_s.so.1
 }}}
   * WrapITK generates invalid code in VoronoiSegmentationImageFilter wrapper when build with with Microsoft Visual Studio 8 (and maybe other versions) and ITK 3.14. Workaround: patch ITK 3.14 with [http://public.kitware.com/cgi-bin/viewcvs.cgi/Code/Algorithms/itkVoronoiSegmentationImageFilterBase.h?root=Insight&r1=1.30&r2=1.31&sortby=date this fix] already in ITK cvs.
+  * Python 3 is not supported. No workaround at this time.
 
 = Binary downloads and installation =
 
