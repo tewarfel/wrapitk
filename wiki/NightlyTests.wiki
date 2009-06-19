@@ -66,6 +66,7 @@ cmake ..
 A few configuration parameters are important:
  * SITE - the name of your build host
  * BUILDNAME - the name of the build is used to describe in a very short way the configuration used for your build. It must begin with "WrapITK", to be able to find WrapITK builds easily on the ITK dashboard. For example, "WrapITK-Darwin-c++-4.2" is a WrapITK build on Mac OS X with gcc 4.2.
+ * ITK_DIR - the ITK directory to use to build WrapITK. It must be the build directory of a nightly updated ITK, like the one you've just set up in the previous section.
 
 Using ccache both for c++, with in the same way than with ITK, and for other cachable outputs within WrapITK (gccxml and swig) can highly reduce the rebuild time. To use is for WrapITK non C++ files, simply turn WRAP_ITK_USE_CCACHE on.
 
@@ -104,3 +105,6 @@ ctest -D Nightly -C Release
 }}}
 
 TODO: say more, add visual studio case
+
+
+= Typical execution times =
