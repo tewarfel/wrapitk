@@ -8,7 +8,7 @@ WrapITK can use the same test infrastructure than ITK to run nightly tests in a 
 
 Because WrapITK developments and bug fixes are closely related to ITK ones, testing the last version of WrapITK from the subversion repository implies to use the last version of ITK from CVS repository. The easiest way to go is to set up both ITK and WrapITK nightly builds, and to use ITK build to build WrapITK. 
 
-= Required tools =
+= Requirements =
 
   * CVS - It's the tool used to manage changes in ITK.
   * subversion - It's the tool used to manage changes in WrapITK.
@@ -16,6 +16,7 @@ Because WrapITK developments and bug fixes are closely related to ITK ones, tes
   * swig - The C++ code generator in charge of the code genaration in WrapITK. You'll have to use a fairly recent version to avoid reporting already fixed warning or errors caused by bugs in swig.
   * cmake - It's the tool used by WrapITK to manage the template instantiations according to the user options, to manage the build, and to run the tests.
   * CableSwig - gccxml, cableidx TODO: document those tools
+  * arount 3 GB of free space on your hard drive.
 
 = Getting a working copy of last versions of ITK and WrapITK =
 
@@ -107,4 +108,21 @@ ctest -D Nightly -C Release
 TODO: say more, add visual studio case
 
 
-= Typical execution times =
+= Ressource usage =
+
+The ressources used on your computer are highly dependent on how you have configured your build. The tests are highly CPU demanding, so the computationnal capabilities of the hosts where the tests are run have a great impact on build time.
+
+Here are a few example of ressource usage on different hosts:
+
+  * marvin.jouy.inra.fr - Dell Precision T5500, Intel X5570 8 cores 2.93 GHz, 24 GB of RAM, OpenSolaris 2009.06, Release build, Java/Python/Tcl on, all other options to default values.
+    * ITK: ~30 minutes, 580 MB
+    * WrapITK: ~1.5 hours, 2.0 GB
+
+ * voxel2.jouy.inra.fr - Dell PowerEdge 1750, 2 Intel Pentium4 2.4 GHz, 1 GB of RAM, Windows XP, Release build, Java/Python/Tcl on, all other options to default
+    * ITK: ~2.5 hours, 2.23 GB
+    * WrapITK: ~12 hours, TODO
+
+ * cmac.jouy.inra.fr - iMac 20″, Core 2 duo 2.4 GHz, 2 GB of RAM, Mac OS X 10.5, Release build, Java/Python/Tcl on, all other options to default
+    * ITK: ~1 hour, 1.1 GB
+    * WrapITK: ~5 hours, 3.6 GB
+
