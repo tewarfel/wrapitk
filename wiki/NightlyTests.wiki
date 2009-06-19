@@ -2,9 +2,11 @@ Setting up nightly tests of WrapITK
 
 = Introduction =
 
-This page describe how to run nightly tests of WrapITK.
+Testing frequently WrapITK on as much configurations as possible is the best way to be sure that it works on those configurations. As shown many times in the past, testing a program from time to time is not enough to claim that it works with a given configuration.
 
-Because WrapITK developments and bug fixes are closely related to ITK ones, testing last versions of WrapITK from the subversion repository implies to use the last version of ITK from CVS repository. The most easy way to go is to set up both ITK and WrapITK nightly builds, and to use ITK build to build WrapITK. 
+WrapITK can use the same test infrastructure than ITK to run nightly tests in a quite easy way. At the time of the writing, 6 builds are submitted nightly to the ITK dashboard. From the perspective of a maintainer of a nightly test build, it is the best way to ensure that WrapITK runs on its host, with the options he use.
+
+Because WrapITK developments and bug fixes are closely related to ITK ones, testing the last version of WrapITK from the subversion repository implies to use the last version of ITK from CVS repository. The easiest way to go is to set up both ITK and WrapITK nightly builds, and to use ITK build to build WrapITK. 
 
 = Required tools =
 
