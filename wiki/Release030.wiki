@@ -56,6 +56,8 @@ Those good results can be explained by:
   * the newer swig used ;
   * the use of simple python objects instead of SmartPointers (see below).
 
+Note that psyco can also enhance the execution times (see below).
+
 === `itk::SmartPointer` is not wrapped anymore ===
 
 SmartPointers are not wrapped anymore in python. Here are some significant improvements
@@ -173,6 +175,21 @@ export WRAPITK_SHOW2D_EXTENSION=.tif
 
 WrapITK loads psyco, if available, to improve the performances.
 
+Here are some results²:
+
+|| *Action*    || *without psyco*       || *with psyco*          || *speed up* ||
+|| load        || 17.5761048794         || 17.571958065          || 1.00       ||
+|| index       || 1.28790211678         || 1.04161691666         || 1.24       ||
+|| index2      || 4.10891604424         || 3.36609005928         || 1.22       ||
+|| integer     || 2.43840312958         || 2.01709103584         || 1.21       ||
+|| list        || 2.54752993584         || 2.09809708595         || 1.21       ||
+|| tuple       || 2.50614404678         || 2.02894997597         || 1.24       ||
+|| new         || 1.87332892418         || 1.80359697342         || 1.04       ||
+||extended_new || 4.80319905281         || 6.23383378983         || 0.77       ||
+
+Most of the execution times are enhanced, excepted for extended_new. Fortunately, the user shouldn't call the New() method often. The load time is kept unchanged, probably because most of the load time is spent in loading binary files.
+
+No memory usage study has been made.
 
 == Java ==
 
