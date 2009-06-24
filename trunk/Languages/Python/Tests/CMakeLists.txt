@@ -23,6 +23,8 @@ ADD_TEST(PythonFindEmptyClasses ${PYTHON_DRIVER} ${CMAKE_CURRENT_SOURCE_DIR}/fin
 
 ADD_TEST(PythonGetNameOfClass ${PYTHON_DRIVER} ${CMAKE_CURRENT_SOURCE_DIR}/getNameOfClass.py)
 
+ADD_TEST(PythonTiming ${PYTHON_DRIVER} ${CMAKE_CURRENT_SOURCE_DIR}/timing.py)
+
 
 # some tests will fail if dim=2 and unsigned short are not wrapped
 INTERSECTION(WRAP_2 2 "${WRAP_ITK_DIMS}")
