@@ -34,7 +34,7 @@ Even if most of the changes are focused on python, all the target languages have
 
 SmartPointers are not wrapped anymore in python. Here are some significant improvements:
   * Binary size is about 50% smaller than before. Even with a larger number of classes wrapped, this new version produces 222MB of binaries, to be compared to the 388MB produced by the one included in ITK¹.
-  * Load time is remarkably decreased
+  * Load time is remarkably decreased — this new versions loads in 3.17 seconds, to be compared to the 23.92 seconds of the version included in ITK¹. More than 7 times faster!
   * GetPointer() is no more needed, to pass a smart pointed object to a function which require a super class of the object. GetPointer() is still available for backward compatibility but display a warning when used. It should disappear in one of the next release.
 
 
