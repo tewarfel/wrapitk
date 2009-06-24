@@ -193,11 +193,26 @@ No memory usage study has been made.
 
 == Java ==
 
+=== Smaller ===
+
+WrapITK produce smaller binaries with this release — 43 MB, to compare to the 78 MB of the previous release.
+
+=== Object creation closer of usual java object creation ===
+
+Before this release, the objects where created that way:
+{{{
+itkImageUS2_Pointer img = itkImageUS2.itkImageUS2_New();
+}}}
+Now, it looks more to the usual object creation in java:
+{{{
+itkImageUS2 img = new itkImageUS2();
+}}}
+
 === `itk::SmartPointer` is not wrapped anymore ===
 
 SmartPointers are not wrapped anymore in java. Here are some significant improvements:
-  * Binary size is about 50% smaller than before
-  * Load time is remarkably decreased
+  * Binary size is about 50% smaller than before ;
+  * Load time is remarkably decreased ;
   * GetPointer() is no more needed, to pass a smart pointed object to a function which require a super class of the object.
 
 === Wrapping to multiple java packages ===
@@ -210,6 +225,7 @@ itk::LightObject now has a toString() method which returns what is printed by th
 
 === External projects ===
 
+WrapITK external projects can now be built in java.
 
 == Tcl ==
 
