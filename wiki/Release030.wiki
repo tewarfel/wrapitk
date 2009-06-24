@@ -288,3 +288,4 @@ at the end of your ~/.profile file.
 
 ----
 ¹ Measured on a Dell Precision T5500, Intel X5570 8 cores 2.93 GHz, 24 GB of RAM running OpenSolaris 2009.06. ITK and WrapITK are built with gcc 4.3.2 in 64 bits, Release mode with the default options.
+² Measured on a Dell Precision GX380, Intel Pentium4 CPU 3.20 GHz, 4 GB of RAM running Mandriva Linux 2009. ITK and WrapITK are built with gcc 4.3.2 in 32 bits, Release mode with the default options and support for unsigned char, rgb unsigned char and rgba unsigned char.
