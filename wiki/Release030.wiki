@@ -71,7 +71,7 @@ In previous versions, python integration was enhanced by patching ITK code. The 
 
 Many methods were not usable in python because the were requiring std::basic_string instead of std::string. Several users have reported that problem when trying to use dicom reader from python. All those methods are now plainly usable.
 
-=== Better repr() for simple types ===
+=== Better `repr()` for simple types ===
 
 Even with optional patches, it was quite difficult to read the content of simple types like itk::Index. The simplest way to do that (with optional patch) was to make a print — repr was the standard swig one:
 {{{
@@ -104,7 +104,7 @@ Additionnaly, itk module provides the down_cast() which automatically cast the o
 <itkMedianImageFilterPython.itkMedianImageFilterIUS3IUS3; proxy of <Swig Object of type 'itkMedianImageFilterIUS3IUS3 *' at 0xa5f4990> >
 }}}
 
-=== `[]` is a better GetOutput() ===
+=== `[]` is a better `GetOutput()` ===
 
 Up to now, the user had to use GetOutput() to get the images produced by a filter. However, the GetOutput() method is not bounded (one can use it with a higher value than the actual number of outputs in that filter. GetOutput() also produce a non casted output and may fail to give a valid if the outputs of the filter are of different types.
 
@@ -121,7 +121,7 @@ IndexError: index out of range
  <itkImagePython.itkImageO33; proxy of <Swig Object of type 'itkImageO33 *' at 0xacd0918> >]
 }}}
 
-=== () is a better UpdateLargestPossibleRegion() ===
+=== () is a better `UpdateLargestPossibleRegion()` ===
 
 One thing the user quickly note when using WrapITK is the required usage of UpdateLargestPossibleRegion() when working with several size of images. The simpler Update() can't work, because it doesn't trigger the renegociation of the regions in the pipeline. UpdateLargestPossibleRegion() is the right method to use, but is painfully long to write.
 
@@ -153,7 +153,7 @@ WrapITK now hides the complexity of the PyCommand class. Adding a python callbac
 median.AddObserver(itk.ProgressEvent(), lambda: sys.stderr.write(str(median.GetProgress())+"\n"))
 }}}
 
-=== itk.show2D() enhancements ===
+=== `itk.show2D()` enhancements ===
 
 itk.show2D() can now display labeled images and itk::LabelMap objects.
 
