@@ -128,6 +128,18 @@ WrapITK now hides the complexity of the PyCommand class. Adding a python callbac
 median.AddObserver(itk.ProgressEvent(), lambda: sys.stderr.write(str(median.GetProgress())+"\n"))
 }}}
 
+=== itk.show2D() enhancements ===
+
+itk.show2D() can now display labeled images and itk::LabelMap objects.
+
+imview is not the only user usable. With some environment vars, the user can change the viewer used. Here is an example with ImageJ:
+{{{
+export WRAPITK_SHOW2D_COMMAND="/usr/java/jdk1.6.0/bin/java -Xmx1024m -jar /home/glehmann/ImageJ/ij.jar %s  -run 'View 100%%' &"
+export WRAPITK_SHOW2D_LABEL_COMMAND="/usr/java/jdk1.6.0/bin/java -Xmx1024m -jar /home/glehmann/ImageJ/ij.jar %s  -run 'View 100%%' -run '3-3-2 RGB' &"
+export WRAPITK_SHOW2D_COMPRESS=off
+export WRAPITK_SHOW2D_EXTENSION=.tif
+}}}
+
 === itk.pipeline, auto_pipeline, templated_class ===
 
 === Doc integration ===
