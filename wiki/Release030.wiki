@@ -30,13 +30,31 @@ Even if most of the changes are focused on python, all the target languages have
 
 == Python ==
 
-=== Smaller binaries ===
+=== Smaller ===
 
 Binary size is about 50% smaller than before. Even with a larger number of classes wrapped, this new version produces 222MB of binaries, to be compared to the 388MB produced by the one included in ITK¹.
 
-=== Faster load ===
+=== Faster ===
 
-Load time is remarkably decreased — this new versions loads in 3.17 seconds, to be compared to the 23.92 seconds of the version included in ITK¹. More than 7 times faster!
+WrapITK is remarkably faster than before. Here some measures made with this release and the previous one¹:
+
+|| *Action*    || *Old WrapITK release* || *New WrapITK release* ||
+|| load        || 23.8312721252         || 3.18670701981         || 
+|| index       || 1.23672509193         || 0.613842010498        ||
+|| index2      || 2.80786514282         || 1.45068907738         ||
+|| integer     || 1.9988951683          || 0.988557100296        ||
+|| list        || 2.09374189377         || 1.02638506889         ||
+|| tuple       || 2.09267783165         || 1.05574297905         ||
+|| new         || 1.45943212509         || 0.429218053818        ||
+||extended_new || 2.02460122108         || 1.38173890114         ||
+
+See [http://code.google.com/p/wrapitk/source/browse/trunk/Languages/Python/Tests/timing.py timing.py] tests for more details.
+
+Load time is remarkably decreased — More than 7 times faster!
+
+Those good results can be explained by:
+  * the newer swig used ;
+  * the use of simple python objects instead of SmartPointers (see below).
 
 === `itk::SmartPointer` is not wrapped anymore ===
 
