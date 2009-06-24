@@ -229,7 +229,16 @@ WrapITK external projects can now be built in java.
 
 == Tcl ==
 
+Nothing really new for Tcl, excepted that it uses the last swig instead of the one packaged in CableSwig. A noticeable thing: it is still there!
+
+Any contributions are welcome to improve this language support.
+
+
 == New languages ==
+
+Some work has been done on Ruby support. It is possible to build a WrapITK with Ruby support at this time, but it is quite badly integrated with that language.
+
+Here also, contributions are welcome.
 
 = Supported platforms =
 
