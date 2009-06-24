@@ -1,6 +1,7 @@
-import itk, time
+import time
 
 start = time.time()
+import itk
 itk.force_load()
 print "load:", time.time() - start
 
