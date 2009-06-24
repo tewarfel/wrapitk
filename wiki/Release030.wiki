@@ -268,7 +268,7 @@ export LD_PRELOAD=libgcc_s.so.1
 == Mac OS X ==
 
 WrapITK binaries are available at http://voxel.jouy.inra.fr/itk/wrapitk-0.3.0/ . For a standard installation, you'll need:
-  * ITK-3.12.0-Darwin.dmg — contains ITK libs;
+  * ITK-3.14.0-Darwin.dmg — contains ITK libs;
   * WrapITK-0.3.0-Darwin.dmg — contains WrapITK binaries for python, java and tcl.
 Simply download those files, open them, and run the installer.
 
