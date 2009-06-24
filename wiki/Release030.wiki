@@ -1,7 +1,6 @@
 #labels Featured
 WrapITK release page for version 0.3.0.
 
-<wiki:toc max_depth="2" />
 
 = Introduction =
 
