@@ -33,7 +33,7 @@ Even if most of the changes are focused on python, all the target languages have
 === `itk::SmartPointer` is not wrapped anymore ===
 
 SmartPointers are not wrapped anymore in python. Here are some significant improvements:
-  * Binary size is about 50% smaller than before
+  * Binary size is about 50% smaller than before. Even with a larger number of classes wrapped, this new version produces 222MB of binaries, to be compared to the 388MB produced by the one included in ITK¹.
   * Load time is remarkably decreased
   * GetPointer() is no more needed, to pass a smart pointed object to a function which require a super class of the object. GetPointer() is still available for backward compatibility but display a warning when used. It should disappear in one of the next release.
 
@@ -218,3 +218,6 @@ at the end of your ~/.profile file.
 = Source downloads and build =
 
 = Bug reports =
+
+----
+¹ Measured on OpenSolaris 2009.06, built with gcc 4.3.2 in 64 bits, Release mode with the default options.
