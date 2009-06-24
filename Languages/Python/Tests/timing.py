@@ -1,5 +1,8 @@
 import itk, time
 
+start = time.time()
+itk.force_load()
+print "load:", time.time() - start
 
 img = itk.Image.UC2.New(Regions=(10,20))
 img.Allocate()
