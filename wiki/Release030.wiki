@@ -9,7 +9,7 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
 = Wrapping process enhancements =
 
-  * Native swig. CableSwig, the tool created to wrap ITK is not used any more. It decreases the program maintenance, and make the connection with other tool wraped with swig easier.
+  * Native swig. CableSwig, the tool created to wrap ITK is not used any more. It decreases the program maintenance, and make the connection with other tool wraped with swig easier. Note that two tool packaged with CableSwig are still needed — gccxml and cableidx — that's why you still have to install CableSwig package to build WrapITK.
   * Full separation of types declaration and code generation. It is now possible to use WrapITK to generate something else than swig wrappers. The Doc module for example can generate the manpages for the classes instantiated in WrapITK.
   * Code generation based on callback macros. It makes WrapITK more flexible and more easily extensible.
   * Inline documentation generation from c++ to target language using Doxygen.
