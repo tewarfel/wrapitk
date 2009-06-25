@@ -323,6 +323,20 @@ in PATH.
 
 Download the sources from http://wrapitk.googlecode.com/files/wrapitk-0.3.0.tar.bz2 .
 
+The following tools and libraries are required:
+
+  * [http://www.cmake.org CMake] (>= 2.4.8): For configuring the compilation system.
+
+  * [http://www.itk.org/ITK/resources/CableSwig.html CableSwig] (>= 0.1.0): For parsing and automatic instantiation of c++ templates.
+
+  * [http://www.swig.org SWIG] (>= 1.3.35): For language binding. >= 1.3.38 is recommended for documentation wrapping.
+
+  * [http://www.python.org Python] (>= 2.4): Some code generating processes are currently implemented in python. Mac OS X requires Python >= 2.5 for Python support, because of a bug in previous releases on that plateform.
+
+  * [http://www.doxygen.org Doxygen] (>= 1.3.9.1, optional): For automatic generation of _inline_ documentation in the target language (coming soon). This is optional, but highly recommended, as ITK is a huge library. Enabling this feature provides the access to instant documentation in a modern IDE with code assistance.
+
+  * Language binding development libraries: The interfacing libraries for wrapping language of choice, eg, JNI for java binding.
+
 = Bug reports =
 
 Please report WrapITK related bugs using the [http://code.google.com/p/wrapitk/issues/list issues page]. You may also ask for configuration and compilation help in the [http://www.itk.org/ITK/help/mailing.html ITK mailing list].
