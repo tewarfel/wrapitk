@@ -321,7 +321,11 @@ in PATH.
 
 = Source downloads and build =
 
+Download the sources from http://wrapitk.googlecode.com/files/wrapitk-0.3.0.tar.bz2 .
+
 = Bug reports =
+
+Please report WrapITK related bugs using the [http://code.google.com/p/wrapitk/issues/list issues page]. You may also ask for configuration and compilation help in the [http://www.itk.org/ITK/help/mailing.html ITK mailing list].
 
 ----
 ¹ Measured on a Dell Precision T5500, Intel X5570 8 cores 2.93 GHz, 24 GB of RAM running OpenSolaris 2009.06. ITK and WrapITK are built with gcc 4.3.2 in 64 bits, Release mode with the default options.
