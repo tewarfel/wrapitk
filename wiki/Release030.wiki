@@ -167,7 +167,13 @@ export WRAPITK_SHOW2D_COMPRESS=off
 export WRAPITK_SHOW2D_EXTENSION=.tif
 }}}
 
-=== itk.pipeline, auto_pipeline, templated_class ===
+=== Python mini pipelines ===
+
+Many filters in ITK are made internally of a pipeline of several filters — we call them mini pipeline.
+
+Some tools have been added in WrapITK to make possible the creation of such filters in python: itk.pipeline, auto_pipeline, templated_class, and the build options (DIMS, USIGN_INTS, SIGN_INTS, REALS, VECTOR_REALS, COV_VECTOR_REALS, RGBS, RGBAS, COMPLEX_REALS, INTS, SCALARS, VECTORS, COLORS, and ALL_TYPES).
+
+See [http://code.google.com/p/wrapitk/source/browse/trunk/Languages/Python/Tests/templated_pipeline.py templated_pipeline.py] for an example.
 
 === Doc integration ===
 
