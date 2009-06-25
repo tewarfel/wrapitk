@@ -1,0 +1,7 @@
+WRAP_CLASS("itk::Statistics::GreyLevelCooccurrenceMatrixTextureCoefficientsCalculator" POINTER)
+  UNIQUE(dims "1;2;${WRAP_ITK_DIMS}")                    
+  FOREACH(d ${dims})
+    WRAP_TEMPLATE("${ITKM_HD${d}}"  "${ITKT_HD${d}}")
+    WRAP_TEMPLATE("${ITKM_HF${d}}"  "${ITKT_HF${d}}")
+  ENDFOREACH(d)
+END_WRAP_CLASS()
