@@ -281,6 +281,21 @@ at the end of your ~/.profile file.
 
 == Microsoft windows ==
 
+WrapITK binaries are available at http://voxel.jouy.inra.fr/itk/wrapitk-0.3.0/ . For a standard installation, you'll need:
+  * ITK-3.14.0-win32.exe — contains ITK libs;
+  * WrapITK-0.3.0-win32.exe — contains WrapITK binaries for python, java and tcl.
+Simply download those files and run the installer.
+
+You'll then have to edit your environment to make it fully usable. If you have used the default installation path, you have to put
+{{{
+C:\Program Files\WrapITK 0.3.0\lib\InsightToolkit\WrapITK\Python
+}}}
+in PYTHONPATH, and
+{{{
+C:\Program Files\InsightToolkit-3.14\bin
+}}}
+in PATH.
+
 
 = Source downloads and build =
 
