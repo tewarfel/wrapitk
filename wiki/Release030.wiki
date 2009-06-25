@@ -9,14 +9,14 @@ For the first time since its integration in ITK, WrapITK is releasing a new vers
 
 = Wrapping process enhancements =
 
-  * Native swig
-  * Full separation of types declaration and code generation
-  * Code generation based on callback macros
-  * Inline documentation generation from c++ to target language using Doxygen
-  * Options in installed tree
-  * CPack
-  * ccache
-  * Nightly tests
+  * Native swig. CableSwig, the tool created to wrap ITK is not used any more. It decreases the program maintenance, and make the connection with other tool wraped with swig easier.
+  * Full separation of types declaration and code generation. It is now possible to use WrapITK to generate something else than swig wrappers. The Doc module for example can generate the manpages for the classes instantiated in WrapITK.
+  * Code generation based on callback macros. It makes WrapITK more flexible and more easily extensible.
+  * Inline documentation generation from c++ to target language using Doxygen.
+  * Options stored in installed tree. It makes them reusable in external project, and thus simplify the configuration of those projects by the user.
+  * CPack. WrapITK binaries are distributed for several OS.
+  * CCache. WrapITK is able to used CCache to cache some internal files. It speeds up a lot the rebuild, and thus make the life of the developers easier.
+  * Nightly tests. Every nights, WrapITK tests are reported on ITK dashboard, to ensure a high quality on a large number of operating systems.
 
 = Class coverage =
 
