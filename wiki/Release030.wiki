@@ -346,9 +346,9 @@ The following tools and libraries are required:
 
 Please report WrapITK related bugs using the [http://code.google.com/p/wrapitk/issues/list issues page]. You may also ask for configuration and compilation help in the [http://www.itk.org/ITK/help/mailing.html ITK mailing list].
 
-== Authors ==
+= Authors =
 
-Gaëtan Lehmann
+Gaëtan Lehmann, INRA, UMR1198 Biologie du développement et reproduction, Domaine de Vilvert, F-78352 Jouy-en-Josas, France ; CNRS, Domaine de Vilvert, F-78352 Jouy-en-Josas, France ; ENVA, F-94704 Maisons Alfort, France.
 
 Ali Tonddast-Navaei
 
