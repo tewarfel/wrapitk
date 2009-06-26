@@ -224,7 +224,7 @@ WrapITK loads psyco, if available, to improve the performances.
 
 Here are some results²:
 
-|| *Action*    || *without psyco*       || *with psyco*          || *speed up* ||
+|| *Action*    || *Without psyco*       || *With psyco*          || *Speed up* ||
 || load        || 17.5761048794         || 17.571958065          || 1.00       ||
 || index       || 1.28790211678         || 1.04161691666         || 1.24       ||
 || index2      || 4.10891604424         || 3.36609005928         || 1.22       ||
