@@ -8,7 +8,7 @@
 ==Debian==
 ===5.0 Lenny===
 || *Architectures* || *ITK <br> version* || *Binding <br> languages* || *Image <br> dimensions* || *Pixel types* || *Runtime <br> packages* || *Development <br> packages ||
-|| x86 <br> x86_64 || 3.14 <sup><font color="#3366cc" size="1">NEW</font></sup> || Python 2.6 (_Ubuntu 9.04_) <br> Python 2.5 (_Debian 5.0, Ubuntu 8.10_) || 2, 3 || Unsigned char <br> Unsigned short <br> Float <br> Double <br> Complex float <br> Complex double <br> Vector float <br> Vector double <br> Co-variant vector float <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| libitk <br> python-itk <br> python-itk-numpy || libitk-dev ||
+|| x86 <br> x86_64 || 3.14 || Python 2.6 (_Ubuntu 9.04_) <br> Python 2.5 (_Debian 5.0, Ubuntu 8.10_) || 2, 3 || Unsigned char <br> Unsigned short <br> Float <br> Double <br> Complex float <br> Complex double <br> Vector float <br> Vector double <br> Co-variant vector float <br> Co-variant vector double <br> RGB unsigned short <br> RGBA unsigned short|| libitk <br> python-itk <br> python-itk-numpy || libitk-dev ||
 
   * Adding the repository:
     * Ubuntu 9.04 Jaunty <sup><font color="#3366cc" size="1">NEW</font></sup>
