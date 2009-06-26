@@ -27,7 +27,7 @@ After a long time since its integration into ITK, WrapITK 0.3.0 is officially re
 
 = Class coverage =
 
-WrapITK can now manipulates RGBAPixel types. This means and the classes in the itk::Statistics namespace are now usable.
+WrapITK can now manipulates RGBAPixel types. The classes in the itk::Statistics namespace are now usable (they where empty before this release).
 
 The filter coverage has raised to 75% with 279 filters available.
 
@@ -39,7 +39,7 @@ Although most of the changes are focused on python, some new language bindings a
 
 === Smaller binary size ===
 
-Binary size is about 50% smaller than before. Even with a larger number of classes wrapped, this new version produces 222MB of binaries, to be compared to the 388MB produced by the one included in ITK.
+Binary size is about 50% smaller than before. Even with a larger number of classes wrapped, this new version produces 222MB of binaries, to be compared to the 388MB produced by the one included in ITK¹.
 
 === Faster ===
 
@@ -75,7 +75,7 @@ SmartPointers are not wrapped any more. Here are some significant improvements
 
   * Faster load ;
 
-  * GetPointer(), which passes a smart pointer object to a function which require a super class of the object, is no more wrapped. However, GetPointer() is still available for backward compatibility. A warning will be displayed when this method is called and it will disappear in one of the next releases.
+  * GetPointer() is no more needed to pass a smart pointed object to a function which require a super class of the object. However, GetPointer() is still available for backward compatibility. A warning will be displayed when this method is called and it will disappear in one of the next releases.
 
 === No optional patch — the features are available by default ===
 
