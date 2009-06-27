@@ -36,36 +36,41 @@ ENDMACRO(WRAP_LIBRARY_DOC)
 
 ###############################################################################
 MACRO(WRAP_NAMED_CLASS_DOC class swig_name)
-  SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT OFF)
-  GET_DIRECTORY_PROPERTY(dirs INCLUDE_DIRECTORIES)
-  SET(paths )
-  FOREACH(dir ${dirs})
-    SET(paths ${paths} "${dir}/${swig_name}.h")
-  ENDFOREACH(dir)
-  FILE(GLOB doc_path ${paths})
-  IF(doc_path AND "${class}" MATCHES "^itk::")
-    # store the header
-    SET(WRAP_ITK_DOC_DOXYGEN_HEADERS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${doc_path}")
-    # and the produced file
-    STRING(REPLACE "::" "_" base_name "${class}")
-    SET(page "${CMAKE_CURRENT_BINARY_DIR}/Doc/man3/${base_name}.3")
-    SET(WRAP_ITK_DOC_DOXYGEN_PAGES "${WRAP_ITK_DOC_DOXYGEN_PAGES};${page}")
-    # and in install the manpage, if requested, and if not yet installed from another dir
-    IF(WRAP_ITK_DOC_MAN AND NOT "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${base_name}\\.3(;|$)")
-      WRAP_ITK_INSTALL(/Doc/man3 "${page}")
-      SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES ${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES} "${base_name}.3" CACHE INTERNAL "man pages produced by doxygen and already installed")
-    ENDIF(WRAP_ITK_DOC_MAN AND NOT "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${base_name}\\.3(;|$)")
-    
-    # some simple computations to find the xml file produced for this class
-    STRING(REGEX REPLACE "([A-Z])" "_\\1" xmlname ${class})
-    STRING(REGEX REPLACE ":" "_1" xmlname ${xmlname})
-    STRING(TOLOWER  ${xmlname} xmlname)
-    SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} "${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml")
-    
-    # the doxy2swig input
-    SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT "${WRAP_ITK_DOC_DOXY2SWIG_INPUT}\n${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml\t${class}")
-    SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT ON)
-  ENDIF(doc_path AND "${class}" MATCHES "^itk::")
+  IF("${WRAPPER_WRAP_METHOD}" STREQUAL "ENUM")
+    # doc is not generated in the same way for enum. Just ignore it
+    SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT OFF)
+  ELSE("${WRAPPER_WRAP_METHOD}" STREQUAL "ENUM")
+    SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT OFF)
+    GET_DIRECTORY_PROPERTY(dirs INCLUDE_DIRECTORIES)
+    SET(paths )
+    FOREACH(dir ${dirs})
+      SET(paths ${paths} "${dir}/${swig_name}.h")
+    ENDFOREACH(dir)
+    FILE(GLOB doc_path ${paths})
+    IF(doc_path AND "${class}" MATCHES "^itk::")
+      # store the header
+      SET(WRAP_ITK_DOC_DOXYGEN_HEADERS ${WRAP_ITK_DOC_DOXYGEN_HEADERS} "${doc_path}")
+      # and the produced file
+      STRING(REPLACE "::" "_" base_name "${class}")
+      SET(page "${CMAKE_CURRENT_BINARY_DIR}/Doc/man3/${base_name}.3")
+      SET(WRAP_ITK_DOC_DOXYGEN_PAGES "${WRAP_ITK_DOC_DOXYGEN_PAGES};${page}")
+      # and in install the manpage, if requested, and if not yet installed from another dir
+      IF(WRAP_ITK_DOC_MAN AND NOT "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${base_name}\\.3(;|$)")
+        WRAP_ITK_INSTALL(/Doc/man3 "${page}")
+        SET(WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES ${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES} "${base_name}.3" CACHE INTERNAL "man pages produced by doxygen and already installed")
+      ENDIF(WRAP_ITK_DOC_MAN AND NOT "${WRAP_ITK_DOC_DOXYGEN_INSTALLED_PAGES}" MATCHES "(^|;)${base_name}\\.3(;|$)")
+      
+      # some simple computations to find the xml file produced for this class
+      STRING(REGEX REPLACE "([A-Z])" "_\\1" xmlname ${class})
+      STRING(REGEX REPLACE ":" "_1" xmlname ${xmlname})
+      STRING(TOLOWER  ${xmlname} xmlname)
+      SET(WRAP_ITK_DOC_DOXYGEN_XML_FILES ${WRAP_ITK_DOC_DOXYGEN_XML_FILES} "${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml")
+      
+      # the doxy2swig input
+      SET(WRAP_ITK_DOC_DOXY2SWIG_INPUT "${WRAP_ITK_DOC_DOXY2SWIG_INPUT}\n${CMAKE_CURRENT_BINARY_DIR}/Doc/xml/class${xmlname}.xml\t${class}")
+      SET(WRAP_ITK_DOC_GENERATE_DOXY2SWIG_INPUT ON)
+    ENDIF(doc_path AND "${class}" MATCHES "^itk::")
+  ENDIF("${WRAPPER_WRAP_METHOD}" STREQUAL "ENUM")
     
 ENDMACRO(WRAP_NAMED_CLASS_DOC)
 
