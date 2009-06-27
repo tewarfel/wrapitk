@@ -5,3 +5,6 @@ WRAP_CLASS("itk::Statistics::GreyLevelCooccurrenceMatrixTextureCoefficientsCalcu
     WRAP_TEMPLATE("${ITKM_HF${d}}"  "${ITKT_HF${d}}")
   ENDFOREACH(d)
 END_WRAP_CLASS()
+
+SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
+WRAP_NON_TEMPLATE_CLASS("itk::Statistics::TextureFeatureName" ENUM)

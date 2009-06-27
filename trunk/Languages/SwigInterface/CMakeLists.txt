@@ -332,12 +332,8 @@ MACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE wrap_method wrap_class swig_name)
     ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Pointer::SmartPointer" "${swig_name}_Superclass_Pointer")
   ENDIF("${wrap_method}" MATCHES "SUPERCLASS")
 
-  IF("${wrap_method}" MATCHES "FORCE_INSTANTIATE")
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}" "${swig_name}")
-    # cable swig part will add a peace of code for type instantiation
-  ELSE("${wrap_method}" MATCHES "FORCE_INSTANTIATE")
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}" "${swig_name}")
-  ENDIF("${wrap_method}" MATCHES "FORCE_INSTANTIATE")
+  # the same output with or without FORCE_INSTANTIATE
+  ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}" "${swig_name}")
 
   IF("${wrap_method}" MATCHES "POINTER")
     # add a pointer typedef if we are so asked
