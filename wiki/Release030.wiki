@@ -311,7 +311,7 @@ It may also work on other platforms, but has not been tested yet.
 
   * BinaryDilateImageFilter has no SetKernel() method in Tcl for unknown reasons. This may affect other classes. Workaround: not available at the moment;
 
-  * Due to OpenSolaris bug #6634042, WrapITK generates a core dump on (Open)Solaris x86 when built in 64 bits with gcc. Workaround: Use Sun Studio, or preload libgcc_s.so.1 with 
+  * Due to OpenSolaris bug #6634042, WrapITK generates a core dump on (Open)Solaris x86 when built in 64 bits with gcc. Workaround: preload libgcc_s.so.1 with 
 {{{
 export LD_PRELOAD_64=libgcc_s.so.1
 }}}
