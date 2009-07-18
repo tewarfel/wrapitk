@@ -245,29 +245,38 @@ def generate_class( typedef, indent=0 ):
     print >> outputFile, "  "*indent, "  %s:" % access
 
     # iterate over the members
-    for member in typedef.type.declaration.get_members( access=access ):
-      if isinstance( member, pygccxml.declarations.typedef.typedef_t ):
-        warn( 51, "Member typedef are not supported: %s" % member.name )
-      elif isinstance( member, pygccxml.declarations.calldef.member_function_t ):
-        generate_method( typedef, member, indent )
-      elif isinstance( member, pygccxml.declarations.calldef.constructor_t ):
-        generate_constructor( typedef, member, indent )
-      elif isinstance( member, pygccxml.declarations.calldef.member_operator_t ):
-        generate_method( typedef, member, indent )
-      elif isinstance( member, pygccxml.declarations.calldef.destructor_t ):
-        generate_destructor( typedef, member, indent )
-      elif isinstance( member, pygccxml.declarations.enumeration.enumeration_t ):
-        generate_nested_enum( typedef, member, indent )
-      elif isinstance( member, pygccxml.declarations.variable.variable_t ):
-        warn( 52, "Member variables are not supported: %s" % member.name )
-      elif isinstance( member, pygccxml.declarations.class_declaration.class_t ):
-        warn( 53, "Member classes are not supported: %s" % member.name )
-      elif isinstance( member, pygccxml.declarations.class_declaration.class_declaration_t ):
-        warn( 53, "Member classes are not supported: %s" % member.name )
-      elif isinstance( member, pygccxml.declarations.calldef.casting_operator_t ):
-        warn( 54, "Member casting operators are not supported: %s" % member.name )
-      else :
-        warn( 50, "Unknown member type: %s" % repr(member) )
+    if not typedef.name.startswith("vcl_complex"):
+      for member in typedef.type.declaration.get_members( access=access ):
+        if isinstance( member, pygccxml.declarations.typedef.typedef_t ):
+          warn( 51, "Member typedef are not supported: %s" % member.name )
+        elif isinstance( member, pygccxml.declarations.calldef.member_function_t ):
+          generate_method( typedef, member, indent )
+        elif isinstance( member, pygccxml.declarations.calldef.constructor_t ):
+          generate_constructor( typedef, member, indent )
+        elif isinstance( member, pygccxml.declarations.calldef.member_operator_t ):
+          generate_method( typedef, member, indent )
+        elif isinstance( member, pygccxml.declarations.calldef.destructor_t ):
+          generate_destructor( typedef, member, indent )
+        elif isinstance( member, pygccxml.declarations.enumeration.enumeration_t ):
+          generate_nested_enum( typedef, member, indent )
+        elif isinstance( member, pygccxml.declarations.variable.variable_t ):
+          warn( 52, "Member variables are not supported: %s" % member.name )
+        elif isinstance( member, pygccxml.declarations.class_declaration.class_t ):
+          warn( 53, "Member classes are not supported: %s" % member.name )
+        elif isinstance( member, pygccxml.declarations.class_declaration.class_declaration_t ):
+          warn( 53, "Member classes are not supported: %s" % member.name )
+        elif isinstance( member, pygccxml.declarations.calldef.casting_operator_t ):
+          warn( 54, "Member casting operators are not supported: %s" % member.name )
+        else :
+          warn( 50, "Unknown member type: %s" % repr(member) )
+    else:
+      # vcl_complex is too difficult to wrap in some cases. Only wrap the constructor.
+      for member in typedef.type.declaration.get_members( access=access ):
+        if isinstance( member, pygccxml.declarations.calldef.constructor_t ):
+          generate_constructor( typedef, member, indent )
+        elif isinstance( member, pygccxml.declarations.calldef.destructor_t ):
+          generate_destructor( typedef, member, indent )
+
 
   # finally, close the class
   print >> outputFile, "  "*indent, "};"
