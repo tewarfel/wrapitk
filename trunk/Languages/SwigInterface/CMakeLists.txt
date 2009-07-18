@@ -317,19 +317,17 @@ MACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE wrap_method wrap_class swig_name)
   # ADD_ONE_TYPEDEF_ALL_LANGUAGES("${wrap_method}" "${wrap_class}" "${swig_name}" "${ARGV3}")
   
   # Add a typedef for the class. We have this funny looking full_name::base_name
-  # thing (it expands to, for example "typedef itk::Foo<baz, 2>::Foo"), to 
-  # trick gcc_xml into creating code for the class. If we left off the trailing
-  # base_name, then gcc_xml wouldn't see the typedef as a class instantiation,
-  # and thus wouldn't create XML for any of the methods, etc.
+  # thing (it expands to, for example "typedef itk::Foo<baz, 2>::Foo") used
+  # for gccxml typedefs
 
   IF("${wrap_method}" MATCHES "2_SUPERCLASSES")
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Superclass::Self" "${swig_name}_Superclass_Superclass")
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Superclass::Pointer::SmartPointer" "${swig_name}_Superclass_Superclass_Pointer")
+    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Superclass" "${swig_name}_Superclass_Superclass")
+    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Superclass::Pointer" "${swig_name}_Superclass_Superclass_Pointer")
   ENDIF("${wrap_method}" MATCHES "2_SUPERCLASSES")
 
   IF("${wrap_method}" MATCHES "SUPERCLASS")
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Self" "${swig_name}_Superclass")
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Pointer::SmartPointer" "${swig_name}_Superclass_Pointer")
+    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass" "${swig_name}_Superclass")
+    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Superclass::Pointer" "${swig_name}_Superclass_Pointer")
   ENDIF("${wrap_method}" MATCHES "SUPERCLASS")
 
   # the same output with or without FORCE_INSTANTIATE
@@ -337,7 +335,7 @@ MACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE wrap_method wrap_class swig_name)
 
   IF("${wrap_method}" MATCHES "POINTER")
     # add a pointer typedef if we are so asked
-    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
+    ADD_SIMPLE_TYPEDEF_SWIG_INTERFACE("${full_class_name}::Pointer" "${swig_name}_Pointer")
   ENDIF("${wrap_method}" MATCHES "POINTER")
 
 ENDMACRO(ADD_ONE_TYPEDEF_SWIG_INTERFACE)
