@@ -415,7 +415,12 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   IF(WRAP_ITK_DOC)
     ADD_DEPENDENCIES(${lib} ${WRAPPER_LIBRARY_NAME}Doxygen)
   ENDIF(WRAP_ITK_DOC)
-  INSTALL(TARGETS "${lib}" DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib")
+  # 64 bit binaries are not installed in the same directories on solaris
+  SET(sun64 )
+  IF(CMAKE_SYSTEM MATCHES "SunOS.*" AND CMAKE_SIZEOF_VOID_P EQUAL 8)
+    SET(sun64 "/64")
+  ENDIF(CMAKE_SYSTEM MATCHES "SunOS.*" AND CMAKE_SIZEOF_VOID_P EQUAL 8) 
+  INSTALL(TARGETS "${lib}" DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/lib${sun64}")
   IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
     # don't depends on the targets from wrapitk in external projects
     FOREACH(dep ${WRAPPER_LIBRARY_DEPENDS})
