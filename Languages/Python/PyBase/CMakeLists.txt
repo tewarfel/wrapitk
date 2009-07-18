@@ -37,7 +37,9 @@ WRAP_LIBRARY("ITKPyBase" Python)
   ADD_PYTHON_CONFIG_TEMPLATE("string" "std::string" "string" "")
   ADD_PYTHON_CONFIG_TEMPLATE("stringstream" "std::stringstream" "stringstream" "")
 
-  FOREACH(t B UC US UL SC SS SL F D)
+# TODO: readd the bool (B) once supported by sunstudio
+#  FOREACH(t B UC US UL SC SS SL F D)
+  FOREACH(t UC US UL SC SS SL F D)
     ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "map${t}${t}" "${ITKT_${t}}, ${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "list${t}" "${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("set" "std::set" "set${t}" "${ITKT_${t}}")
