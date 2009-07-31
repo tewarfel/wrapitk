@@ -101,10 +101,7 @@ def renameTypesInSTL( s ):
     args = []
     for arg in pygccxml.declarations.templates.args(s):
       t, d = typeAndDecorators( arg );
-      if aliases.has_key( t ):
-        args.append( aliases[t] + d )
-      else:
-        args.append( renameTypesInSTL( t ) + d )
+      args.append( renameTypesInSTL( get_alias( t ) ) + d )
     return pygccxml.declarations.templates.join( pygccxml.declarations.templates.name(s), args ) + typeAndDecorators( s )[1]
   return s
   

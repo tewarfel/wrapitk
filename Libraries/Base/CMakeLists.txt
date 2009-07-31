@@ -10,14 +10,14 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkSize
   itkVector
   itkPoint
-  itkDefaultDynamicMeshTraits
-  itkDefaultStaticMeshTraits
+#  itkDefaultDynamicMeshTraits
+#  itkDefaultStaticMeshTraits
   itkLevelSet
   itkContinuousIndex
   itkVectorContainer
   itkMapContainer
   itkBoundingBox
-  itkPointSet
+#  itkPointSet
   itkCovariantVector
   itkRGBPixel
   itkRGBAPixel

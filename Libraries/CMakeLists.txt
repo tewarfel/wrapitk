@@ -50,6 +50,7 @@ SET(optional_libraries
   SegmentationValidation
   SimpleFilters
   UnaryPixelMath
+  Mesh
   ItkVtk
 )
 
