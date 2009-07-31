@@ -490,8 +490,10 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
       SET(text "${text}%template(itkMapContainerMD${d}QBAIUL_Superclass) std::map< itkMeshD${d}Q::BoundaryAssignmentIdentifier, unsigned long, std::less< itkMeshD${d}Q::BoundaryAssignmentIdentifier > >;\n")
       ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerMD${d}QBAIUL_Superclass" "itk::Mesh<double, ${d}u, itk::QuadEdgeMeshTraits<double, ${d}, bool, bool, float, float> >::BoundaryAssignmentIdentifier, unsigned long")
 
-#      SET(text "${text}%template(itkMapContainerULCIDQEMCTI${d}_Superclass) std::map< unsigned long, itkCellInterfaceDQEMCTI${d} *, std::less< unsigned long > >;\n")
-#      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerULCIDQEMCTI${d}_Superclass" "unsigned long, itk::CellInterface< double, itk::QuadEdgeMeshCellTraitsInfo< ${d} > >*")
+      SET(text "${text}%traits_swigtype(itkCellInterfaceDQEMCTI${d});\n")
+      SET(text "${text}%fragment(SWIG_Traits_frag(itkCellInterfaceDQEMCTI${d}));\n")
+      SET(text "${text}%template(itkMapContainerULCIDQEMCTI${d}_Superclass) std::map< unsigned long, itkCellInterfaceDQEMCTI${d} *, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerULCIDQEMCTI${d}_Superclass" "unsigned long, itk::CellInterface< double, itk::QuadEdgeMeshCellTraitsInfo< ${d} > >*")
     ENDFOREACH(d)
     
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
