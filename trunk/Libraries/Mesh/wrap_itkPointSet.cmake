@@ -1,5 +1,6 @@
 WRAP_INCLUDE("itkDefaultStaticMeshTraits.h")
 WRAP_INCLUDE("itkDefaultDynamicMeshTraits.h")
+WRAP_INCLUDE("itkQuadEdgeMeshTraits.h")
 
 WRAP_CLASS("itk::PointSet" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})
@@ -11,6 +12,7 @@ WRAP_CLASS("itk::PointSet" POINTER)
 # which may be a bug in ITK but they're needed currently.
     WRAP_TEMPLATE("${ITKM_PD${d}}${d}S"
       "${ITKT_PD${d}},${d},itk::DefaultStaticMeshTraits< ${ITKT_D},${d},${d},${ITKT_D},${ITKT_D} >")
-
+    WRAP_TEMPLATE("${ITKM_D}${d}Q"
+      "${ITKT_D},${d},itk::QuadEdgeMeshTraits< ${ITKT_D},${d},${ITKT_B},${ITKT_B},${ITKT_F},${ITKT_F} >")
   ENDFOREACH(d)
 END_WRAP_CLASS()

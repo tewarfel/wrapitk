@@ -438,6 +438,65 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
   
   SET(base_name wrap_${group_name})
 
+  IF("${group_name}" STREQUAL "itkVectorContainer")
+    # add a template definition for the superclass which is not in ITK
+    SET(text )
+    FOREACH(d ${WRAP_ITK_DIMS})
+      FOREACH(t ${WRAP_ITK_SCALAR})
+        SET(text "${text}%template(itkVectorContainer${ITKM_UI}${ITKM_LSN${t}${d}}_Superclass) std::vector< itkLevelSetNode${t}${d} >;\n")
+        ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "itkVectorContainer${ITKM_UI}${ITKM_LSN${t}${d}}_Superclass" "${ITKT_LSN${t}${d}}")
+      ENDFOREACH(t)
+      
+      SET(text "${text}%template(itkVectorContainer${ITKM_UL}${ITKM_VD${d}}_Superclass) std::vector< itkVectorD${d} >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "itkVectorContainer${ITKM_UL}${ITKM_VD${d}}_Superclass" "${ITKT_VD${d}}")
+
+      SET(text "${text}%template(itkVectorContainer${ITKM_UL}${ITKM_PD${d}}_Superclass) std::vector< itkPointD${d} >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "itkVectorContainer${ITKM_UL}${ITKM_PD${d}}_Superclass" "${ITKT_PD${d}}")
+
+      SET(text "${text}%template(itkVectorContainer${ITKM_UC}${ITKM_O${d}}_Superclass) std::vector< itkOffset${d} >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "itkVectorContainer${ITKM_UL}${ITKM_O${d}}_Superclass" "${ITKT_O${d}}")
+
+      SET(text "${text}%template(itkVectorContainer${ITKM_UI}${ITKM_CID${d}}_Superclass) std::vector< itkContinuousIndexD${d} >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "itkVectorContainer${ITKM_UL}${ITKM_CID${d}}_Superclass" "${ITKT_CID${d}}")
+    ENDFOREACH(d)
+    
+    SET(text "${text}%template(itkVectorContainerUIVUC1_Superclass) std::vector< itkVectorUC1 >;\n")
+    ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "itkVectorContainer${ITKM_UL}${ITKM_VUC1}_Superclass" "${ITKT_VUC1}")
+    
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  ENDIF("${group_name}" STREQUAL "itkVectorContainer")
+
+  IF("${group_name}" STREQUAL "itkMapContainer")
+    # add a template definition for the superclass which is not in ITK
+    SET(text )
+    FOREACH(d ${WRAP_ITK_DIMS})
+      SET(text "${text}%template(itkMapContainer${ITKM_UL}${ITKM_VD${d}}_Superclass) std::map< unsigned long, itkVectorD${d}, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainer${ITKM_UL}${ITKM_VD${d}}_Superclass" "unsigned long, itkVector${d}")
+
+      SET(text "${text}%template(itkMapContainer${ITKM_UL}${ITKM_PD${d}}_Superclass) std::map< unsigned long, itkPointD${d}, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainer${ITKM_UL}${ITKM_PD${d}}_Superclass" "unsigned long, itkPoint${d}")
+    ENDFOREACH(d)
+    
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  ENDIF("${group_name}" STREQUAL "itkMapContainer")
+
+  IF("${group_name}" STREQUAL "itkQuadEdgeMeshBase")
+    # add a template definition for the superclass which is not in ITK
+    SET(text )
+    FOREACH(d ${WRAP_ITK_DIMS})
+      SET(text "${text}%template(itkMapContainerULQEMPF${d}_Superclass) std::map< unsigned long, itkQuadEdgeMeshPointF${d}, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerULQEMPF${d}_Superclass" "unsigned long, itk::QuadEdgeMeshPoint< float, ${d} >")
+
+      SET(text "${text}%template(itkMapContainerMD${d}QBAIUL_Superclass) std::map< itkMeshD${d}Q::BoundaryAssignmentIdentifier, unsigned long, std::less< itkMeshD${d}Q::BoundaryAssignmentIdentifier > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerMD${d}QBAIUL_Superclass" "itk::Mesh<double, ${d}u, itk::QuadEdgeMeshTraits<double, ${d}, bool, bool, float, float> >::BoundaryAssignmentIdentifier, unsigned long")
+
+#      SET(text "${text}%template(itkMapContainerULCIDQEMCTI${d}_Superclass) std::map< unsigned long, itkCellInterfaceDQEMCTI${d} *, std::less< unsigned long > >;\n")
+#      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerULCIDQEMCTI${d}_Superclass" "unsigned long, itk::CellInterface< double, itk::QuadEdgeMeshCellTraitsInfo< ${d} > >*")
+    ENDFOREACH(d)
+    
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  ENDIF("${group_name}" STREQUAL "itkQuadEdgeMeshBase")
+
   # is there a docstring file?
   IF(WRAP_ITK_DOC AND NOT WRAP_ITK_PYTHON_PROCCESS_SWIG_INPUTS)
     # yes. Include the docstring file
@@ -890,50 +949,6 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
   IF("${cpp_name}" STREQUAL "itk::Array")
     ADD_PYTHON_VARIABLE_LENGHT_SEQ_TYPEMAP("${swig_name}" "${template_params}")
   ENDIF("${cpp_name}" STREQUAL "itk::Array")
-    
-  IF("${cpp_name}" STREQUAL "itk::VectorContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
-    # add a template definition for the superclass which is not in ITK
-    STRING(REGEX REPLACE "^[^,]+, *(.+) *$" "\\1" superclass_template_param "${template_params}")
-    IF("${superclass_template_param}" MATCHES "itk::")
-      SET(param "${superclass_template_param}")
-      STRING(REPLACE "::" "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "unsigned" "U" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "signed" "S" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "char" "C" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "short" "S" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "long" "L" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "float" "F" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "double" "D" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE " " "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "<" "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE ">" "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "," "" superclass_template_param "${superclass_template_param}")
-      SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(${swig_name}_Superclass) std::vector< ${superclass_template_param} >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "${swig_name}_Superclass" "${param}")
-    ENDIF("${superclass_template_param}" MATCHES "itk::")
-  ENDIF("${cpp_name}" STREQUAL "itk::VectorContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
-
-  IF("${cpp_name}" STREQUAL "itk::MapContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
-    # add a template definition for the superclass which is not in ITK
-    STRING(REGEX REPLACE "^[^,]+, *(.+) *$" "\\1" superclass_template_param "${template_params}")
-    IF("${superclass_template_param}" MATCHES "itk::")
-      SET(param "${superclass_template_param}")
-      STRING(REPLACE "::" "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "unsigned" "U" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "signed" "S" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "char" "C" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "short" "S" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "long" "L" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "float" "F" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "double" "D" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE " " "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "<" "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE ">" "" superclass_template_param "${superclass_template_param}")
-      STRING(REPLACE "," "" superclass_template_param "${superclass_template_param}")
-      SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(${swig_name}_Superclass) std::map< unsigned long, ${superclass_template_param}, std::less< unsigned long > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "${swig_name}_Superclass" "unsigned long, ${param}")
-    ENDIF("${superclass_template_param}" MATCHES "itk::")
-  ENDIF("${cpp_name}" STREQUAL "itk::MapContainer" AND NOT "${swig_name}" MATCHES "Pointer$")
 
   IF("${swig_name}" STREQUAL "itkTransformBase")
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}%template(list${swig_name}_Pointer) std::list< ${swig_name}_Pointer >;\n")

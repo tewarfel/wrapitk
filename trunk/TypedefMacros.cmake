@@ -377,13 +377,13 @@ MACRO(WRAP_NAMED_CLASS class swig_name)
   IF("${ARGC}" EQUAL 3)
     SET(WRAPPER_WRAP_METHOD "${ARGV2}")
     SET(ok 0)
-    FOREACH(opt POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES FORCE_INSTANTIATE ENUM)
+    FOREACH(opt POINTER POINTER_WITH_SUPERCLASS POINTER_WITH_2_SUPERCLASSES FORCE_INSTANTIATE ENUM AUTOPOINTER)
       IF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
         SET(ok 1)
       ENDIF("${opt}" STREQUAL "${WRAPPER_WRAP_METHOD}")
     ENDFOREACH(opt)
     IF(ok EQUAL 0)
-      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, POINTER_WITH_2_SUPERCLASSES, FORCE_INSTANTIATE and ENUM")
+      MESSAGE(SEND_ERROR "WRAP_CLASS: Invalid option '${WRAPPER_WRAP_METHOD}'. Possible values are POINTER, POINTER_WITH_SUPERCLASS, POINTER_WITH_2_SUPERCLASSES, FORCE_INSTANTIATE, ENUM and AUTOPOINTER")
     ENDIF(ok EQUAL 0)
   ENDIF("${ARGC}" EQUAL 3)
 
@@ -545,8 +545,13 @@ MACRO(ADD_ONE_TYPEDEF wrap_method wrap_class swig_name)
   ENDIF("${wrap_method}" MATCHES "FORCE_INSTANTIATE" OR "${wrap_method}" MATCHES "ENUM")
 
   IF("${wrap_method}" MATCHES "POINTER")
-    # add a pointer typedef if we are so asked
-    ADD_SIMPLE_TYPEDEF("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
+    IF("${wrap_method}" STREQUAL "AUTOPOINTER")
+      # add a pointer typedef if we are so asked
+      ADD_SIMPLE_TYPEDEF("${full_class_name}::SelfAutoPointer::AutoPointer" "${swig_name}_AutoPointer")
+    ELSE("${wrap_method}" STREQUAL "AUTOPOINTER")
+      # add a pointer typedef if we are so asked
+      ADD_SIMPLE_TYPEDEF("${full_class_name}::Pointer::SmartPointer" "${swig_name}_Pointer")
+    ENDIF("${wrap_method}" STREQUAL "AUTOPOINTER")
   ENDIF("${wrap_method}" MATCHES "POINTER")
 
 ENDMACRO(ADD_ONE_TYPEDEF)
