@@ -470,11 +470,11 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
     # add a template definition for the superclass which is not in ITK
     SET(text )
     FOREACH(d ${WRAP_ITK_DIMS})
-      SET(text "${text}%template(itkMapContainer${ITKM_UL}${ITKM_VD${d}}_Superclass) std::map< unsigned long, itkVectorD${d}, std::less< unsigned long > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainer${ITKM_UL}${ITKM_VD${d}}_Superclass" "unsigned long, ${ITKT_VD${d}}")
+      SET(text "${text}%template(mapULitkVectorD${d}) std::map< unsigned long, itkVectorD${d}, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULitkVectorD${d}" "unsigned long, ${ITKT_VD${d}}")
 
-      SET(text "${text}%template(itkMapContainer${ITKM_UL}${ITKM_PD${d}}_Superclass) std::map< unsigned long, itkPointD${d}, std::less< unsigned long > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainer${ITKM_UL}${ITKM_PD${d}}_Superclass" "unsigned long, ${ITKT_PD${d}}")
+      SET(text "${text}%template(mapULitkPointD${d}) std::map< unsigned long, itkPointD${d}, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULitkPointD${d}" "unsigned long, ${ITKT_PD${d}}")
     ENDFOREACH(d)
     
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
@@ -484,16 +484,16 @@ MACRO(END_WRAP_MODULE_PYTHON group_name)
     # add a template definition for the superclass which is not in ITK
     SET(text )
     FOREACH(d ${WRAP_ITK_DIMS})
-      SET(text "${text}%template(itkMapContainerULQEMPF${d}_Superclass) std::map< unsigned long, itkQuadEdgeMeshPointF${d}, std::less< unsigned long > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerULQEMPF${d}_Superclass" "unsigned long, itk::QuadEdgeMeshPoint< float, ${d} >")
+      SET(text "${text}%template(mapULitkQuadEdgeMeshPointF${d}) std::map< unsigned long, itkQuadEdgeMeshPointF${d}, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULitkQuadEdgeMeshPointF${d}" "unsigned long, itk::QuadEdgeMeshPoint< float, ${d} >")
 
-      SET(text "${text}%template(itkMapContainerMD${d}QBAIUL_Superclass) std::map< itkMeshD${d}Q::BoundaryAssignmentIdentifier, unsigned long, std::less< itkMeshD${d}Q::BoundaryAssignmentIdentifier > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerMD${d}QBAIUL_Superclass" "itk::Mesh<double, ${d}u, itk::QuadEdgeMeshTraits<double, ${d}, bool, bool, float, float> >::BoundaryAssignmentIdentifier, unsigned long")
+      # SET(text "${text}%template(itkMapContainerMD${d}QBAIUL_Superclass) std::map< itkMeshD${d}Q::BoundaryAssignmentIdentifier, unsigned long, std::less< itkMeshD${d}Q::BoundaryAssignmentIdentifier > >;\n")
+      # ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerMD${d}QBAIUL_Superclass" "itk::Mesh<double, ${d}u, itk::QuadEdgeMeshTraits<double, ${d}, bool, bool, float, float> >::BoundaryAssignmentIdentifier, unsigned long")
 
       SET(text "${text}%traits_swigtype(itkCellInterfaceDQEMCTI${d});\n")
       SET(text "${text}%fragment(SWIG_Traits_frag(itkCellInterfaceDQEMCTI${d}));\n")
-      SET(text "${text}%template(itkMapContainerULCIDQEMCTI${d}_Superclass) std::map< unsigned long, itkCellInterfaceDQEMCTI${d} *, std::less< unsigned long > >;\n")
-      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "itkMapContainerULCIDQEMCTI${d}_Superclass" "unsigned long, itk::CellInterface< double, itk::QuadEdgeMeshCellTraitsInfo< ${d} > >*")
+      SET(text "${text}%template(mapULitkCellInterfaceDQEMCTI${d}) std::map< unsigned long, itkCellInterfaceDQEMCTI${d} *, std::less< unsigned long > >;\n")
+      ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULitkCellInterfaceDQEMCTI${d}" "unsigned long, itk::CellInterface< double, itk::QuadEdgeMeshCellTraitsInfo< ${d} > >*")
     ENDFOREACH(d)
     
     SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
