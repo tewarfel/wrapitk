@@ -40,9 +40,9 @@ PyImageFilter<TInputImage,TOutputImage>
 template <class TInputImage, class TOutputImage>
 void
 PyImageFilter<TInputImage,TOutputImage>
-::SetPyGenerateData(PyObject *obj)
+::SetPyGenerateData(PyObject *o)
 {
-    if (obj != this->obj)
+    if (o != this->obj)
     {
         if (this->obj)
         {
@@ -51,7 +51,7 @@ PyImageFilter<TInputImage,TOutputImage>
         }
 
         // store the new object
-        this->obj = obj;
+        this->obj = o;
 
         if (this->obj)
         {
