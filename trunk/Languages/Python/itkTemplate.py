@@ -167,6 +167,11 @@ class itkTemplate(object):
         # convert the string to a number !
         param = int(param)
       
+      elif paramNorm == "true":
+        param = True
+      elif paramNorm == "false":
+        param = False
+        
       elif param in ["_C_ldouble_complex", "_C_double_complex", "_C_float_complex"]:
         # those type are discardes in igenerator.py to avoid errors. We can't use them here.
         # just discard it
