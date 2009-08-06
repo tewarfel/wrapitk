@@ -70,6 +70,20 @@ MACRO(WRAP_LIBRARY_JAVA library_name)
 #  SET(WRAP_ITK_JAVA_LIBRARY_DECLS )
 #  SET(WRAP_ITK_JAVA_LIBRARY_CALLS )
   SET(WRAP_ITK_JAVA_CXX_FILES )
+
+  STRING(TOLOWER ${WRAPPER_LIBRARY_NAME} _java_package_name)
+  SET(java_package_path ${WRAP_ITK_JAVA_SRC_DIR}/${WRAP_ITK_JAVA_CORE_PACKAGE_PATH}/${_java_package_name})
+  # clean java proxies. It's difficult to know which files are produced by swig,
+  # so all the java are compiled at once in the Proxies subdirectories. A file
+  # from a previous build can make the build fail.
+  SET_DIRECTORY_PROPERTIES(PROPERTIES ADDITIONAL_MAKE_CLEAN_FILES "${java_package_path}")
+  # create the directory during the build so it can be recreated after a make clean.
+  # dummy is there to make the command not depend on ${java_package_path} directly
+  # to avoid rerunning the command when a file is added or modified in that dir.
+  ADD_CUSTOM_COMMAND(COMMAND ${CMAKE_COMMAND}
+    ARGS -E make_directory ${java_package_path}/dummy
+    OUTPUT ${java_package_path}/dummy
+  )
 ENDMACRO(WRAP_LIBRARY_JAVA library_name)
 
 
@@ -93,9 +107,6 @@ MACRO(END_WRAP_LIBRARY_JAVA)
   SET(java_package_name ${WRAP_ITK_JAVA_CORE_PACKAGE_NAME}.${_java_package_name})
   SET(java_jar_file_name ${java_package_name}.jar)
   SET(java_jar_file_path ${WRAP_ITK_JAVA_JAR_DIR}/${java_jar_file_name})
-  
-  # make the package directory
-  FILE(MAKE_DIRECTORY ${java_package_path})
   
   # set the java source and bin files
   SET(java_file )
@@ -313,7 +324,7 @@ MACRO(END_WRAP_MODULE_JAVA group_name)
     -outdir ${java_package_path}
     ${interface_file}
     WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java
-    DEPENDS ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i ${WRAP_ITK_JAVA_SOURCE_DIR}/java.i ${SWIG_EXECUTABLE}
+    DEPENDS ${java_package_path}/dummy ${DEPS} ${interface_file} ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/java/${base_name}_ext.i ${WRAP_ITK_JAVA_SOURCE_DIR}/java.i ${SWIG_EXECUTABLE}
     COMMENT "Generating Java wrap files for class ${java_package_name}.${group_name}"
   )
   # ${WRAP_ITK_JAVA_LIBRARY_DEPS} 
