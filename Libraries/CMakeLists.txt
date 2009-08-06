@@ -29,6 +29,7 @@ SET(optional_libraries
   Calculators
   Compose
   Interpolators  # is required by DeformableTransforms
+  Mesh  # is required by DeformableTransforms
   DeformableTransforms
   Denoising
   DistanceMap
@@ -50,7 +51,6 @@ SET(optional_libraries
   SegmentationValidation
   SimpleFilters
   UnaryPixelMath
-  Mesh
   ItkVtk
 )
 
