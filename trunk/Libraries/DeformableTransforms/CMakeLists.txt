@@ -4,7 +4,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkKernelTransform
 )
 
-SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Interpolators)
+SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Interpolators Mesh)
 
 SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
 
