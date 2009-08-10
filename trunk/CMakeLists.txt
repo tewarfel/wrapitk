@@ -17,6 +17,14 @@ ENDIF(BUILD_TESTING)
 # Config ITKWrap
 ###############################################################################
 
+# on visual studio 2005 and later, we need to use /bigobj as the
+# generated wrappings take up more than 65535 sections in some
+# objects.
+IF(CMAKE_COMPILER_2005)
+  ADD_DEFINITIONS(/bigobj)
+ENDIF(CMAKE_COMPILER_2005)
+
+
 # Set up options needed for ConfigureWrapping
 
 # set WrapITK version
