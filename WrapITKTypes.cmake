@@ -2,7 +2,10 @@
 
 # set the default include files for the generated wrapper files
 # itk::Command has to be available in all ITK wrapped files
-SET(WRAPPER_DEFAULT_INCLUDE "itkCommand.h")
+SET(WRAPPER_DEFAULT_INCLUDE 
+  itkCommand.h
+  itkStatisticsLabelObject.h
+)
 
 # define some macro to help creation of types vars
 
@@ -253,4 +256,11 @@ WRAP_TYPE("itk::Statistics::Histogram" "H")
 END_WRAP_TYPE()
 SET(itk_Wrap_Histogram ${WRAPPER_TEMPLATES})
 
+WRAP_TYPE("itk::LabelMap" "LM")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    ADD_TEMPLATE("${d}" "itk::StatisticsLabelObject< ${ITKT_UL}, ${d} >")
+ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_LabelMap ${WRAPPER_TEMPLATES})
+	
 #------------------------------------------------------------------------------
