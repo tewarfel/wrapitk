@@ -871,6 +871,7 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
  ENDIF("${cpp_name}" STREQUAL "itk::StatisticsLabelObject" AND NOT "${swig_name}" MATCHES "Pointer$")
   
   IF("${cpp_name}" STREQUAL "itk::LabelMap" AND NOT "${swig_name}" MATCHES "Pointer$")
+    SET(text "")
     SET(text "${text}%extend ${swig_name} {\n")
     SET(text "${text}  %pythoncode {\n")
     SET(text "${text}    def __len__(self):\n")
