@@ -751,7 +751,7 @@ class pipeline:
       return self.filters[-1].GetNumberOfOutputs()
       
   def __getitem__(self, item):
-    self.GetOutput( item )
+    return self.GetOutput( item )
       
   def __call__(self, *args, **kargs):
      set_inputs( self, args, kargs )
