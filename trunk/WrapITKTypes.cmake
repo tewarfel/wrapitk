@@ -101,6 +101,7 @@ WRAP_TYPE("itk::Array" "A")
   ADD_TEMPLATE("${ITKM_D}" "${ITKT_D}")
   ADD_TEMPLATE("${ITKM_F}" "${ITKT_F}")
   ADD_TEMPLATE("${ITKM_UL}" "${ITKT_UL}")
+  ADD_TEMPLATE("${ITKM_SL}" "${ITKT_SL}")
 END_WRAP_TYPE()
 SET(itk_Wrap_Array ${WRAPPER_TEMPLATES})
 
