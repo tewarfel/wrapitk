@@ -17,7 +17,6 @@ SET(io_classes
   AnalyzeImageIO
   BioRadImageIO
   BMPImageIO
-#  Brains2MaskImageIO
   DICOMImageIO2
   GDCMImageIO
   DicomImageIO
@@ -35,6 +34,10 @@ SET(io_classes
   SiemensVisionImageIO
   StimulateImageIO
   VTKImageIO
+  Brains2MaskImageIO
+  Bruker2DSEQImageIO
+  PhilipsRECImageIO
+  VoxBoCUBImageIO
 )
 
 FOREACH(c ${io_classes})

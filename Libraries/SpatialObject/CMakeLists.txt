@@ -6,6 +6,8 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkSpatialObjectBase
   itkSpatialObjectPoint
   itkContourSpatialObjectPoint
+  itkDTITubeSpatialObjectPoint
+  itkVesselTubeSpatialObjectPoint
   itkPointBasedSpatialObject
   itkImageSpatialObject
   itkBlobSpatialObject
