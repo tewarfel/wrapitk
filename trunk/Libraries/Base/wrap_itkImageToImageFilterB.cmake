@@ -31,7 +31,13 @@ WRAP_CLASS("itk::ImageToImageFilter" POINTER)
   WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_REAL}" "${WRAP_ITK_COMPLEX_REAL}")
   WRAP_IMAGE_FILTER_COMBINATIONS("${WRAP_ITK_COMPLEX_REAL}" "${WRAP_ITK_REAL}")
 
-
+  # scalar <-> SymmetricSecondRankTensor
+  FOREACH(d ${WRAP_ITK_DIMS})
+    FOREACH(t ${WRAP_ITK_SCALAR})
+      WRAP_TEMPLATE("${ITKM_I${t}${d}}${ITKM_ISSRT${ITKM_D}${d}${d}}" "${ITKT_I${t}${d}}, ${ITKT_ISSRT${ITKM_D}${d}${d}}")
+      WRAP_TEMPLATE("${ITKM_ISSRT${ITKM_D}${d}${d}}${ITKM_I${t}${d}}" "${ITKT_ISSRT${ITKM_D}${d}${d}}, ${ITKT_I${t}${d}}")
+    ENDFOREACH(t)
+  ENDFOREACH(d)
 
   # Wrap dim=3 -> dim=2, dim=3 -> dim=2, etc.
   FOREACH(d ${WRAP_ITK_DIMS})    
