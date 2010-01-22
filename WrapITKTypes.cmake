@@ -165,6 +165,14 @@ WRAP_TYPE("std::complex" "C")
 END_WRAP_TYPE()
 SET(itk_Wrap_vcl_complex ${WRAPPER_TEMPLATES})
 
+WRAP_TYPE("itk::SymmetricSecondRankTensor" "SSRT")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    ADD_TEMPLATE("${ITKM_D}${d}" "${ITKT_D}, ${d}")
+    ADD_TEMPLATE("${ITKM_F}${d}" "${ITKT_F}, ${d}")
+  ENDFOREACH(d)
+END_WRAP_TYPE()
+SET(itk_Wrap_SymmetricSecondRankTensor ${WRAPPER_TEMPLATES})
+
 WRAP_TYPE("itk::Image" "I")
   # Make a list of all of the selected image pixel types and also double (for
   # BSplineDeformableTransform), uchar (for 8-bit image output), and ulong
@@ -187,6 +195,9 @@ WRAP_TYPE("itk::Image" "I")
     
     # Offset, used by Danielsson's filter
     ADD_TEMPLATE("${ITKM_O${d}}${d}"  "${ITKT_O${d}},${d}")
+    
+    # SymmetricSecondRankTensor types required by level set filters
+    ADD_TEMPLATE("${ITKM_SSRT${ITKM_D}${d}}${d}"  "${ITKT_SSRT${ITKM_D}${d}}, ${d}")
     
   ENDFOREACH(d)
 END_WRAP_TYPE()

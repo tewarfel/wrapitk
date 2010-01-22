@@ -24,6 +24,7 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkVariableLengthVector
   ITKRegions
   itkMatrix
+  itkSymmetricSecondRankTensor
   itkImage
   itkVectorImage
   itkNeighborhood
