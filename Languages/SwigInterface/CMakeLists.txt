@@ -167,6 +167,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
 #        --import ${module_interface_file}
         --swig-include wrap_${module}_ext.i
         -w1 -w3 -w51 -w52 -w53 -w54 #--warning-error
+        -A protected -A private
         # --verbose
         ${xml_file}
         ${interface_file}
