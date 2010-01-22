@@ -68,7 +68,6 @@ def info( msg ):
 notWrapped = [
   "itk::SmartPointerForwardReference<.+>",
   "itk::LibHandle",
-  "itk::CreateObjectFunctionBase",
   "itk::NeighborhoodAllocator<.+>",
   "itk::ImageRegion<.+>", # to avoid wrapping all the region for all the dims
   "itk::ImportImageContainer<.+>",
@@ -78,24 +77,15 @@ notWrapped = [
   "itk::VectorImageNeighborhoodAccessorFunctor<.+>",
   "itk::.*Iterator.*",  # TODO: remove this one ?
   "itk::Neighborhood<.+>", # TODO: remove this one
-#  "itk::VectorContainer<.+>",  # some of those types are quite difficult some ignore them all
-#  "itk::MapContainer<.+>",  # some of those types are quite difficult some ignore them all
   "itk::ThreadFunctionType",
-  "itk::ThreadProcessIDType",
-#  "itk::PolygonGroupOrientation", # cableidx must generate something for the enums before wrapping this one
-#  "itk::SpatialOrientation::ValidCoordinateOrientationFlags",  # the same for this one
-#  "itk::Statistics::TextureFeatureName",
   "itk::Functor::.+",
   "itk::SmartPointer< itk::Functor::.+",
   "itk::Function::.+",
   "itk::.+Function.*",  # Level set functions
-  "itk::dsr", # a struct which shouldn't be exposed in analyze IO code ?
   "itk::InterpolateImageFunction<.+>",  # use one more dimension than the wrapped one
   "itk::watershed::.+",  # ignore the internal classes of the watershed
   "itk::SmartPointer< itk::VoronoiDiagram2D<.+> >",  # require to wrap too more type
   "itk::Image< itk::CovariantVector< double, \d+u >, \d+u >",  # used internally in ImageToImageMetric
-  "itk::MaskedRankHistogram<.+>",  # used internally in itk::MaskedRankImageFilter
-  "itk::RankHistogram<.+>",  # used internally in itk::RankImageFilter  
 ]
 
 notWrappedRegExp = re.compile( "|".join( [ "^"+s+"$" for s in notWrapped] ) )
