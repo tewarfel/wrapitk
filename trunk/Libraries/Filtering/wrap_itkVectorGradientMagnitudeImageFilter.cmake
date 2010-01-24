@@ -1,0 +1,10 @@
+WRAP_CLASS("itk::VectorGradientMagnitudeImageFilter" POINTER)
+  FOREACH(d ${WRAP_ITK_DIMS})
+    FOREACH(t ${WRAP_ITK_VECTOR_REAL})
+      FOREACH(t2 ${WRAP_ITK_REAL})
+        WRAP_TEMPLATE("${ITKM_I${t}${d}${d}}${ITKM_${t2}}"
+"${ITKT_I${t}${d}${d}}, ${ITKT_${t2}}")
+      ENDFOREACH(t2)
+    ENDFOREACH(t)
+  ENDFOREACH(d)
+END_WRAP_CLASS()
