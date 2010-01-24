@@ -7,6 +7,6 @@ WRAP_CLASS("itk::DTITubeSpatialObjectPoint")
   FILTER_DIMS(d 3)                                
   IF(d)
     WRAP_TEMPLATE(3 3)
-  ENDIF(3)
+  ENDIF(d)
 
 END_WRAP_CLASS()
