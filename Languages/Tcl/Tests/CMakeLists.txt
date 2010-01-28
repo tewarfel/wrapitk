@@ -20,13 +20,13 @@ ADD_TEST(TclListAll ${TCL_DRIVER} ${CMAKE_CURRENT_SOURCE_DIR}/ListAll.tcl)
 
 INTERSECTION(WRAP_2 2 "${WRAP_ITK_DIMS}")
 IF(WRAP_unsigned_short AND WRAP_2)
-  ADD_TEST(TclBinaryDilateImageFilter
-    ${TCL_DRIVER}
-    ${CMAKE_CURRENT_SOURCE_DIR}/BinaryDilateImageFilter.tcl
-    ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
-    BinaryDilateImageFilter.png
-    --compare BinaryDilateImageFilter.png ${WrapITK_SOURCE_DIR}/images/BinaryDilateImageFilter.png
-  )
+#  ADD_TEST(TclBinaryDilateImageFilter
+#    ${TCL_DRIVER}
+#    ${CMAKE_CURRENT_SOURCE_DIR}/BinaryDilateImageFilter.tcl
+#    ${WrapITK_SOURCE_DIR}/images/2th_cthead1.png
+#    BinaryDilateImageFilter.png
+#    --compare BinaryDilateImageFilter.png ${WrapITK_SOURCE_DIR}/images/BinaryDilateImageFilter.png
+#  )
 
   ADD_TEST(TclBinaryErodeImageFilter
     ${TCL_DRIVER}
