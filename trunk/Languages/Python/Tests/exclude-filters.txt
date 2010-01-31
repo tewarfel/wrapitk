@@ -71,3 +71,4 @@ WarpJacobianDeterminantFilter
 MatrixIndexSelectionImageFilter
 HistogramToImageFilter
 AttributeMorphologyBaseImageFilter
+FiniteDifferenceSparseImageFilter
