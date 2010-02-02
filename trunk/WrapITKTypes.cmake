@@ -62,7 +62,7 @@ ENDMACRO(ADD_TEMPLATE)
 
 
 WRAP_TYPE("itk::Offset" "O")
-  UNIQUE(dims "${WRAP_ITK_DIMS};1")
+  UNIQUE(dims "${WRAP_ITK_DIMS};1;2")
   FOREACH(d ${dims})
     ADD_TEMPLATE("${d}"  "${d}")
   ENDFOREACH(d)
