@@ -5,6 +5,9 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkDenseFrequencyContainer
   itkSample
   itkHistogram
+  itkListSampleBase
+  itkListSample
+  itkMembershipFunctionBase
 )
 
 SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base VXLNumerics)
