@@ -22,7 +22,7 @@ def _create_logger_( name ):
     #handler.setFormatter( logging.Formatter( os.linesep + '%(levelname)s %(message)s' ) )
     handler.setFormatter( logging.Formatter( '%(levelname)s %(message)s' ) )
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.WARNING)
     return logger
 
 class loggers:
