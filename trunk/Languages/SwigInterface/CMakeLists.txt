@@ -39,7 +39,7 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface module.i.in)
   WRAP_ITK_INSTALL(/Configuration/Languages/SwigInterface module.includes.in)
   
-  INSTALL(DIRECTORY pygccxml-0.8.2
+  INSTALL(DIRECTORY pygccxml-1.0.0
     DESTINATION "${WRAP_ITK_INSTALL_PREFIX}/Configuration/Languages/SwigInterface"
     PATTERN ".svn" EXCLUDE
     PATTERN "CVS" EXCLUDE
@@ -48,7 +48,7 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   )
 
   # create the igenerator.py with the pygccxml path in it
-  SET(PYGCCXML_PATH "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Configuration/Languages/SwigInterface/pygccxml-0.8.2/")
+  SET(PYGCCXML_PATH "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}/Configuration/Languages/SwigInterface/pygccxml-1.0.0/")
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
     "${CMAKE_CURRENT_BINARY_DIR}/InstallOnly/igenerator.py"
     @ONLY IMMEDIATE)
@@ -58,7 +58,7 @@ IF(NOT EXTERNAL_WRAP_ITK_PROJECT)
   )
   
   # create the igenerator.py with the pygccxml path in it
-  SET(PYGCCXML_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pygccxml-0.8.2/")
+  SET(PYGCCXML_PATH "${CMAKE_CURRENT_SOURCE_DIR}/pygccxml-1.0.0/")
   CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/igenerator.py.in" 
     "${CMAKE_CURRENT_BINARY_DIR}/igenerator.py"
     @ONLY IMMEDIATE)
@@ -152,7 +152,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     # configure the test driver, to set the python path to the pygccxml dir
   #   FIND_PROGRAM(ITK_TEST_DRIVER itkTestDriver)
   #   SET(PYTHON_PYGCCXML_DRIVER "${ITK_TEST_DRIVER}"
-  #     --add-before-env PYTHONPATH "${WRAP_ITK_CMAKE_DIR}/pygccxml-0.8.2/"
+  #     --add-before-env PYTHONPATH "${WRAP_ITK_CMAKE_DIR}/pygccxml-1.0.0/"
   #     "${PYTHON_EXECUTABLE}"
   #   )
   
