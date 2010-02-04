@@ -5,7 +5,10 @@
 # http://www.boost.org/LICENSE_1_0.txt)
 
 import os
-import md5
+try:
+  import hashlib as md5
+except:
+  import md5
 import time
 import cPickle 
 from pygccxml import utils
