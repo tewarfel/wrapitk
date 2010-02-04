@@ -163,6 +163,7 @@ class gccxml_configuration_t(parser_configuration_t):
 
 
     def raise_on_wrong_settings( self ):
+        return
         super( gccxml_configuration_t, self ).raise_on_wrong_settings()
         if os.path.isfile( self.gccxml_path ):
             return
