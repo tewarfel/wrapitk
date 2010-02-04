@@ -14,7 +14,11 @@ The cache class is L{directory_cache_t} which can be passed to the C{cache}
 argument of the L{parse()} function.
 """
 
-import os, os.path, gzip, md5
+import os, os.path, gzip
+try:
+  import hashlib as md5
+except:
+  import md5
 import cPickle
 import declarations_cache
 
