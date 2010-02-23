@@ -334,7 +334,8 @@ class scanner_t( xml.sax.handler.ContentHandler ):
         if size is None:
             size = array_t.SIZE_UNKNOWN
             msg = 'unable to find out array size from expression "%s"' % attrs[ XML_AN_MAX ]
-            warnings.warn( msg )
+            # warning is absolutely useless without much clue
+            # warnings.warn( msg )
         return array_t( type_, size + 1 )
 
     def __read_cv_qualified_type( self, attrs ):
