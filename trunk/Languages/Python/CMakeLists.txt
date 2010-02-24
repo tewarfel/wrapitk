@@ -703,6 +703,21 @@ MACRO(ADD_SIMPLE_TYPEDEF_PYTHON wrap_class swig_name)
 
   # and now, generate the typemaps and other customizations
   
+  IF("${cpp_name}" STREQUAL "vcl_complex")
+    SET(text "\n\n")
+    SET(text "${text}%extend ${swig_name} {\n")
+    SET(text "${text}  %pythoncode {\n")
+    SET(text "${text}    def __repr__(self):\n")
+    SET(text "${text}        return \"${swig_name}(%s, %s)\" % (self.real(), self.imag())\n")
+    SET(text "${text}      \n")
+    SET(text "${text}\n")
+    SET(text "${text}  }\n")
+    SET(text "${text}}\n")
+    SET(text "${text}\n\n")
+
+    SET(WRAP_ITK_PYTHON_SWIG_EXT "${WRAP_ITK_PYTHON_SWIG_EXT}${text}")
+  ENDIF("${cpp_name}" STREQUAL "vcl_complex")
+
   IF("${swig_name}" STREQUAL "itkLightObject")
     SET(text "\n\n")
     SET(text "${text}%extend itkLightObject {\n")
