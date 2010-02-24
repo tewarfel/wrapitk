@@ -90,6 +90,80 @@ notWrapped = [
 
 notWrappedRegExp = re.compile( "|".join( [ "^"+s+"$" for s in notWrapped] ) )
 
+# vcl_complex code
+
+vcl_complex_headers = {"D": """ class vcl_complexD {
+   public:
+     ~vcl_complexD();
+     vcl_complexD & operator=(vcl_complexD const & arg0);
+     vcl_complexD(vcl_complexD const & arg0);
+     vcl_complexD(vcl_complexD __z);
+     vcl_complexD(double __r = 0.0, double __i = 0.0);
+     vcl_complexD(vcl_complexF const & __z);
+     vcl_complexD(vcl_complexLD const & __z);
+     double & real();
+     double const & real() const;
+     double & imag();
+     double const & imag() const;
+     vcl_complexD & operator=(double __d);
+     vcl_complexD & operator+=(double __d);
+     vcl_complexD & operator-=(double __d);
+     vcl_complexD & operator*=(double __d);
+     vcl_complexD & operator/=(double __d);
+     // vcl_complexD const & __rep() const;
+   private:
+   protected:
+ };
+""",
+
+"F": """class vcl_complexF {
+   public:
+     ~vcl_complexF();
+     vcl_complexF & operator=(vcl_complexF const & arg0);
+     vcl_complexF(vcl_complexF const & arg0);
+     vcl_complexF(vcl_complexF __z);
+     vcl_complexF(float r = 0.0f, float i = 0.0f);
+     vcl_complexF(vcl_complexD const & __z);
+     vcl_complexF(vcl_complexLD const & __z);
+     float & real();
+     float const & real() const;
+     float & imag();
+     float const & imag() const;
+     vcl_complexF & operator=(float __f);
+     vcl_complexF & operator+=(float __f);
+     vcl_complexF & operator-=(float __f);
+     vcl_complexF & operator*=(float __f);
+     vcl_complexF & operator/=(float __f);
+     // vcl_complexF const & __rep() const;
+   private:
+   protected:
+ };
+""",
+
+"LD" : """ class vcl_complexLD {
+   public:
+     ~vcl_complexLD();
+     vcl_complexLD & operator=(vcl_complexLD const & arg0);
+     vcl_complexLD(vcl_complexLD const & arg0);
+     vcl_complexLD(vcl_complexLD __z);
+     vcl_complexLD(long double __r = 0.0l, long double __i = 0.0l);
+     vcl_complexLD(vcl_complexF const & __z);
+     vcl_complexLD(vcl_complexD const & __z);
+     long double & real();
+     long double const & real() const;
+     long double & imag();
+     long double const & imag() const;
+     vcl_complexLD & operator=(long double __r);
+     vcl_complexLD & operator+=(long double __r);
+     vcl_complexLD & operator-=(long double __r);
+     vcl_complexLD & operator*=(long double __r);
+     vcl_complexLD & operator/=(long double __r);
+     // vcl_complexLD const & __rep() const;
+   private:
+   protected:
+ };
+"""
+}
 
 def renameTypesInSTL( s ):
   if s.startswith( "std::" ) and pygccxml.declarations.templates.is_instantiation(s):
@@ -220,27 +294,26 @@ def normalize(name):
 
 def generate_class( typedef, indent=0 ):
   info("Generating interface for %s." % typedef.name)
-  super_classes = []
-  for super_class in typedef.type.declaration.bases:
-    # exclude non wrappable stuff on msvc++
-    if get_alias(super_class.related_class.decl_string) not in ["_C_float_complex", "_C_double_complex", "_C_ldouble_complex"]:
-      super_classes.append( "%s %s" % ( super_class.access, get_alias(super_class.related_class.decl_string) ) )
-  s = ""
-  if super_classes:
-    s = " : " + ", ".join( super_classes )
-  print >> outputFile, "  "*indent, "class %s%s {" % ( typedef.name, s )
-    
-  # iterate over access
-  for access in pygccxml.declarations.ACCESS_TYPES.ALL:
-    
-    # print the access type
-    print >> outputFile, "  "*indent, "  %s:" % access
-    
-    # warnings or no warning?
-    w = access not in options.access_warnings
 
-    # iterate over the members
-    if not typedef.name.startswith("vcl_complex"):
+  if not typedef.name.startswith("vcl_complex"):
+    super_classes = []
+    for super_class in typedef.type.declaration.bases:
+      super_classes.append( "%s %s" % ( super_class.access, get_alias(super_class.related_class.decl_string) ) )
+    s = ""
+    if super_classes:
+      s = " : " + ", ".join( super_classes )
+    print >> outputFile, "  "*indent, "class %s%s {" % ( typedef.name, s )
+      
+    # iterate over access
+    for access in pygccxml.declarations.ACCESS_TYPES.ALL:
+      
+      # print the access type
+      print >> outputFile, "  "*indent, "  %s:" % access
+      
+      # warnings or no warning?
+      w = access not in options.access_warnings
+  
+      # iterate over the members
       for member in typedef.type.declaration.get_members( access=access ):
         if isinstance( member, pygccxml.declarations.typedef.typedef_t ):
           warn( 51, "Member typedef are not supported: %s" % member.name, w )
@@ -264,19 +337,39 @@ def generate_class( typedef, indent=0 ):
           warn( 54, "Member casting operators are not supported: %s" % member.name, w )
         else :
           warn( 50, "Unknown member type: %s" % repr(member), w )
-    else:
-      # vcl_complex is too difficult to wrap in some cases. Only wrap the constructor.
+
+    # finally, close the class
+    print >> outputFile, "  "*indent, "};"
+    print >> outputFile
+    print >> outputFile
+
+  elif typedef.name == "vcl_complexD":
+    print >> outputFile, vcl_complex_headers["D"]
+  elif typedef.name == "vcl_complexF":
+    print >> outputFile, vcl_complex_headers["F"]
+  elif typedef.name == "vcl_complexLD":
+    print >> outputFile, vcl_complex_headers["LD"]
+  else:
+    # vcl_complex is too difficult to wrap in some cases. Only wrap the constructor.
+    print >> outputFile, "  "*indent, "class %s%s {" % ( typedef.name, s )
+      
+    # iterate over access
+    for access in pygccxml.declarations.ACCESS_TYPES.ALL:
+      
+      # print the access type
+      print >> outputFile, "  "*indent, "  %s:" % access
+      
+      # warnings or no warning?
+      w = access not in options.access_warnings
       for member in typedef.type.declaration.get_members( access=access ):
         if isinstance( member, pygccxml.declarations.calldef.constructor_t ):
           generate_constructor( typedef, member, indent, w )
         elif isinstance( member, pygccxml.declarations.calldef.destructor_t ):
-          generate_destructor( typedef, member, indent, w )
-
-
-  # finally, close the class
-  print >> outputFile, "  "*indent, "};"
-  print >> outputFile
-  print >> outputFile
+          generate_destructor( typedef, member, indent, w )  
+    # finally, close the class
+    print >> outputFile, "  "*indent, "};"
+    print >> outputFile
+    print >> outputFile
         
 
 def generate_constructor( typedef, constructor, indent, w ):  
