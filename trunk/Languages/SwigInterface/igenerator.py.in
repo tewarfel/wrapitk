@@ -152,7 +152,7 @@ vcl_complex_headers = {"D": """ class vcl_complexD {
      long double real();
      long double const real() const;
      long double imag();
-     long double const & imag() const;
+     long double const imag() const;
      vcl_complexLD & operator=(long double __r);
      vcl_complexLD & operator+=(long double __r);
      vcl_complexLD & operator-=(long double __r);
