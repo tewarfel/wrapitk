@@ -402,6 +402,10 @@ MACRO(END_WRAP_LIBRARY_PYTHON)
   SET(lib ${WRAPPER_LIBRARY_NAME}Python)
   ADD_LIBRARY(${lib} MODULE ${cpp_file} ${WRAP_ITK_PYTHON_CXX_FILES} ${WRAPPER_LIBRARY_CXX_SOURCES})
   SET_TARGET_PROPERTIES(${lib} PROPERTIES PREFIX "_")
+  # gcc 4.4 complains a lot without this flag when building in release mode
+  IF(CMAKE_COMPILER_IS_GNUCC)
+    SET_TARGET_PROPERTIES(${lib} PROPERTIES COMPILE_FLAGS -fno-strict-aliasing)
+  ENDIF(CMAKE_COMPILER_IS_GNUCC)  
   # work around linkage problem on some solaris systems
   IF(CMAKE_SYSTEM MATCHES "SunOS-." AND CMAKE_COMPILER_IS_GNUCXX AND CMAKE_COMPILER_IS_GNUCC)
     TARGET_LINK_LIBRARIES(${lib} stdc++)
