@@ -104,6 +104,9 @@ class itkTemplate(object):
         import re
         shortNameSize = len(re.sub(r':.*:', '', self.__name__))
         attributeName = cl.__name__[shortNameSize:]
+    if cl.__name__.startswith("vcl_complex"):
+      # C++ name is likely to be std::complex here, instead of the expected vcl_complex
+      attributeName = cl.__name__[len("vcl_complex"):]
     else:
       import re
       shortNameSize = len(re.sub(r'.*::', '', self.__name__))
@@ -171,11 +174,6 @@ class itkTemplate(object):
         param = True
       elif paramNorm == "false":
         param = False
-        
-      elif param in ["_C_ldouble_complex", "_C_double_complex", "_C_float_complex"]:
-        # those type are discardes in igenerator.py to avoid errors. We can't use them here.
-        # just discard it
-        pass
         
       else :
         # unable to convert the parameter
