@@ -104,7 +104,7 @@ class itkTemplate(object):
         import re
         shortNameSize = len(re.sub(r':.*:', '', self.__name__))
         attributeName = cl.__name__[shortNameSize:]
-    if cl.__name__.startswith("vcl_complex"):
+    elif cl.__name__.startswith("vcl_complex"):
       # C++ name is likely to be std::complex here, instead of the expected vcl_complex
       attributeName = cl.__name__[len("vcl_complex"):]
     else:
