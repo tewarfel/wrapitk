@@ -66,8 +66,6 @@ excluded = set([
 attrNameList = set([i for i in dir(itk) if i[0].isupper() and len(i) > 2]) - excluded
 
 for name in attrNameList:
-    if name != "FFTComplexToComplexImageFilter":
-      continue
     # use it because of lazy loading
     exec "attr = itk."+name
     print "-----------", name, "-----------"
