@@ -127,10 +127,14 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
     WRAP_ITK_INSTALL("/Configuration/Typedefs" "${dest}")
   ENDFOREACH(swig_lib WRAPPER_SWIG_LIBRARY_FILES)
 
+  # accumulate the idx files already generated before this module to generate usable depenencies
+  SET(idx_files )
   FOREACH(module ${SWIG_INTERFACE_MODULES})
     # create the swig interface
     SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}.i")
     SET(xml_file "${WRAPPER_LIBRARY_OUTPUT_DIR}/wrap_${module}.xml")
+    SET(idx_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/wrap_${module}.idx")
+    SET(idx_files ${idx_files} ${idx_file})
     SET(includes_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.includes")
     SET(module_interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${WRAPPER_LIBRARY_NAME}.i")
     # prepare the options
@@ -171,7 +175,7 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
         # --verbose
         ${xml_file}
         ${interface_file}
-      DEPENDS ${DEPS} ${idx_file} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
+      DEPENDS ${DEPS} ${idx_files} ${includes_file} ${IGENERATOR} # ${SWIG_INTERFACE_IDX_FILES} ${SWIG_INTERFACE_FILES}
     )
   #   ADD_CUSTOM_TARGET(${module}Swig DEPENDS ${interface_file})
   #   ADD_DEPENDENCIES(${module}Swig ${WRAPPER_LIBRARY_NAME}Idx)
