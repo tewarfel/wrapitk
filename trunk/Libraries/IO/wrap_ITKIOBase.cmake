@@ -35,7 +35,7 @@ SET(io_classes
   SiemensVisionImageIO
   StimulateImageIO
   VTKImageIO
-  Brains2MaskImageIO
+#  Brains2MaskImageIO
   Bruker2DSEQImageIO
   PhilipsRECImageIO
   VoxBoCUBImageIO
