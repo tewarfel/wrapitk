@@ -60,6 +60,8 @@ excluded = set([
   "INTS",
   "COV_VECTOR_REALS",
   "FFTComplexToComplexImageFilter",
+  "QuadEdgeMeshCellTraitsInfo",
+  "QuadEdgeMeshTraits",
   ])
 
 
