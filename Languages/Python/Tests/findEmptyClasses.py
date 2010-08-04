@@ -8,7 +8,7 @@ import sets
 set = sets.Set
 
 # dirty but easier: a global var to count the empty classes
-count = 0
+empty = set()
 
 def exploreTpl(tpl):
     for cl in tpl.itervalues():
@@ -30,8 +30,7 @@ def exploreMethods(obj):
     excludeList = ['this', 'thisown']
     attrNameList = [i for i in dir(obj) if isinstance(i, str) and i[0].isupper() and i not in excludeList]
     if attrNameList == [] :
-      count += 1
-      print obj
+      empty.add(obj)
         
       
 excluded = set([
@@ -83,5 +82,11 @@ for name in attrNameList:
             exploreMethods(cl())
         except:
             pass
-                                                                
-sys.exit(count)
+
+print
+print
+print len(empty), "empty classes found"
+for c in empty:
+  print c
+
+sys.exit(len(empty))
