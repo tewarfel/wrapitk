@@ -1,7 +1,3 @@
-IF(ITK_USE_REVIEW_STATISTICS)
-  WRAP_CLASS("itk::Statistics::ScalarImageToTextureFeaturesFilter" POINTER)
-ELSE(ITK_USE_REVIEW_STATISTICS)
-  WRAP_CLASS("itk::Statistics::ScalarImageToGreyLevelCooccurrenceMatrixGenerator" POINTER)
-ENDIF(ITK_USE_REVIEW_STATISTICS)
+WRAP_CLASS("itk::Statistics::ScalarImageToTextureFeaturesFilter" POINTER)
   WRAP_IMAGE_FILTER_SCALAR(1)
 END_WRAP_CLASS()
