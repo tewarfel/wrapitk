@@ -1,0 +1,5 @@
+WRAP_CLASS("itk::QuadEdgeMeshTraits")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    WRAP_TEMPLATE("D${d}BBFF" "double, ${d}, bool, bool, float, float")
+  ENDFOREACH(d)
+END_WRAP_CLASS()

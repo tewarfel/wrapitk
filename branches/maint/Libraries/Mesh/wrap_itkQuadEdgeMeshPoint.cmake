@@ -1,0 +1,5 @@
+WRAP_CLASS("itk::QuadEdgeMeshPoint")
+  FOREACH(d ${WRAP_ITK_DIMS})
+    WRAP_TEMPLATE("F${d}" "float, ${d}")
+  ENDFOREACH(d)
+END_WRAP_CLASS()

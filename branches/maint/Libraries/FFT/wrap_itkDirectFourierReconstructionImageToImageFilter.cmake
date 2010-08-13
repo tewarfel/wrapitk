@@ -1,0 +1,8 @@
+WRAP_CLASS("itk::DirectFourierReconstructionImageToImageFilter" POINTER)
+  FILTER_DIMS(d 3)
+  IF(d)
+    FOREACH(t ${WRAP_ITK_REAL})
+      WRAP_TEMPLATE("${ITKM_${t}}${ITKM_${t}}" "${ITKT_${t}}, ${ITKT_${t}}")
+    ENDFOREACH(t)
+  ENDIF(d)
+END_WRAP_CLASS()

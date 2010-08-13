@@ -1,0 +1,13 @@
+WRAP_LIBRARY(DeformableTransforms)
+
+SET(WRAPPER_LIBRARY_GROUPS
+  itkKernelTransform
+)
+
+SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Interpolators Mesh)
+
+SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon)
+
+AUTO_INCLUDE_MODULES()
+END_WRAP_LIBRARY()
+
