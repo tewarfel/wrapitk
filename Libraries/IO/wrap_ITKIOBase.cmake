@@ -40,6 +40,7 @@ SET(io_classes
   PhilipsRECImageIO
   VoxBoCUBImageIO
   MRCImageIO
+  JPEG2000ImageIO
 )
 
 FOREACH(c ${io_classes})
