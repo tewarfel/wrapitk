@@ -160,6 +160,10 @@ MACRO(END_WRAP_LIBRARY_SWIG_INTERFACE)
   #     "${PYTHON_EXECUTABLE}"
   #   )
   
+    IF(WRAP_ITK_EXTERN)
+      SET(opts ${opts} --include "${WRAPPER_LIBRARY_NAME}.extern.h")
+    ENDIF(WRAP_ITK_EXTERN)
+
     ADD_CUSTOM_COMMAND(
       OUTPUT ${interface_file}
       COMMAND ${PYTHON_EXECUTABLE} ${IGENERATOR}
