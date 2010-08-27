@@ -6,7 +6,7 @@ SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
   --add-before-libpath "${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}"
   --add-before-libpath "${ITK_DIR}/bin/\\\${CTEST_CONFIGURATION_TYPE}"
   --add-before-libpath "${ITK_DIR}"
-  "${JAVA_RUNTIME}"
+  "${Java_JAVA_EXECUTABLE}"
   -Djava.library.path=${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}
 )
 
@@ -43,7 +43,7 @@ MACRO(BUILD_JAVA_TEST name cp_var)
   IF(LAST_TEST_DEPS_OK)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
-      COMMAND ${JAVA_COMPILE}
+      COMMAND ${Java_JAVAC_EXECUTABLE}
       ARGS -classpath "${${cp_var}}"
       -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
@@ -61,7 +61,7 @@ MACRO(BUILD_JAVA_TEST_BIN name cp_var)
   IF(LAST_TEST_DEPS_OK)
     ADD_CUSTOM_COMMAND(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
-      COMMAND ${JAVA_COMPILE}
+      COMMAND ${Java_JAVAC_EXECUTABLE}
       ARGS -classpath "${${cp_var}}"
       -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
