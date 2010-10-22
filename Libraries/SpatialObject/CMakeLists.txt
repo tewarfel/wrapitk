@@ -1,6 +1,6 @@
 WRAP_LIBRARY(SpatialObject)
 
-SET(WRAPPER_LIBRARY_GROUPS
+set(WRAPPER_LIBRARY_GROUPS
   itkSpatialObjectProperty
   itkAffineGeometryFrame
   itkSpatialObjectBase
@@ -14,9 +14,9 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkPolygonSpatialObject
 )
 
-SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Calculators)
+set(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Calculators)
 
-SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKSpatialObject)
+set(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKSpatialObject)
 
 AUTO_INCLUDE_MODULES()
 END_WRAP_LIBRARY()

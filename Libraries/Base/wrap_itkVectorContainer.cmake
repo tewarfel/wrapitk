@@ -1,16 +1,16 @@
 WRAP_INCLUDE("set")
 
 WRAP_CLASS("itk::VectorContainer" POINTER)
-  FOREACH(d ${WRAP_ITK_DIMS})
-    FOREACH(t ${WRAP_ITK_SCALAR})
+  foreach(d ${WRAP_ITK_DIMS})
+    foreach(t ${WRAP_ITK_SCALAR})
       WRAP_TEMPLATE("${ITKM_UI}${ITKM_LSN${t}${d}}"  "${ITKT_UI},${ITKT_LSN${t}${d}}")
-    ENDFOREACH(t)
-    
+    endforeach(t)
+
     WRAP_TEMPLATE("${ITKM_UL}${ITKM_VD${d}}"    "${ITKT_UL},${ITKT_VD${d}}")
     WRAP_TEMPLATE("${ITKM_UL}${ITKM_PD${d}}"    "${ITKT_UL},${ITKT_PD${d}}")
     WRAP_TEMPLATE("${ITKM_UC}${ITKM_O${d}}"    "${ITKT_UC},${ITKT_O${d}}")
     WRAP_TEMPLATE("${ITKM_UI}${ITKM_CID${d}}"    "${ITKT_UI},${ITKT_CID${d}}")
-  ENDFOREACH(d)
+  endforeach(d)
   WRAP_TEMPLATE("${ITKM_UL}${ITKM_D}"    "${ITKT_UL},${ITKT_D}")
   WRAP_TEMPLATE("${ITKM_UC}${ITKM_D}"    "${ITKT_UC},${ITKT_D}")
   # used in FastMarchingExtensionImageFilter

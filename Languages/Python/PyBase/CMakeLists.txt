@@ -1,21 +1,21 @@
 WRAP_LIBRARY("ITKPyBase" Python)
-  
-  SET(WRAPPER_LIBRARY_DEPENDS )
-  SET(WRAPPER_LIBRARY_LINK_LIBRARIES )
-  
-  SET(WRAPPER_LIBRARY_SWIG_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/wrap_pyBase.i")
-  
+
+  set(WRAPPER_LIBRARY_DEPENDS )
+  set(WRAPPER_LIBRARY_LINK_LIBRARIES )
+
+  set(WRAPPER_LIBRARY_SWIG_INPUTS "${CMAKE_CURRENT_SOURCE_DIR}/wrap_pyBase.i")
+
   # no wrap_*.cmake file to include, no need to run that
   # AUTO_INCLUDE_MODULES()
-  
+
   # add the vars defined by including std_iostream and std_stream to the python config
-  IF("${SWIG_VERSION}" STRGREATER "1.3.36")
+  if("${SWIG_VERSION}" STRGREATER "1.3.36")
     ADD_PYTHON_CONFIG_TEMPLATE("SwigPyIterator" "SwigPyIterator" "SwigPyIterator" "")
     ADD_PYTHON_CONFIG_TEMPLATE("PySwigIterator" "SwigPyIterator" "SwigPyIterator" "")
-  ELSE("${SWIG_VERSION}" STRGREATER "1.3.36")
+  else("${SWIG_VERSION}" STRGREATER "1.3.36")
     ADD_PYTHON_CONFIG_TEMPLATE("SwigPyIterator" "PySwigIterator" "PySwigIterator" "")
     ADD_PYTHON_CONFIG_TEMPLATE("PySwigIterator" "PySwigIterator" "PySwigIterator" "")
-  ENDIF("${SWIG_VERSION}" STRGREATER "1.3.36")
+  endif("${SWIG_VERSION}" STRGREATER "1.3.36")
   ADD_PYTHON_CONFIG_TEMPLATE("cerr" "std::cerr" "cerr" "")
   ADD_PYTHON_CONFIG_TEMPLATE("cin" "std::cin" "cin" "")
   ADD_PYTHON_CONFIG_TEMPLATE("clog" "std::clog" "clog" "")
@@ -38,15 +38,15 @@ WRAP_LIBRARY("ITKPyBase" Python)
   ADD_PYTHON_CONFIG_TEMPLATE("stringstream" "std::stringstream" "stringstream" "")
 
 # TODO: readd the bool (B) once supported by sunstudio
-#  FOREACH(t B UC US UL SC SS SL F D)
-  FOREACH(t UC US UL SC SS SL F D)
+#  foreach(t B UC US UL SC SS SL F D)
+  foreach(t UC US UL SC SS SL F D)
     ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "map${t}${t}" "${ITKT_${t}}, ${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("list" "std::list" "list${t}" "${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("set" "std::set" "set${t}" "${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vector${t}" "${ITKT_${t}}")
     ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectorvector${t}" "std::vector< ${ITKT_${t}} >")
-  ENDFOREACH(t)
-  
+  endforeach(t)
+
   ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapULD" "unsigned long, double")
   ADD_PYTHON_CONFIG_TEMPLATE("vector" "std::vector" "vectorsetUL" "std::set< unsigned long >")
   ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapsetUL" "unsigned long, std::set< unsigned long >")

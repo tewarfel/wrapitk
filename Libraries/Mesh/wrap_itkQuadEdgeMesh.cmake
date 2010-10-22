@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::QuadEdgeMesh" POINTER)
-  FOREACH(d 3)
+  foreach(d 3)
     WRAP_TEMPLATE("${ITKM_D}${d}S" "${ITKT_D},${d}")
-  ENDFOREACH(d)
+  endforeach(d)
 END_WRAP_CLASS()

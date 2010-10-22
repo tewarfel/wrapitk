@@ -1,8 +1,8 @@
 
 # configure the test driver
-FIND_PROGRAM(ITK_TEST_DRIVER itkTestDriver)
+find_program(ITK_TEST_DRIVER itkTestDriver)
 
-SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
+set(JAVA_DRIVER "${ITK_TEST_DRIVER}"
   --add-before-libpath "${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}"
   --add-before-libpath "${ITK_DIR}/bin/\\\${CTEST_CONFIGURATION_TYPE}"
   --add-before-libpath "${ITK_DIR}"
@@ -10,73 +10,73 @@ SET(JAVA_DRIVER "${ITK_TEST_DRIVER}"
   -Djava.library.path=${WrapITK_BINARY_DIR}/lib/\\\${CTEST_CONFIGURATION_TYPE}
 )
 
-# windows doesn't use the same separator than the others  
-IF(WIN32)
-  SET(sep "\\\;")
-ELSE(WIN32)
-  SET(sep ":")
-ENDIF(WIN32)
+# windows doesn't use the same separator than the others
+if(WIN32)
+  set(sep "\\\;")
+else(WIN32)
+  set(sep ":")
+endif(WIN32)
 
 # put all generated files in this list
-SET(targets "")
+set(targets "")
 # the required libs
-SET(depends "")
+set(depends "")
 
-MACRO(BUILD_CLASSPATH var)
-  SET(${var} ".")
-  SET(LAST_TEST_DEPS_OK ON)
-  FOREACH(lib ${ARGN})
-    STRING(TOLOWER ${lib} lower_lib)
-    SET(${var} "${${var}}${sep}${WrapITK_BINARY_DIR}/lib/org.itk.${lower_lib}.jar")
-    SET(depends ${depends} ${lib}JavaJar)
-    IF(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${lib}(;|$)")
-      SET(LAST_TEST_DEPS_OK OFF)
-    ENDIF(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${lib}(;|$)")
-  ENDFOREACH(lib)
-ENDMACRO(BUILD_CLASSPATH)
+macro(BUILD_CLASSPATH var)
+  set(${var} ".")
+  set(LAST_TEST_DEPS_OK ON)
+  foreach(lib ${ARGN})
+    string(TOLOWER ${lib} lower_lib)
+    set(${var} "${${var}}${sep}${WrapITK_BINARY_DIR}/lib/org.itk.${lower_lib}.jar")
+    set(depends ${depends} ${lib}JavaJar)
+    if(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${lib}(;|$)")
+      set(LAST_TEST_DEPS_OK OFF)
+    endif(NOT "${WRAP_ITK_LIBRARIES}" MATCHES "(^|;)${lib}(;|$)")
+  endforeach(lib)
+endmacro(BUILD_CLASSPATH)
 
 
-MACRO(BUILD_JAVA_TEST name cp_var)
+macro(BUILD_JAVA_TEST name cp_var)
   # a convenient macro to build java tests
-  # 
+  #
   BUILD_CLASSPATH(${cp_var} ${ARGN})
-  IF(LAST_TEST_DEPS_OK)
-    ADD_CUSTOM_COMMAND(
+  if(LAST_TEST_DEPS_OK)
+    add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
       COMMAND ${Java_JAVAC_EXECUTABLE}
       ARGS -classpath "${${cp_var}}"
       -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
       DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/${name}.java
       )
-    SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
-  ELSE(LAST_TEST_DEPS_OK)
-    MESSAGE("Warning: Can't buid java test ${name}.")
-  ENDIF(LAST_TEST_DEPS_OK)
-ENDMACRO(BUILD_JAVA_TEST)
+    set(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
+  else(LAST_TEST_DEPS_OK)
+    message("Warning: Can't buid java test ${name}.")
+  endif(LAST_TEST_DEPS_OK)
+endmacro(BUILD_JAVA_TEST)
 
-MACRO(BUILD_JAVA_TEST_BIN name cp_var)
+macro(BUILD_JAVA_TEST_BIN name cp_var)
   # a convenient macro to build java tests
-  # 
+  #
   BUILD_CLASSPATH(${cp_var} ${ARGN})
-  IF(LAST_TEST_DEPS_OK)
-    ADD_CUSTOM_COMMAND(
+  if(LAST_TEST_DEPS_OK)
+    add_custom_command(
       OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/${name}.class
       COMMAND ${Java_JAVAC_EXECUTABLE}
       ARGS -classpath "${${cp_var}}"
       -d "${CMAKE_CURRENT_BINARY_DIR}" ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
       DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${name}.java
       )
-    SET(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
-  ELSE(LAST_TEST_DEPS_OK)
-    MESSAGE("Warning: Can't buid java test ${name}.")
-  ENDIF(LAST_TEST_DEPS_OK)
-ENDMACRO(BUILD_JAVA_TEST_BIN)
+    set(targets ${targets} ${CMAKE_CURRENT_BINARY_DIR}/${name}.class)
+  else(LAST_TEST_DEPS_OK)
+    message("Warning: Can't buid java test ${name}.")
+  endif(LAST_TEST_DEPS_OK)
+endmacro(BUILD_JAVA_TEST_BIN)
 
-MACRO(JAVA_ADD_TEST)
-  IF(LAST_TEST_DEPS_OK)
-    ADD_TEST(${ARGN})
-  ENDIF(LAST_TEST_DEPS_OK)
-ENDMACRO(JAVA_ADD_TEST)
+macro(JAVA_ADD_TEST)
+  if(LAST_TEST_DEPS_OK)
+    add_test(${ARGN})
+  endif(LAST_TEST_DEPS_OK)
+endmacro(JAVA_ADD_TEST)
 
 
 # configure the tests
@@ -86,15 +86,15 @@ ENDMACRO(JAVA_ADD_TEST)
 
 UNIQUE(types "${WRAP_ITK_SCALAR};UC")
 # signed char can't be used to store an image with values up to 255
-LIST(REMOVE_ITEM types SC)
-FOREACH(d ${WRAP_ITK_DIMS})
-  FOREACH(t ${types})
+list(REMOVE_ITEM types SC)
+foreach(d ${WRAP_ITK_DIMS})
+  foreach(t ${types})
 
-    SET(test_base_name simplePipeline${t}${d})
+    set(test_base_name simplePipeline${t}${d})
 
-    SET(WRAP_ITK_JAVA_TEST_IMAGE_DIMENSION ${d})
-    SET(WRAP_ITK_JAVA_TEST_PIXEL_TYPE ${t})
-    CONFIGURE_FILE("${CMAKE_CURRENT_SOURCE_DIR}/simplePipeline.java.in"
+    set(WRAP_ITK_JAVA_TEST_IMAGE_DIMENSION ${d})
+    set(WRAP_ITK_JAVA_TEST_PIXEL_TYPE ${t})
+    configure_file("${CMAKE_CURRENT_SOURCE_DIR}/simplePipeline.java.in"
                   "${CMAKE_CURRENT_BINARY_DIR}/${test_base_name}.java"
                   @ONLY IMMEDIATE)
 
@@ -108,8 +108,8 @@ FOREACH(d ${WRAP_ITK_DIMS})
       --compare ${test_base_name}.nrrd ${WrapITK_SOURCE_DIR}/images/cthead1.png
     )
 
-  ENDFOREACH(t)
-ENDFOREACH(d)
+  endforeach(t)
+endforeach(d)
 
 BUILD_JAVA_TEST(MedianImageFilter class_path IO Denoising)
 JAVA_ADD_TEST(JavaMedianImageFilter
@@ -212,5 +212,5 @@ JAVA_ADD_TEST(JavaThresholdImageFilter
 )
 
 
-ADD_CUSTOM_TARGET(JavaTests ALL DEPENDS ${targets})
-ADD_DEPENDENCIES(JavaTests ${depends})
+add_custom_target(JavaTests ALL DEPENDS ${targets})
+add_dependencies(JavaTests ${depends})

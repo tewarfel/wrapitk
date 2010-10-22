@@ -1,15 +1,15 @@
 WRAP_LIBRARY(Registration)
 
-SET(WRAPPER_LIBRARY_GROUPS
+set(WRAPPER_LIBRARY_GROUPS
   itkPDEDeformableRegistrationFilter
   itkPDEDeformableRegistrationFunction
   itkESMDemonsRegistrationFunction
   itkDisplacementFieldJacobianDeterminantFilter
 )
 
-SET(WRAPPER_LIBRARY_DEPENDS 
-  VXLNumerics 
-  Base 
+set(WRAPPER_LIBRARY_DEPENDS
+  VXLNumerics
+  Base
   Numerics
   Transforms
   SpatialObject
@@ -17,7 +17,7 @@ SET(WRAPPER_LIBRARY_DEPENDS
   Calculators
 )
 
-SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKNumerics)
+set(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKNumerics)
 
 AUTO_INCLUDE_MODULES()
 END_WRAP_LIBRARY()
