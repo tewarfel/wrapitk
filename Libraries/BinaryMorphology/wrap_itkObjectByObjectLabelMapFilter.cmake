@@ -1,4 +1,4 @@
-WRAP_CLASS("itk::RelabelLabelMapFilter" POINTER_WITH_SUPERCLASS)
+WRAP_CLASS("itk::ObjectByObjectLabelMapFilter" POINTER)
   FOREACH(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_LM${d}}" "${ITKT_LM${d}}")
   ENDFOREACH(d)
