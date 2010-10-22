@@ -1,29 +1,29 @@
-MACRO(ADD_TCL_TYPEMAP simple_name cpp_name swig_name template_params)
+macro(ADD_TCL_TYPEMAP simple_name cpp_name swig_name template_params)
   # write me
-ENDMACRO(ADD_TCL_TYPEMAP)
+endmacro(ADD_TCL_TYPEMAP)
 
-MACRO(TCL_SUPPORT_CONFIGURE_FILES)
+macro(TCL_SUPPORT_CONFIGURE_FILES)
   # write me
-ENDMACRO(TCL_SUPPORT_CONFIGURE_FILES)
+endmacro(TCL_SUPPORT_CONFIGURE_FILES)
 
-MACRO(END_WRAPPER_LIBRARY_TCL)
+macro(END_WRAPPER_LIBRARY_TCL)
 
-  SET(cpp_files )
+  set(cpp_files )
 
-  SET(modules )
+  set(modules )
 
-  FOREACH(source ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
-  
-    GET_FILENAME_COMPONENT(base_name ${source} NAME_WE)
-    STRING(REGEX REPLACE "^wrap_" "" group_name "${base_name}")
-    
+  foreach(source ${WRAPPER_LIBRARY_CABLESWIG_INPUTS})
+
+    get_filename_component(base_name ${source} NAME_WE)
+    string(REGEX REPLACE "^wrap_" "" group_name "${base_name}")
+
     # create the swig interface for all the groups in the module
     #
-    SET(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${base_name}.i")
-    SET(lib ${group_name}Tcl)
-    SET(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${base_name}Tcl.cpp")
+    set(interface_file "${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/${base_name}.i")
+    set(lib ${group_name}Tcl)
+    set(cpp_file "${CMAKE_CURRENT_BINARY_DIR}/${base_name}Tcl.cpp")
 
-    ADD_CUSTOM_COMMAND(
+    add_custom_command(
       OUTPUT ${cpp_file}
       COMMAND swig -c++ -tcl -fcompact -O -Werror -w508 -w312 -w314 -w509 -w302 -w362
       -w365 -w366 -w367 -w368 -w378 -w503 # operator???, to be suppressed later...
@@ -35,28 +35,28 @@ MACRO(END_WRAPPER_LIBRARY_TCL)
       WORKING_DIRECTORY ${WRAPPER_MASTER_INDEX_OUTPUT_DIR}/tcl
       DEPENDS ${interface_file} ${WrapITK_SOURCE_DIR}/Tcl/tcl.i
     )
-    ADD_CUSTOM_TARGET(${base_name}SwigTcl DEPENDS ${cpp_file})
-    
-    SET(cpp_files ${cpp_files} ${cpp_file})
-    
-    SET(modules ${modules} ${group_name})
+    add_custom_target(${base_name}SwigTcl DEPENDS ${cpp_file})
 
-    ADD_LIBRARY(${lib} SHARED ${cpp_file})
-    SET_TARGET_PROPERTIES(${lib} PROPERTIES PREFIX "")
-    TARGET_LINK_LIBRARIES(${lib} ${WRAPPER_LIBRARY_LINK_LIBRARIES} ${TCL_LIBRARY})
-    
-  ENDFOREACH(source)
-  
-#  ADD_LIBRARY(${WRAPPER_LIBRARY_NAME}Tcl MODULE ${cpp_files})
-#  SET_TARGET_PROPERTIES(${WRAPPER_LIBRARY_NAME}Tcl PROPERTIES PREFIX "_")
-#  TARGET_LINK_LIBRARIES( ${WRAPPER_LIBRARY_NAME}Tcl
-#    ${WRAPPER_LIBRARY_LINK_LIBRARIES} 
+    set(cpp_files ${cpp_files} ${cpp_file})
+
+    set(modules ${modules} ${group_name})
+
+    add_library(${lib} SHARED ${cpp_file})
+    set_target_properties(${lib} PROPERTIES PREFIX "")
+    target_link_libraries(${lib} ${WRAPPER_LIBRARY_LINK_LIBRARIES} ${TCL_LIBRARY})
+
+  endforeach(source)
+
+#  add_library(${WRAPPER_LIBRARY_NAME}Tcl MODULE ${cpp_files})
+#  set_target_properties(${WRAPPER_LIBRARY_NAME}Tcl PROPERTIES PREFIX "_")
+#  target_link_libraries( ${WRAPPER_LIBRARY_NAME}Tcl
+#    ${WRAPPER_LIBRARY_LINK_LIBRARIES}
 #    ${TCL_LIBRARY}
 #  )
 
-  ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}SwigTcl DEPENDS ${cpp_files})
-  
-  ADD_CUSTOM_TARGET(${WRAPPER_LIBRARY_NAME}Tcl DEPENDS ${modules})
+  add_custom_target(${WRAPPER_LIBRARY_NAME}SwigTcl DEPENDS ${cpp_files})
+
+  add_custom_target(${WRAPPER_LIBRARY_NAME}Tcl DEPENDS ${modules})
 
 
-ENDMACRO(END_WRAPPER_LIBRARY_TCL)
+endmacro(END_WRAPPER_LIBRARY_TCL)

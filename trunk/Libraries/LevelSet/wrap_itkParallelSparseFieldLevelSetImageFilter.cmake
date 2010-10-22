@@ -5,17 +5,17 @@ WRAP_CLASS("itk::ParallelSparseFieldLevelSetImageFilter" POINTER)
 END_WRAP_CLASS()
 
 
-SET(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
+set(WRAPPER_AUTO_INCLUDE_HEADERS OFF)
 WRAP_CLASS("itk::ParallelSparseFieldLevelSetNode")
-  FOREACH(d ${WRAP_ITK_DIMS})
+  foreach(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("I${d}" "itk::Index< ${d} >")
-  ENDFOREACH(d)
+  endforeach(d)
 END_WRAP_CLASS()
-SET(WRAPPER_AUTO_INCLUDE_HEADERS ON)
+set(WRAPPER_AUTO_INCLUDE_HEADERS ON)
 
 
 WRAP_CLASS("itk::SparseFieldLayer" POINTER)
-  FOREACH(d ${WRAP_ITK_DIMS})
+  foreach(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("PSFLSNI${d}" "itk::ParallelSparseFieldLevelSetNode< itk::Index< ${d} > >")
-  ENDFOREACH(d)
+  endforeach(d)
 END_WRAP_CLASS()

@@ -1,7 +1,7 @@
 WRAP_CLASS("vcl_complex" FORCE_INSTANTIATE)
 
-  FOREACH(t F D LD)
+  foreach(t F D LD)
     WRAP_TEMPLATE("${ITKM_${t}}" "${ITKT_${t}}")
-  ENDFOREACH(t)
+  endforeach(t)
 
 END_WRAP_CLASS()

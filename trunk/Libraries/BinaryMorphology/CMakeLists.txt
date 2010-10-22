@@ -1,8 +1,8 @@
 WRAP_LIBRARY(BinaryMorphology)
 
-SET(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Numerics)
+set(WRAPPER_LIBRARY_DEPENDS VXLNumerics Base Transforms Numerics)
 
-SET(WRAPPER_LIBRARY_GROUPS
+set(WRAPPER_LIBRARY_GROUPS
   itkLabelObjectLine
   itkLabelObject
   itkShapeLabelObject
@@ -13,8 +13,8 @@ SET(WRAPPER_LIBRARY_GROUPS
   itkInPlaceLabelMapFilter
   itkChangeRegionLabelMapFilter
 )
-		  
-SET(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKStatistics ITKReview)
+		
+set(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKStatistics ITKReview)
 
 AUTO_INCLUDE_MODULES()
 END_WRAP_LIBRARY()

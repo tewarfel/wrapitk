@@ -1,27 +1,27 @@
-  
-SET(WRAP_ITK_LIBRARIES
+
+set(WRAP_ITK_LIBRARIES
   VXLNumerics
   Base
 )
-  
+
 # set Iterators library to OFF by default
 # it is currently usable only when applying patches to ITK, and will only
 # take place and time to build
 # TODO: remove this line when iterators will be usable without patch
-OPTION(WRAP_Iterators "Build Iterators library." OFF)
-  
+option(WRAP_Iterators "Build Iterators library." OFF)
+
 # Set FFTW to on if USE_FFTWF or USE_FFTWD are on.
-IF(USE_FFTWD OR USE_FFTWF)
-  OPTION(WRAP_FFTW "Build FFTW library." ON)
-ELSE(USE_FFTWD OR USE_FFTWF)
-  OPTION(WRAP_FFTW "Build FFTW library." OFF)
-ENDIF(USE_FFTWD OR USE_FFTWF)
+if(USE_FFTWD OR USE_FFTWF)
+  option(WRAP_FFTW "Build FFTW library." ON)
+else(USE_FFTWD OR USE_FFTWF)
+  option(WRAP_FFTW "Build FFTW library." OFF)
+endif(USE_FFTWD OR USE_FFTWF)
 
 # ItkVtk is very optional, it MUST be OFF by default
 # TODO: move it to external project
-OPTION(WRAP_ItkVtk "Build ITK-VTK glue library." OFF)
+option(WRAP_ItkVtk "Build ITK-VTK glue library." OFF)
 
-SET(optional_libraries 
+set(optional_libraries
   Numerics
   Transforms
   SpatialObject
@@ -54,15 +54,15 @@ SET(optional_libraries
   ItkVtk
 )
 
-FOREACH(library ${optional_libraries})
-  OPTION(WRAP_${library} "Build ${library} library." ON)
-  MARK_AS_ADVANCED(WRAP_${library})
-  IF(WRAP_${library})
-    SET(WRAP_ITK_LIBRARIES ${WRAP_ITK_LIBRARIES} ${library})
-  ENDIF(WRAP_${library})
-ENDFOREACH(library)
-SET(WRAP_ITK_LIBRARIES ${WRAP_ITK_LIBRARIES} CACHE INTERNAL "Internal library list.")
+foreach(library ${optional_libraries})
+  option(WRAP_${library} "Build ${library} library." ON)
+  mark_as_advanced(WRAP_${library})
+  if(WRAP_${library})
+    set(WRAP_ITK_LIBRARIES ${WRAP_ITK_LIBRARIES} ${library})
+  endif(WRAP_${library})
+endforeach(library)
+set(WRAP_ITK_LIBRARIES ${WRAP_ITK_LIBRARIES} CACHE INTERNAL "Internal library list.")
 
-FOREACH(library ${WRAP_ITK_LIBRARIES} ${WRAP_ITK_EXTRA_LIBRARIES})
-  ADD_SUBDIRECTORY(${library})
-ENDFOREACH(library)
+foreach(library ${WRAP_ITK_LIBRARIES} ${WRAP_ITK_EXTRA_LIBRARIES})
+  add_subdirectory(${library})
+endforeach(library)

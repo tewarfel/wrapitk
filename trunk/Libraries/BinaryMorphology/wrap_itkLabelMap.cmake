@@ -1,3 +1,3 @@
 WRAP_CLASS("itk::LabelMap" POINTER)
-  SET(WRAPPER_TEMPLATES "${itk_Wrap_LabelMap}")
+  set(WRAPPER_TEMPLATES "${itk_Wrap_LabelMap}")
 END_WRAP_CLASS()

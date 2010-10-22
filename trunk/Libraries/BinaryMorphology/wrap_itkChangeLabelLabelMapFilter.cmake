@@ -1,5 +1,5 @@
 WRAP_CLASS("itk::ChangeLabelLabelMapFilter" POINTER)
-  FOREACH(d ${WRAP_ITK_DIMS})
+  foreach(d ${WRAP_ITK_DIMS})
     WRAP_TEMPLATE("${ITKM_LM${d}}" "${ITKT_LM${d}}")
-  ENDFOREACH(d)
+  endforeach(d)
 END_WRAP_CLASS()

@@ -1,6 +1,6 @@
 WRAP_CLASS("itk::Index")
   UNIQUE(dims "${WRAP_ITK_DIMS};1;2")
-  FOREACH(d ${dims})
+  foreach(d ${dims})
     WRAP_TEMPLATE(${d} ${d})
-  ENDFOREACH(d)  
+  endforeach(d)
 END_WRAP_CLASS()
