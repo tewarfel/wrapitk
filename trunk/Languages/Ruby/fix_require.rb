@@ -1,4 +1,4 @@
-#!/usr/bin/env ruby 
+#!/usr/bin/env ruby
 
 def fix_require(l)
   l = l.gsub('rb_require(', '// rb_require(')

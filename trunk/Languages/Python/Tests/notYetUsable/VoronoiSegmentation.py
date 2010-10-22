@@ -29,4 +29,3 @@ writer.SetFileName( argv[3] )
 writer.SetInput( filter.GetOutput() )
 
 writer.Update()
-

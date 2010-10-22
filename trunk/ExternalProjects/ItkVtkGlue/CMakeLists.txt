@@ -23,4 +23,3 @@ if(INSTALL_DEVEL_FILES)
 endif(INSTALL_DEVEL_FILES)
 
 enable_testing()
-

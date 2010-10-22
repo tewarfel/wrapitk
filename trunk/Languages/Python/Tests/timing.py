@@ -33,22 +33,22 @@ def pytuple(it):
   l = (0, 0)
   for dummy in range(0, it):
     img.GetPixel(l)
-    
+
 def new(it):
   for dummy in range(0, it):
     lo = itk.Image.UC2.__New_orig__()
-  
+
 def extended_new(it):
   for dummy in range(0, it):
     lo = itk.Image.UC2.New()
-  
+
 
 def run(f, it):
   start = time.time()
   f(it)
   return time.time() - start
-  
-  
+
+
 it = 1000000
 print "index:", run(index, it)
 print "index2:", run(index2, it)

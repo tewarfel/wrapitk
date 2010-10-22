@@ -7,7 +7,7 @@ import itkdata
 
 # Put the ITK_TEST_ROOT setting in the global namespace.  This
 # package is only used for testing, so this is okay.
-  
+
 ITK_TEST_ROOT = ""
 
 # Look for the -T command line option.
@@ -21,7 +21,7 @@ if not ITK_TEST_ROOT:
 if not ITK_TEST_ROOT and os.environ.has_key('ITK_TEST_ROOT'):
   ITK_TEST_ROOT = os.environ['ITK_TEST_ROOT']
 
-  
+
 # Use the default output directory.
 if not ITK_TEST_ROOT:
   ITK_TEST_ROOT = itkbase.defaultTestRoot
@@ -41,5 +41,3 @@ except:
   sys.stderr.write("Bla: %s\n" % `sys.exc_info()[0]`)
   sys.stderr.write("Unable to create testing output directory with name: %s\n" % ITK_TEST_OUTPUT)
   sys.exit(1)
-
-

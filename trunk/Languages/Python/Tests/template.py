@@ -37,7 +37,7 @@ try :
   raise Exception('no exception sent for unknown parameter')
 except KeyError:
   pass
-  
+
 # TODO: test the rest of the dict interface
 # TODO: test __eq__, __ne__ and __hash__
 
@@ -62,14 +62,14 @@ try :
   raise Exception('no exception sent for wrong attribute name')
 except AttributeError:
   pass
-  
+
 # wwith a wrong attribute type
 try :
   reader = readerType.New(FileName=1)
   raise Exception('no exception sent for wrong attribute type')
 except :
   pass
-  
+
 # pass filter as argument for input
 # to a filter with SetInput method
 median = itk.MedianImageFilter[IType, IType].New(reader)
@@ -132,4 +132,3 @@ except AttributeError:
 # but how ?
 
 # something else ?
-

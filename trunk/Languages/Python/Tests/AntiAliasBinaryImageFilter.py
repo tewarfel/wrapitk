@@ -33,12 +33,12 @@ WriterType = itk.ImageFileWriter[ CharImageType ]
 
 
 
-CastToRealFilterType = itk.CastImageFilter[ CharImageType, RealImageType] 
+CastToRealFilterType = itk.CastImageFilter[ CharImageType, RealImageType]
 
-RescaleFilter = itk.RescaleIntensityImageFilter[RealImageType, CharImageType ] 
+RescaleFilter = itk.RescaleIntensityImageFilter[RealImageType, CharImageType ]
 
 
-AntiAliasFilterType = itk.AntiAliasBinaryImageFilter[RealImageType, RealImageType] 
+AntiAliasFilterType = itk.AntiAliasBinaryImageFilter[RealImageType, RealImageType]
 
 reader = ReaderType.New()
 writer = WriterType.New()
@@ -64,5 +64,5 @@ antiAliasFilter.SetNumberOfLayers( 2 )
 
 rescale.SetInput( antiAliasFilter.GetOutput() )
 writer.SetInput( rescale.GetOutput() )
-  
+
 writer.Update()

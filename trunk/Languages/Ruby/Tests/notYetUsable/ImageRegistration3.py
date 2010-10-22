@@ -9,8 +9,8 @@
 #  Copyright (c) Insight Software Consortium. All rights reserved.
 #  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 #
-#     This software is distributed WITHOUT ANY WARRANTY; without even 
-#     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+#     This software is distributed WITHOUT ANY WARRANTY; without even
+#     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 #     PURPOSE.  See the above copyright notices for more information.
 #
 #=========================================================================
@@ -22,7 +22,7 @@ from sys import argv
 
 
 #
-#  Read the fixed and moving images using filenames 
+#  Read the fixed and moving images using filenames
 #  from the command line arguments
 #
 fixedImageReader  = itkImageFileReaderF2_New()
@@ -72,7 +72,7 @@ def iterationUpdate():
     print "M: %f   P: %f %f " % ( optimizer.GetValue(),
                         currentParameter.GetElement(0),
                         currentParameter.GetElement(1) )
- 
+
 iterationCommand = itkPyCommand_New()
 iterationCommand.SetCommandCallable( iterationUpdate )
 optimizer.AddObserver( itkIterationEvent(), iterationCommand.GetPointer() )
@@ -93,7 +93,7 @@ print "Starting registration"
 #  Start the registration process
 #
 
-registration.StartRegistration() 
+registration.StartRegistration()
 
 
 #
@@ -137,5 +137,3 @@ writer = itkImageFileWriterUS2_New()
 writer.SetFileName( argv[3] )
 writer.SetInput( outputCast.GetOutput() )
 writer.Update()
-
-

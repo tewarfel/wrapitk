@@ -9,8 +9,8 @@
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -27,18 +27,18 @@
 
 namespace itk
 {
-  
+
 /** \class VTKImageToImageFilter
- * \brief Converts a VTK image into an ITK image and plugs a 
- *  vtk data pipeline to an ITK datapipeline.   
+ * \brief Converts a VTK image into an ITK image and plugs a
+ *  vtk data pipeline to an ITK datapipeline.
  *
  *  This class puts together an itkVTKImageImporter and a vtkImageExporter.
  *  It takes care of the details related to the connection of ITK and VTK
  *  pipelines. The User will perceive this filter as an adaptor to which
- *  a vtkImage can be plugged as input and an itk::Image is produced as 
+ *  a vtkImage can be plugged as input and an itk::Image is produced as
  *  output.
- * 
- * \ingroup   ImageFilters     
+ *
+ * \ingroup   ImageFilters
  */
 template <class TOutputImage >
 class ITK_EXPORT VTKImageToImageFilter : public VTKImageImport< TOutputImage >
@@ -52,32 +52,32 @@ public:
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(VTKImageToImageFilter, VTKImageImport);
 
   /** Some typedefs. */
   typedef TOutputImage                              OutputImageType;
   typedef typename    OutputImageType::ConstPointer OutputImagePointer;
- 
+
   /** Set the input in the form of a vtkImageData */
   void SetInput( vtkImageData * );
 
   /** Return the internal VTK image exporter filter.
-      This is intended to facilitate users the access 
+      This is intended to facilitate users the access
       to methods in the exporter */
   vtkImageExport * GetExporter() const;
 
   /** Return the internal ITK image importer filter.
-      This is intended to facilitate users the access 
+      This is intended to facilitate users the access
       to methods in the importer.
       Deprecated - the method now return 'this'.
       */
   const Superclass * GetImporter() const;
-  
+
 protected:
-  VTKImageToImageFilter(); 
-  virtual ~VTKImageToImageFilter(); 
+  VTKImageToImageFilter();
+  virtual ~VTKImageToImageFilter();
 
 private:
   VTKImageToImageFilter(const Self&); //purposely not implemented
@@ -94,6 +94,3 @@ private:
 #endif
 
 #endif
-
-
-

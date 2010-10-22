@@ -70,7 +70,7 @@ for imageFile1, imageFile2 in options.compare :
   returnValue = subprocess.call( command )
   if returnValue != 0 :
     sys.exit( returnValue )
-  
+
 
 # everything suceed - just exit
 sys.exit(0)

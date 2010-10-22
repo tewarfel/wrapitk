@@ -14,11 +14,11 @@ proc createImageViewer2D {frame image args} {
     pack $frame.scrollx -side bottom -fill x
     pack $frame.scrolly -side right -fill y
     pack $frame.canvas -expand 1 -fill both
-    
+
     # Create a Tk image on the canvas.
     set i [image create photo]
     $frame.canvas create image 0 0 -image $i -anchor nw
-    
+
     # Setup the TkImageViewer2D instance.
     set viewer [itkTkImageViewer2D_New]
     $viewer SetInput $image
@@ -45,7 +45,7 @@ $source SetSize $a
 
 # Connect the smoothing filter.
 set filter [itkRecursiveGaussianImageFilterUS2US2_New]
-$filter SetInput [$source GetOutput] 
+$filter SetInput [$source GetOutput]
 $filter SetSigma $sigma
 $filter SetNormalizeAcrossScale 1
 $filter SetDirection 0
@@ -64,7 +64,7 @@ button .control.update -text "Update" -command {
   $smoothedV Draw
   $randomV Draw
 }
-label .control.sigma_label -text "Sigma:" 
+label .control.sigma_label -text "Sigma:"
 entry .control.sigma -textvariable sigma
 button .control.interact -text "Interact" -command {wm deiconify .itkInteract}
 

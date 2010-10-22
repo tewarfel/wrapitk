@@ -14,4 +14,3 @@ If the location is LocIsThisRel, use IDiaSymbol::get_offset to obtain the offset
 If the location is LocIsStatic, use IDiaSymbol::get_addressSection and IDiaSymbol::get_addressOffset,
 or IDiaSymbol::get_relativeVirtualAddress, or IDiaSymbol::get_virtualAddress to obtain
 the address of the static member.
-

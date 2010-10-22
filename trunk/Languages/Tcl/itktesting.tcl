@@ -8,21 +8,21 @@
 #  Copyright (c) Insight Software Consortium. All rights reserved.
 #  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 #
-#     This software is distributed WITHOUT ANY WARRANTY; without even 
-#     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+#     This software is distributed WITHOUT ANY WARRANTY; without even
+#     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 #     PURPOSE.  See the above copyright notices for more information.
 #
 
 # Define ITK Tcl testing utilities.
 namespace eval itk::testing {
-  
+
   # Require the itk packages.
   package require InsightToolkit
   package require itkdata
-  
+
   # Put the ITK_TEST_ROOT setting in the global namespace.  This
   # package is only used for testing, so this is okay.
-  
+
   # Look for the -T command line option.
   if {! [info exists ::ITK_TEST_ROOT] && [info exists argc]} {
     set argcm1 [expr $argc - 1]
@@ -33,12 +33,12 @@ namespace eval itk::testing {
       }
     }
   }
-  
+
   # Check for the environment variable ::ITK_TEST_ROOT.
   if {! [info exists ::ITK_TEST_ROOT] && [info exists env(ITK_TEST_ROOT)]} {
     set ::ITK_TEST_ROOT $env(ITK_TEST_ROOT)
   }
-  
+
   # Use the default output directory.
   if {! [info exists ::ITK_TEST_ROOT]} {
     set dtr $::itk::testing::defaultTestRoot

@@ -221,4 +221,3 @@ set(CONFIG_WRAP_ITK_DIR "${CMAKE_INSTALL_PREFIX}/${WRAP_ITK_INSTALL_PREFIX}")
 configure_file("${WRAP_ITK_CONFIG_DIR}/FindWrapITK.cmake.in"
                "${WrapITK_BINARY_DIR}/InstallOnly/FindWrapITK.cmake"
                @ONLY IMMEDIATE)
-

@@ -9,8 +9,8 @@
   Copyright (c) 2002 Insight Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -69,7 +69,7 @@ VTKImageToImageFilter<TOutputImage>
 
 
 /**
- * Set a vtkImageData as input 
+ * Set a vtkImageData as input
  */
 template <class TOutputImage>
 void
@@ -111,4 +111,3 @@ VTKImageToImageFilter<TOutputImage>
 } // end namespace itk
 
 #endif
-

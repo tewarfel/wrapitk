@@ -24,15 +24,15 @@ def exploreTpl(tpl):
             exploreMethods(cl())
         except:
             pass
-    
+
 def exploreMethods(obj):
     global count
     excludeList = ['this', 'thisown']
     attrNameList = [i for i in dir(obj) if isinstance(i, str) and i[0].isupper() and i not in excludeList]
     if attrNameList == [] :
       empty.add(obj)
-        
-      
+
+
 excluded = set([
   "PeriodicBoundaryCondition",
   "BandNode",

@@ -1,18 +1,18 @@
 
 %define itkver 2.8
 
-Summary:	Extended language support for ITK
-Name:		wrapitk
-Version:	0.2
-Release:	%mkrel 1
-License:	BSDish
-Group:		Sciences/Other
-URL:		http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK
-#Source0:	http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK-%{version}.tar.bz2
-Source0:	http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.bz2
-Patch0:		wrapitk-reconstruction.patch.bz2
-BuildRequires:	cmake >= 2.2
-BuildRequires:	cableswig >= %{itkver}
+Summary:        Extended language support for ITK
+Name:                wrapitk
+Version:        0.2
+Release:        %mkrel 1
+License:        BSDish
+Group:                Sciences/Other
+URL:                http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK
+#Source0:        http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK-%{version}.tar.bz2
+Source0:        http://voxel.jouy.inra.fr/darcs/contrib-itk/WrapITK/WrapITK.tar.bz2
+Patch0:                wrapitk-reconstruction.patch.bz2
+BuildRequires:        cmake >= 2.2
+BuildRequires:        cableswig >= %{itkver}
 BuildRequires:  python-numarray-devel
 BuildRequires:  itk-devel >= %{itkver}
 BuildRequires:  python-devel
@@ -21,96 +21,96 @@ BuildRequires:  tetex-latex
 BuildRequires:  tetex-dvips
 BuildRequires:  ghostscript
 BuildRequires:  ImageMagick
-BuildRequires:	vtk-devel >= 5.0
-BuildRequires:	python-vtk >= 5.0
+BuildRequires:        vtk-devel >= 5.0
+BuildRequires:        python-vtk >= 5.0
 BuildRequires:  tcl tk
 # needed for backport to 2006.0
 %if %mdkversion >= 200610
 BuildRequires:  tk-devel
 BuildRequires:  tcl-devel
 %endif
-BuildRequires:	doxygen
+BuildRequires:        doxygen
 BuildRequires:  tetex-latex
 BuildRequires:  texinfo
-BuildRoot:	%{_tmppath}/%{name}-%{version}-%{release}-buildroot
+BuildRoot:        %{_tmppath}/%{name}-%{version}-%{release}-buildroot
 # for upgrade from package with ITK version
 Epoch:          1
 
 %description
-ITK is an open-source software system to support the Visible Human Project. 
-Currently under active development, ITK employs leading-edge segmentation 
+ITK is an open-source software system to support the Visible Human Project.
+Currently under active development, ITK employs leading-edge segmentation
 and registration algorithms in two, three, and more dimensions.
 
-The Insight Toolkit was developed by six principal organizations, three 
-commercial (Kitware, GE Corporate R&D, and Insightful) and three academic 
-(UNC Chapel Hill, University of Utah, and University of Pennsylvania). 
-Additional team members include Harvard Brigham & Women's Hospital, 
-University of Pittsburgh, and Columbia University. The funding for the 
-project is from the National Library of Medicine at the National Institutes 
-of Health. NLM in turn was supported by member institutions of NIH (see 
-sponsors). 
+The Insight Toolkit was developed by six principal organizations, three
+commercial (Kitware, GE Corporate R&D, and Insightful) and three academic
+(UNC Chapel Hill, University of Utah, and University of Pennsylvania).
+Additional team members include Harvard Brigham & Women's Hospital,
+University of Pittsburgh, and Columbia University. The funding for the
+project is from the National Library of Medicine at the National Institutes
+of Health. NLM in turn was supported by member institutions of NIH (see
+sponsors).
 
 %package  devel
-Summary:	ITK header files for building C++ code
-Group:		Development/C++
-Requires:	cmake >= 2.2
-Requires:	cableswig >= %{itkver}
-Requires:	itk-devel >= %{itkver}
+Summary:        ITK header files for building C++ code
+Group:                Development/C++
+Requires:        cmake >= 2.2
+Requires:        cableswig >= %{itkver}
+Requires:        itk-devel >= %{itkver}
 
 %description devel
-ITK is an open-source software system to support the Visible Human Project. 
-Currently under active development, ITK employs leading-edge segmentation 
+ITK is an open-source software system to support the Visible Human Project.
+Currently under active development, ITK employs leading-edge segmentation
 and registration algorithms in two, three, and more dimensions.
 
-The Insight Toolkit was developed by six principal organizations, three 
-commercial (Kitware, GE Corporate R&D, and Insightful) and three academic 
-(UNC Chapel Hill, University of Utah, and University of Pennsylvania). 
-Additional team members include Harvard Brigham & Women's Hospital, 
-University of Pittsburgh, and Columbia University. The funding for the 
-project is from the National Library of Medicine at the National Institutes 
-of Health. NLM in turn was supported by member institutions of NIH (see 
-sponsors). 
+The Insight Toolkit was developed by six principal organizations, three
+commercial (Kitware, GE Corporate R&D, and Insightful) and three academic
+(UNC Chapel Hill, University of Utah, and University of Pennsylvania).
+Additional team members include Harvard Brigham & Women's Hospital,
+University of Pittsburgh, and Columbia University. The funding for the
+project is from the National Library of Medicine at the National Institutes
+of Health. NLM in turn was supported by member institutions of NIH (see
+sponsors).
 
 %package -n python-itk
-Summary:	Python bindings for ITK
-Group:		Development/Python
-Requires:	python
-Requires:	itk >= %{itker}
-Requires(pre):	itk >= %{itker}
-Obsoletes:	itk-python
-Provides:	itk-python
+Summary:        Python bindings for ITK
+Group:                Development/Python
+Requires:        python
+Requires:        itk >= %{itker}
+Requires(pre):        itk >= %{itker}
+Obsoletes:        itk-python
+Provides:        itk-python
 
 %description -n python-itk
-ITK is an open-source software system to support the Visible Human Project. 
-Currently under active development, ITK employs leading-edge segmentation 
+ITK is an open-source software system to support the Visible Human Project.
+Currently under active development, ITK employs leading-edge segmentation
 and registration algorithms in two, three, and more dimensions.
 
-The Insight Toolkit was developed by six principal organizations, three 
-commercial (Kitware, GE Corporate R&D, and Insightful) and three academic 
-(UNC Chapel Hill, University of Utah, and University of Pennsylvania). 
-Additional team members include Harvard Brigham & Women's Hospital, 
-University of Pittsburgh, and Columbia University. The funding for the 
-project is from the National Library of Medicine at the National Institutes 
-of Health. NLM in turn was supported by member institutions of NIH (see 
-sponsors). 
+The Insight Toolkit was developed by six principal organizations, three
+commercial (Kitware, GE Corporate R&D, and Insightful) and three academic
+(UNC Chapel Hill, University of Utah, and University of Pennsylvania).
+Additional team members include Harvard Brigham & Women's Hospital,
+University of Pittsburgh, and Columbia University. The funding for the
+project is from the National Library of Medicine at the National Institutes
+of Health. NLM in turn was supported by member institutions of NIH (see
+sponsors).
 
 
 %package -n python-itk-numarray
-Summary:	Convert itk buffers to numarray objects
-Group:		Development/Python
-Requires:	python
-Requires:	python-numarray
-Requires:	python-itk = %{epoch}:%{version}
+Summary:        Convert itk buffers to numarray objects
+Group:                Development/Python
+Requires:        python
+Requires:        python-numarray
+Requires:        python-itk = %{epoch}:%{version}
 
 %description -n python-itk-numarray
 Convert itk buffers to numarray objects
 
 
 %package -n python-itkvtk
-Summary:	Convert itk buffers to vtk ones
-Group:		Development/Python
-Requires:	python
-Requires:	python-itk = %{epoch}:%{version}
+Summary:        Convert itk buffers to vtk ones
+Group:                Development/Python
+Requires:        python
+Requires:        python-itk = %{epoch}:%{version}
 
 
 %description -n python-itkvtk
@@ -118,9 +118,9 @@ Convert itk buffers to vtk ones
 
 
 %package -n itkvtk-devel
-Summary:	Convert itk buffers to vtk ones
-Group:		Development/C++
-Requires:	itk-devel
+Summary:        Convert itk buffers to vtk ones
+Group:                Development/C++
+Requires:        itk-devel
 
 
 %description -n itkvtk-devel
@@ -128,27 +128,27 @@ Convert itk buffers to vtk ones
 
 
 %package -n tcl-itk
-Summary:	Tcl bindings for ITK
-Group:		Development/Python
-Requires:	tcl
-Requires:	itk >= %{itker}
-Requires(pre):	itk >= %{itker}
-Obsoletes:	itk-tcl
-Provides:	itk-tcl
+Summary:        Tcl bindings for ITK
+Group:                Development/Python
+Requires:        tcl
+Requires:        itk >= %{itker}
+Requires(pre):        itk >= %{itker}
+Obsoletes:        itk-tcl
+Provides:        itk-tcl
 
 %description -n tcl-itk
-ITK is an open-source software system to support the Visible Human Project. 
-Currently under active development, ITK employs leading-edge segmentation 
+ITK is an open-source software system to support the Visible Human Project.
+Currently under active development, ITK employs leading-edge segmentation
 and registration algorithms in two, three, and more dimensions.
 
-The Insight Toolkit was developed by six principal organizations, three 
-commercial (Kitware, GE Corporate R&D, and Insightful) and three academic 
-(UNC Chapel Hill, University of Utah, and University of Pennsylvania). 
-Additional team members include Harvard Brigham & Women's Hospital, 
-University of Pittsburgh, and Columbia University. The funding for the 
-project is from the National Library of Medicine at the National Institutes 
-of Health. NLM in turn was supported by member institutions of NIH (see 
-sponsors). 
+The Insight Toolkit was developed by six principal organizations, three
+commercial (Kitware, GE Corporate R&D, and Insightful) and three academic
+(UNC Chapel Hill, University of Utah, and University of Pennsylvania).
+Additional team members include Harvard Brigham & Women's Hospital,
+University of Pittsburgh, and Columbia University. The funding for the
+project is from the National Library of Medicine at the National Institutes
+of Health. NLM in turn was supported by member institutions of NIH (see
+sponsors).
 
 
 %prep
@@ -375,4 +375,3 @@ rm -rf $RPM_BUILD_ROOT
 %files -n itkvtk-devel
 %defattr(0644,root,root,0755)
 %{_includedir}/InsightToolkit/BasicFilters/*
-

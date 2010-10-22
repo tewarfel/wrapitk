@@ -11,24 +11,24 @@ if sys.version < '2.4' :
         set = sets.Set
 
         def sorted(iterable, cmp=None, key=None, reverse=False) :
-	    i = list(iterable)
-	    if key :
-		d = {}
-		for v in iterable :
-		    k = key(v)
-		    if not d.has_key(k) :
-			d[k] = []
-		    d[k].append(v)
-		keys = d.keys()
-		keys.sort(cmp)
-		i = []
-		for k in keys :
-		    i += d[k]
-	    else :
-		i.sort(cmp)
-	    if reverse :
-		i.reverse()
-	    return i
+            i = list(iterable)
+            if key :
+                d = {}
+                for v in iterable :
+                    k = key(v)
+                    if not d.has_key(k) :
+                        d[k] = []
+                    d[k].append(v)
+                keys = d.keys()
+                keys.sort(cmp)
+                i = []
+                for k in keys :
+                    i += d[k]
+            else :
+                i.sort(cmp)
+            if reverse :
+                i.reverse()
+            return i
 
 parser = OptionParser(usage = 'wrappingCoverage.py paths')
 
@@ -58,7 +58,7 @@ nonWrapped = classes - wrapped
 
 # print non wrapped classes without much text to stdout, so they can be easily reused
 for f in sorted(nonWrapped) :
-	print f
+        print f
 
 # and print stats in stderr to avoid poluting the list above
 print >>sys.stderr
@@ -70,4 +70,3 @@ print >>sys.stderr
 
 if not opts.noError:
   sys.exit(len(nonWrapped))
-

@@ -13,12 +13,12 @@
 
 namespace itk
 {
-  
-/** 
+
+/**
   \class MeshToVTKPolyData
-  \brief 
+  \brief
     \warning
-  \sa 
+  \sa
   */
 
 template <class TMesh >
@@ -35,7 +35,7 @@ class MeshToVTKPolyData : public Object
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(MeshToVTKPolyData, Object);
 
@@ -45,8 +45,8 @@ class MeshToVTKPolyData : public Object
   typedef typename TriangleMeshType::PointsContainer                 InputPointsContainer;
   typedef typename InputPointsContainer::Pointer            InputPointsContainerPointer;
   typedef typename InputPointsContainer::Iterator           InputPointsContainerIterator;
-  typedef typename TriangleMeshType::CellType                        CellType; 
-  
+  typedef typename TriangleMeshType::CellType                        CellType;
+
   typedef typename TriangleMeshType::CellsContainerPointer           CellsContainerPointer;
   typedef typename TriangleMeshType::CellsContainerIterator          CellsContainerIterator;
 
@@ -71,7 +71,7 @@ class MeshToVTKPolyData : public Object
   vtkPoints  * m_Points;
   vtkPolyData * m_PolyData;
   vtkCellArray * m_Polys;
-  
+
 };
 
 } // end namespace itk

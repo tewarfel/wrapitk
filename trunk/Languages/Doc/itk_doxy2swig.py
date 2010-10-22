@@ -25,7 +25,7 @@ class itkDoxy2SWIG(Doxy2SWIG):
         Doxy2SWIG.__init__(self, src)
         self.cpp_name = cpp_name
         self.swig_name = swig_name
-    
+
     def write_to_file(self, file):
         if self.multi:
             file.write("".join(self.pieces))
@@ -36,7 +36,7 @@ class itkDoxy2SWIG(Doxy2SWIG):
         if self.cpp_name == cpp_name:
           return self.swig_name
         return cpp_name
-        
+
     def do_compoundname(self, node):
         self.add_text('\n\n')
         data = self.cpp_to_swig_name(node.firstChild.data)
@@ -50,20 +50,20 @@ class itkDoxy2SWIG(Doxy2SWIG):
         tmp = node.parentNode.parentNode.parentNode
         compdef = tmp.getElementsByTagName('compounddef')[0]
         cdef_kind = compdef.attributes['kind'].value
-        
+
         if prot == 'public':
             first = self.get_specific_nodes(node, ('definition', 'name'))
             name = first['name'].firstChild.data
             if name[:8] == 'operator': # Don't handle operators yet.
                 return
-            
+
             # store self.pieces to be able to restore it if the docstring is empty.
             pieces_backup = list(self.pieces)
-            
+
             defn = first['definition'].firstChild.data
             self.add_text('\n')
             self.add_text('%feature("docstring") ')
-            
+
             anc = node.parentNode.parentNode
             if cdef_kind in ('file', 'namespace'):
                 ns_node = anc.getElementsByTagName('innernamespace')
@@ -81,10 +81,10 @@ class itkDoxy2SWIG(Doxy2SWIG):
                 # self.add_text(' %s::%s "\n%s'%(cname, name, defn))
                 self.add_text(' %s::%s "'%(cname, name))
                 # print "***", name, defn
-                
+
             # make sure that the docstring won't be empty before writing any text
             current_length = len(self.pieces)
-                
+
             for n in node.childNodes:
                 # if n not in first.values():
                 if n not in first.values() and (n.__class__.__name__ != "Element" or "description" in n.tagName):
@@ -124,10 +124,10 @@ def d2s_dir(in_dir_name, out_swig_i):
   f.close()
 
 def main(in_dir_name, out_swig_i):
-	d2s_dir(in_dir_name, out_swig_i)
+        d2s_dir(in_dir_name, out_swig_i)
 
 if __name__ == '__main__':
-	if len(sys.argv) != 3:
-		print __doc__
-		sys.exit(1)
-	main(sys.argv[1], sys.argv[2])
+        if len(sys.argv) != 3:
+                print __doc__
+                sys.exit(1)
+        main(sys.argv[1], sys.argv[2])

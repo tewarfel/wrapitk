@@ -13,9 +13,8 @@ set(WRAPPER_LIBRARY_GROUPS
   itkInPlaceLabelMapFilter
   itkChangeRegionLabelMapFilter
 )
-		
+
 set(WRAPPER_LIBRARY_LINK_LIBRARIES ITKCommon ITKStatistics ITKReview)
 
 AUTO_INCLUDE_MODULES()
 END_WRAP_LIBRARY()
-

@@ -271,5 +271,5 @@ WRAP_TYPE("itk::LabelMap" "LM")
 endforeach(d)
 END_WRAP_TYPE()
 set(itk_Wrap_LabelMap ${WRAPPER_TEMPLATES})
-	
+
 #------------------------------------------------------------------------------

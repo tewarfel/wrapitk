@@ -32,5 +32,3 @@ plot(f) # can viper plot 2d images better than this?
 
 #v = viper.Viper(f)
 #v.interactive()
-
-

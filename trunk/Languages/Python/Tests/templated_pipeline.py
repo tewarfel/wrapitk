@@ -10,28 +10,28 @@ class LabelDilateImageFilter(itk.pipeline):
     # are not all already there!
     # Set/GetRadius() is created in the constructor for example, with the expose() method
     itk.pipeline.__init__(self)
-    
+
     # get the template parameters
     template_parameters = kargs["template_parameters"]
     # check the template parameters validity. Not really useful in that case, because we do the same
     # here, but a good habit
     LabelDilateImageFilter.check_template_parameters(template_parameters)
-    
+
     # and store them in an easier way
     ImageType, DistanceMapType = template_parameters
-    
+
     # build the minipipeline
     self.connect(itk.DanielssonDistanceMapImageFilter[ImageType, DistanceMapType].New(UseImageSpacing=True, SquaredDistance=False))
     self.connect(itk.BinaryThresholdImageFilter[DistanceMapType, ImageType].New())
     self.expose("UpperThreshold", "Radius")
     self.append(itk.CastImageFilter[DistanceMapType, ImageType].New(self.filters[0].GetVoronoiMap()))
     self.connect(itk.MaskImageFilter[ImageType, ImageType, ImageType].New(Input2=self.filters[1]))
-    
+
     # now we can parse the inputs
     itk.set_inputs(self, args, kargs)
-    
+
   def check_template_parameters(template_parameters):
-    ImageType, DistanceMapType = template_parameters    
+    ImageType, DistanceMapType = template_parameters
     itk.DanielssonDistanceMapImageFilter[ImageType, DistanceMapType]
     itk.BinaryThresholdImageFilter[DistanceMapType, ImageType]
     itk.CastImageFilter[DistanceMapType, ImageType]

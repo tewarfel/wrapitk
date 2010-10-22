@@ -14,4 +14,3 @@ foreach class $allClasses {
 }
 
 exit
-

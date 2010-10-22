@@ -10,4 +10,3 @@ namespace itk
 } // namespace itk
 
 #endif
-

@@ -12,12 +12,12 @@
 
 namespace itk
 {
-  
-/** 
+
+/**
   \class VTKPolyDataToMesh
-  \brief 
+  \brief
     \warning
-  \sa 
+  \sa
   */
 
 template <class TMesh >
@@ -34,7 +34,7 @@ class VTKPolyDataToMesh : public Object
 
   /** Method for creation through the object factory. */
   itkNewMacro(Self);
-  
+
   /** Run-time type information (and related methods). */
   itkTypeMacro(VTKPolyDataToMesh, Object);
 
@@ -62,7 +62,7 @@ class VTKPolyDataToMesh : public Object
 
   vtkPolyData           * m_PolyData;
 
-  
+
 };
 
 }

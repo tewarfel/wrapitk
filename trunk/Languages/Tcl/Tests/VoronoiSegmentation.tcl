@@ -30,4 +30,3 @@ $writer SetFileName [lindex $argv 2]
 $writer Update
 
 exit
-

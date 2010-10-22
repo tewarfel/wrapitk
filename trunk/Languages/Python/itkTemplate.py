@@ -4,33 +4,33 @@ import sys
 import os
 import itkConfig
 from itkTypes import itkCType
-   
+
 
 def registerNoTpl(name, cl):
   """Register a class without template
-  
+
   It can seem not useful to register classes without template (and it wasn't
   useful until the SmartPointer template was generated), but those classes
   can be used as template argument of classes with template.
   """
   itkTemplate.__templates__[normalizeName(name)] = cl
-  
-  
+
+
 def normalizeName(name):
   """Normalize the class name to remove ambiguity
-  
+
   This function removes the white spaces in the name, and also
   remove the pointer declaration "*" (it have no sense in python) """
-  
+
   name = name.replace(" ","")
   name = name.replace("*","")
-  
+
   return name
 
 
 class itkTemplate(object):
   """This class manage access to avaible template arguments of C++ class
-  
+
   There is 2 ways to access types:
   - with a dict interface. The user can manipulate template parameters nearly
   as it do in c++, excepted that the available parameters sets are choosed at
@@ -43,7 +43,7 @@ class itkTemplate(object):
   __class_to_template__ = {}
   __named_templates__ = {}
   __doxygen_root__ = itkConfig.doxygen_root
-  
+
   def __new__(cls, name):
     # Singleton pattern: we only make a single instance of any Template of a
     # given name. If we have already made the instance, just return it as-is.
@@ -53,16 +53,16 @@ class itkTemplate(object):
         new_instance.__template__ = {}
         cls.__named_templates__[name] = new_instance
     return cls.__named_templates__[name]
-  
+
   def __add__(self, paramSetString, cl):
     """add a new argument set and the resulting class to the template
-    
+
     paramSetString is the c++ string which define the parameters set
     cl is the class which correspond to the couple template-argument set
     """
     # recreate the full name and normalize it to avoid ambiguity
     normalizedFullName = normalizeName(self.__name__+"<"+paramSetString+">")
-    
+
     # the full class should not be already registered. If it is, there is a problem
     # somewhere so warn the user so he can fix the problem
     if itkTemplate.__templates__.has_key( normalizedFullName ) :
@@ -74,7 +74,7 @@ class itkTemplate(object):
     # parameters transformed in corresponding python classes.
     # we transform this list in tuple to make it usable as key of the dict
     param = tuple( self.__find_param__( paramSetString ) )
-    
+
     # once again, warn the user if the tuple of parameter is already defined
     # so he can fix the problem
     if self.__template__.has_key( param ) :
@@ -84,7 +84,7 @@ class itkTemplate(object):
 
     # add in __class_to_template__ dictionary
     itkTemplate.__class_to_template__[cl] = (self, param)
-    
+
     # now populate the template
     # 2 cases:
     # - the template is a SmartPointer. In that case, the attribute name will be the
@@ -111,28 +111,28 @@ class itkTemplate(object):
       import re
       shortNameSize = len(re.sub(r'.*::', '', self.__name__))
       attributeName = cl.__name__[shortNameSize:]
-      
-      
+
+
     if attributeName.isdigit() :
       # the attribute name can't be a number
       # add a single undescore before it to build a valid name
       attributeName = "_" + attributeName
-      
+
     # add the attribute to this object
     self.__dict__[attributeName] = cl
-    
+
 
   def __find_param__(self, paramSetString):
     """find the parameters of the template
-    
+
     paramSetString is the c++ string which define the parameters set
-    
+
     __find_param__ returns a list of itk classes, itkCType, and/or numbers
     which correspond to the parameters described in paramSetString.
     The parameters MUST have been registered before calling this method,
     or __find_param__ will return a string and not the wanted object, and
     will display a warning. Registration order is important.
-    
+
     This method is not static only to be able to display the template name
     in the warning
     """
@@ -159,46 +159,46 @@ class itkTemplate(object):
         # the parameter is registered.
         # just get the really class form the dictionary
         param = itkTemplate.__templates__[paramNorm]
-        
+
       elif itkCType.GetCType( param ) :
         # the parameter is a c type
         # just get the itkCtype instance
         param = itkCType.GetCType( param )
-        
+
       elif paramNorm.isdigit() :
         # the parameter is a number
         # convert the string to a number !
         param = int(param)
-      
+
       elif paramNorm == "true":
         param = True
       elif paramNorm == "false":
         param = False
-        
+
       else :
         # unable to convert the parameter
         # use it without changes, but display a warning message, to incite
         # developer to fix the problem
         print >>sys.stderr,"Warning: Unknown parameter '%s' in template '%s'" % (param, self.__name__)
-      
+
       parameters.append( param )
 
     return parameters
-    
+
 
   def __getitem__(self, parameters):
     """return the class which correspond to the given template parameters
-    
+
     parameters can be:
       - a single parameter (Ex: itk.Index[2])
       - a list of element (Ex: itk.Image[itk.UC, 2])
     """
-    
+
     if type(parameters) != types.TupleType and type(parameters) != types.ListType :
       # parameters is a single element.
       # include it in a list to manage the 2 cases in the same way
       parameters = [parameters]
-        
+
     cleanParameters = []
     for param in parameters:
       # In the case of itk class instance, get the class
@@ -227,7 +227,7 @@ class itkTemplate(object):
         man_path = "%s/man3/%s.3" %(itkTemplate.__doxygen_root__, doxyname)
         bzman_path = "%s/man3/%s.3.bz2" %(itkTemplate.__doxygen_root__, doxyname)
         if os.path.exists(bzman_path):
-	    return commands.getoutput("bunzip2 --stdout '"+bzman_path+"' | groff -mandoc -Tascii -c")
+            return commands.getoutput("bunzip2 --stdout '"+bzman_path+"' | groff -mandoc -Tascii -c")
         elif os.path.exists(man_path):
           # Use groff here instead of man because man dies when it is passed paths with spaces (!)
           # groff does not.
@@ -238,7 +238,7 @@ class itkTemplate(object):
         return "Cannot display man page for %s due to exception: %s." %(self.__name__, e)
     else:
       return object.__getattribute__(self, attr)
-  
+
   def New(self, *args, **kargs):
     """TODO: some doc! Don't call it __call__ as it break the __doc__ attribute feature in
     ipython"""
@@ -309,7 +309,7 @@ class itkTemplate(object):
 # create a new New function which accepts parameters
 def New(self, *args, **kargs) :
   import sys, itk
-  
+
   itk.set_inputs( self, args, kargs )
 
   # now, try to add observer to display progress
@@ -324,14 +324,14 @@ def New(self, *args, **kargs) :
     callback = itkConfig.ProgressCallback
   else :
     callback = None
-      
+
   if callback :
     try :
       name = self.__class__.__name__
       def progress() :
         # self and callback are kept referenced with a closure
         callback(name, self.GetProgress())
-	
+
       self.AddObserver(itk.ProgressEvent(), progress)
     except :
       # it seems that something goes wrong...
@@ -341,10 +341,10 @@ def New(self, *args, **kargs) :
 
   if itkConfig.NotInPlace and "SetInPlace" in dir(self) :
     self.SetInPlace( False )
-  
+
   if itk.auto_pipeline.current != None:
     itk.auto_pipeline.current.connect(self)
-  
+
   return self
 
 
@@ -359,4 +359,3 @@ def image(input) :
   import sys
   print >> sys.stderr, "WrapITK warning: itk.image() is deprecated. Use itk.output() instead."
   return output(input)
-  

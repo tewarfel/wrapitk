@@ -28,11 +28,11 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 \usepackage{subfigure}
 
 
-%  This is a template for Papers to the Insight Journal. 
+%  This is a template for Papers to the Insight Journal.
 %  It is comparable to a technical report format.
 
 % The title should be descriptive enough for people to be able to find
-% the relevant document. 
+% the relevant document.
 \title{WrapITK: Enhanced languages support\\ for the Insight Toolkit}
 
 % Increment the release number whenever significant changes are made.
@@ -42,7 +42,7 @@ colorlinks,linkcolor={blue},citecolor={blue},urlcolor={blue},
 % At minimum, give your name and an email address.  You can include a
 % snail-mail address if you like.
 \author{Ga\"etan Lehmann{$^1$}{\small{,}} Zachary Pincus{$^2$} {\small{and}} Benoit Regrain{$^3$}}
-\authoraddress{{$^1$}INRA, UMR 1198; ENVA; CNRS, FRE 2857, Biologie du D\'eveloppement et 
+\authoraddress{{$^1$}INRA, UMR 1198; ENVA; CNRS, FRE 2857, Biologie du D\'eveloppement et
 Reproduction, Jouy en Josas, F-78350, France\\
 {$^2$}Program in Biomedical Informatics and Department of Biochemistry, Stanford University School of Medicine, Stanford, California\\
 {$^3$}CREATIS, CNRS UMR 5515, Inserm U630, Univ. Lyon1, INSA Lyon, 69621 Villeurbanne, France}
@@ -88,7 +88,7 @@ With 202 wrapped filters, WrapITK covers 63\% of the available filters.
 
   \item  The template argument set is poorly chosen, sometimes making it impossible
 to create a pipeline. In WrapITK, most of the filters have the same input and output
-types, and only a few filters are allowed to change type. This make the types manipulated 
+types, and only a few filters are allowed to change type. This make the types manipulated
 by filters more consistent, and the user should always be able to build his pipeline.
 
   \item  Many types returned by ITK object's methods are not usable in target
@@ -139,7 +139,7 @@ Java, Tcl and Python build properly and are fully usable. However, Java and
 Tcl don't yet have the extended features added to Python\footnote{Any help
 to extend Java and Tcl support would be higly appreciated.}.
 
-WrapITK is mainly developed on Mandriva Linux \cite{MandrivaWebSite} and 
+WrapITK is mainly developed on Mandriva Linux \cite{MandrivaWebSite} and
 MacOS X \cite{MacOsXWebSite} and therefore is well tested on these platforms.
 It also builds on windows \cite{WindowsWebSite}, but more testing is required
 to be sure everything works as it should. See below for details about how
@@ -277,7 +277,7 @@ typed pixels. In this case, the wrappers will only be created if the user has
 chosen to build 3-dimensional image wrappers and has selected one or more
 floating point types (e.g. double or float) in ccmake. Thus, the ccmake
 configuration specifies the maximum possible range of image and filter types to
-be created, and each filter is wrapped for some subset of that range. 
+be created, and each filter is wrapped for some subset of that range.
 
 Projects should always be built outside the source directory, in a \verb$build$
 directory for example.
@@ -300,7 +300,7 @@ command
 urpmi.addmedia mima2-2006.0 http://voxel.jouy.inra.fr/mdk/mima2/2006.0/i586/
 \end{verbatim}
 
-and install the package you want with 
+and install the package you want with
 
 \begin{verbatim}
 urpmi python-itk
@@ -348,7 +348,7 @@ from the console which shows the interpreter prompt:
 
 3> result = 12+3
 
-4> 
+4>
 \end{verbatim}
 
 In the example above, \verb$12+3$ is what is written in the interpreter, and
@@ -675,7 +675,7 @@ to all the newly created filters. \verb$b$ must be \verb$True$ or \verb$False$. 
 9> median.Update()
 itkMedianImageFilterIF2IF2: 0.109990
 \end{verbatim}
-is displayed on the standard output. 
+is displayed on the standard output.
 While prototyping, it is a convenient way for the user to know if
 the execution time will be short or if he can do something more useful
 \footnote{like having a cup of tea} than waiting for the filter to complete.
@@ -778,7 +778,7 @@ python list manipulation interface to the pipeline object.
 Example:
 ITK's current implementation of morphological dilation, erosion, opening and closing
 can be very inefficient with large structuring elements. Also, WrapITK only gives
-access to ball structuring element. The following class illustrates the use of the 
+access to ball structuring element. The following class illustrates the use of the
 \verb$itk.pipeline$ class to implement an efficient opening in 3 dimensions with
 a box structuring element. We take advantage of structuring element decomposition:
 a dilation (or erosion) by a box can be more efficiently computed by perfoming
@@ -802,7 +802,7 @@ class mkOpeningPipe (itk.pipeline):
     self.connect(itk.GrayscaleDilateImageFilter[InType, InType, KernelType].New())
     self.connect(itk.GrayscaleDilateImageFilter[InType, InType, KernelType].New())
     self.SetKernel(x,y,z)
- 
+
   def SetKernel(self, x,y,z):
     self[0].SetKernel(itk.strel(3, (x,0,0)))
     self[1].SetKernel(itk.strel(3, (0,y,0)))
@@ -894,9 +894,9 @@ can choose to load the entire library at once with the command \verb$itk.force_l
 
      \subsection{Full python script examples}
 
-This script is the exact transcription to python of the C++ example 
+This script is the exact transcription to python of the C++ example
 which can be found at Examples/Filtering/GradientMagnitudeRecursiveGaussianImageFilter.cxx
-in the ITK source tree. More information about the filters used can be found in 
+in the ITK source tree. More information about the filters used can be found in
 the ITK Software Guide \cite{ITKSoftwareGuide}, section 6.4.2.
 
 \small \begin{verbatim}
@@ -1005,7 +1005,7 @@ to be wrapped. Often one such file is defined for each class wrapped, but this
 is not strictly necessary.
 
 Within such a file, directives are issued to wrap classes and particular
-template instances. 
+template instances.
 
 WrapITK define several macros and variables designed to:
 \begin{itemize}
@@ -1017,7 +1017,7 @@ the idea of the author of a wrapper by reading the file.
 
      \subsubsection{A simple example: MedianImageFilter}
 
-The most common case should be to create a new wrapper for a simple image filter, like 
+The most common case should be to create a new wrapper for a simple image filter, like
 \verb$MedianImageFilter$. Let's see that example in detail.
 
 Here is the \verb$BasicFiltersB/wrap_itkMedianImageFilter.cmake$ file:
@@ -1077,7 +1077,7 @@ by the user.
   \item \verb$WRAP_ITK_COV_VECTOR_REAL$ contains all the \verb$CovariantVector$ types selected
 by the user.
 
-  \item \verb$WRAP_ITK_VECTOR$ contains all the \verb$Vector$ and 
+  \item \verb$WRAP_ITK_VECTOR$ contains all the \verb$Vector$ and
 \verb$CovariantVector$ types selected by the user.
 
   \item \verb$WRAP_ITK_ALL_TYPES$ contains all the types selected by the user.
@@ -1313,7 +1313,7 @@ for instructions as to what to put in these files.)
 External projects let the developer access some custom class with the target languages
 and is a powerful way to extend WrapITK, test new wrapper, wrap more types, etc.
 A nice side effect of wrappers, for contributions\footnote{A nice template for
-contributions to the Insight Journal \cite{InsightJournalWebSite} which include the 
+contributions to the Insight Journal \cite{InsightJournalWebSite} which include the
 template code to build wrappers is available at
 \url{http://voxel.jouy.inra.fr/darcs/contrib-itk/template/}. Just use the command
 {\em darcs get http://voxel.jouy.inra.fr/darcs/contrib-itk/template/ contribName}
@@ -1340,7 +1340,7 @@ but can be modified in the advanced options.
     \subsection{Usage}
 Once an external project has been built, it can be tested directly from the
 build tree. Start python in the external project build directory's Python
-subdirectory, and run the command \verb$import ProjectConfig$ (or 
+subdirectory, and run the command \verb$import ProjectConfig$ (or
 \verb$import ProjectConfig-[Debug|Release|...]$ if you are using an IDE, depending on which
 build configuration was set from the IDE). This command sets up the search paths
 properly so that WrapITK and the newly-created library files can be found. Then
@@ -1445,7 +1445,7 @@ The \verb$itk.show3D$ class uses the class \verb$ImageToVTKImageFilter$ to creat
 volume rendering shown in Figure \ref{screenshot}.
 
 This project provides new features for all the languages, including C++.
-Its directory structure reflects this. 
+Its directory structure reflects this.
 
 \begin{verbatim}
 |-- CMakeLists.txt
@@ -1593,4 +1593,3 @@ wrapped classes, and of the increase of consistency in available types and names
 \nocite{ITKSoftwareGuide}
 
 \end{document}
-

@@ -47,7 +47,7 @@ writer = WriterType.New()
 reader.SetFileName( argv[1] )
 writer.SetFileName( argv[2] )
 
-FilterType = itk.ResampleImageFilter[InputImageType,InputImageType] 
+FilterType = itk.ResampleImageFilter[InputImageType,InputImageType]
 filter = FilterType.New()
 
 TransformType = itk.AffineTransform[ itk.D, Dimension ]
@@ -55,7 +55,7 @@ TransformType = itk.AffineTransform[ itk.D, Dimension ]
 transform = TransformType.New()
 filter.SetTransform( transform )
 
-InterpolatorType = itk.NearestNeighborInterpolateImageFunction[ 
+InterpolatorType = itk.NearestNeighborInterpolateImageFunction[
                       InputImageType, itk.D ]
 
 interpolator = InterpolatorType.New()
@@ -101,5 +101,3 @@ filter.SetDefaultPixelValue( 100 )
 
 if( exampleAction == 2 ):
   writer.Update()
-
-

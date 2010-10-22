@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -33,7 +33,7 @@ namespace itk
 
 /** \class PyBuffer
  *  \brief Helper class for converting C buffers into python arrays.
- * 
+ *
  *  This class will receive a C buffer and create the equivalen python
  *  array. This permits to pass image buffers into python arrays from
  *  the Numeric python package.
@@ -60,31 +60,31 @@ public:
    /** Image dimension. */
   itkStaticConstMacro(ImageDimension, unsigned int,
                       ImageType::ImageDimension);
- 
+
   /// Type of the import image filter
-  typedef ImportImageFilter< PixelType, 
+  typedef ImportImageFilter< PixelType,
                              ImageDimension >   ImporterType;
 
   typedef typename ImporterType::Pointer   ImporterPointer;
-  
-  /** 
+
+  /**
    * Get an Array with the content of the image buffer
    */
   static PyObject * GetArrayFromImage( ImageType * image);
 
-  /** 
+  /**
    * Get an ITK image from a Python array
    */
   static const ImagePointer GetImageFromArray( PyObject *obj );
- 
+
 
 protected:
   typedef enum PyArray_TYPES PyArrayType;
   static PyArrayType GetPyType(void);
-  
+
   PyBuffer(const Self&);     // Not implemented.
   void operator=(const Self&); // Not implemented.
-  
+
 };
 
 
@@ -95,4 +95,3 @@ protected:
 #endif
 
 #endif // _itkPyBuffer_h
-
