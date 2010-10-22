@@ -5,7 +5,7 @@
 #include "itkConstantBoundaryCondition.h"
 #else
 // Here follows the restricted header made available just to gcc-xml on windows.
-// The problem we are working around is the fact that on windows, the 
+// The problem we are working around is the fact that on windows, the
 // NumericTraits<PixelType>::Zero values are declared as __declspec(dllimport),
 // which gcc-xml and cswig can't deal with properly. So we hide that stuff in
 // these restricted headers.
@@ -30,8 +30,8 @@ public:
   typedef typename Superclass::IndexType IndexType;
   typedef typename Superclass::OffsetType OffsetType;
   typedef typename Superclass::NeighborhoodType NeighborhoodType;
-    
-  typedef typename Superclass::NeighborhoodAccessorFunctorType 
+
+  typedef typename Superclass::NeighborhoodAccessorFunctorType
                                  NeighborhoodAccessorFunctorType;
 
   itkStaticConstMacro(ImageDimension, unsigned int,Superclass::ImageDimension);
@@ -44,10 +44,10 @@ public:
       const OffsetType& ,
       const OffsetType& ,
       const NeighborhoodType *,
-      const NeighborhoodAccessorFunctorType & ) const;  
+      const NeighborhoodAccessorFunctorType & ) const;
   void SetConstant(const PixelType &c);
   /** Get the value of the constant. */
-  const PixelType &GetConstant() const;  
+  const PixelType &GetConstant() const;
 };
 
 } // end namespace itk

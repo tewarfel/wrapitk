@@ -79,5 +79,3 @@ del median
 
 # we shouldn't reach that point
 sys.exit(1)
-
-

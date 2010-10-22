@@ -17,7 +17,7 @@ public class GradientAnisotropicDiffusionImageFilter
     itkImageFileWriterIUS2 writer = new itkImageFileWriterIUS2();
 
     itkCastImageFilterIUS2IF2 inputCast = new itkCastImageFilterIUS2IF2();
-      
+
     itkGradientAnisotropicDiffusionImageFilterIF2IF2 filter = new itkGradientAnisotropicDiffusionImageFilterIF2IF2();
 
     itkRescaleIntensityImageFilterIF2IUS2 outputCast = new itkRescaleIntensityImageFilterIF2IUS2();
@@ -41,5 +41,3 @@ public class GradientAnisotropicDiffusionImageFilter
   }
 
 }
-
-

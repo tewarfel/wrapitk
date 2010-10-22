@@ -14,4 +14,3 @@
   if(FENICS_DIR)
     set(FENICS_FOUND 1 CACHE INTERNAL "FEniCS is installed")
   endif(FENICS_DIR)
-

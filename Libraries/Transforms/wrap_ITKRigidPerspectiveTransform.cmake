@@ -11,4 +11,3 @@ if(d3 AND d2)
     WRAP_TEMPLATE("${ITKM_D}" "${ITKT_D}")
   END_WRAP_CLASS()
 endif(d3 AND d2)
-

@@ -18,4 +18,3 @@ filter  = itk.BinaryThresholdImageFilter[IType, IType].New( reader,
 writer = itk.ImageFileWriter[IType].New( filter, FileName=argv[2] )
 
 writer.Update()
-

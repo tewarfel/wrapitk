@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -62,11 +62,11 @@ protected:
   void operator=(const Self&); // Not implemented.
 
   void TclExecute() const;
-  
+
 private:
   ///! The Tcl interpreter in which the command will be invoked.
   Tcl_Interp* m_Interpreter;
-  
+
   ///! The command to invoke in the Tcl interpreter.
   std::string m_CommandString;
 };
@@ -75,4 +75,3 @@ private:
 } // namespace itk
 
 #endif // _itkTclCommand_h
-

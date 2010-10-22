@@ -7,4 +7,3 @@ WRAP_CLASS("itk::QuadEdgeMeshCellTraitsInfo")
     WRAP_TEMPLATE("${d}" "${d}")
   endforeach(d)
 END_WRAP_CLASS()
-

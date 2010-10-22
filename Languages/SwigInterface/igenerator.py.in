@@ -173,7 +173,7 @@ def renameTypesInSTL( s ):
       args.append( renameTypesInSTL( get_alias( t ) ) + d )
     return pygccxml.declarations.templates.join( pygccxml.declarations.templates.name(s), args ) + typeAndDecorators( s )[1]
   return s
-  
+
 
 def removeStdAllocator( s ):
   if pygccxml.declarations.templates.is_instantiation(s):
@@ -184,7 +184,7 @@ def removeStdAllocator( s ):
         args.append( removeStdAllocator( t ) + d )
     return pygccxml.declarations.templates.join( pygccxml.declarations.templates.name(s), args ) + typeAndDecorators( s )[1]
   return s
-  
+
 
 def typeAndDecorators( s ):
   end = ""
@@ -199,30 +199,30 @@ def typeAndDecorators( s ):
         s = s[:-len(e)]
         needToContinue = True
   return (s, end)
- 
+
 
 def get_alias( decl_string, w=True ):
   s = str(decl_string)
-  
+
   # drop the :: prefix - it make swig produce invalid code
   if s.startswith("::"):
     s = s[2:]
-  
+
   # normalize string
   s = normalize( s )
-  
+
   # workaround a bug - or is it a feature ? - somewhere
   s = s.replace("complex float", "std::complex<float>")
   s = s.replace("complex double", "std::complex<double>")
   s = s.replace("complex long double", "std::complex<long double>")
-  
+
   (s, end) = typeAndDecorators( s )
 
   if aliases.has_key( s ):
 #    print >> sys.stderr, s, end, "        ", aliases[s]
     usedTypes.add( aliases[s] )
     return aliases[s] + end
-    
+
   if s.startswith("itk::Templates::"):
     # that's a explicitly instantiated type. The name is the same than the WraITK
     # one, so lets use it as a base for WrapITK
@@ -233,32 +233,32 @@ def get_alias( decl_string, w=True ):
     if new_s.split("::")[0] in aliases.values():
       usedTypes.add( new_s )
       return new_s + end
-    
+
   if s[:s.rfind("::")] in aliases:
     # take care of subtypes/enum/...
     alias = aliases[ s[:s.rfind("::")] ] + s[s.rfind("::"):]
     usedTypes.add( alias )
     return alias + end
-  
+
   # replace the types defined in this type, to support std::vector<itkDataObject> for example
   s = renameTypesInSTL( s )
-    
+
   # drop the allocator part of the type, because it is not supported by the %template directive with some languages (like tcl)
   s = removeStdAllocator( s )
-    
+
   # rename basic_string to std::string to make name shorter
   s = s.replace("std::basic_string< char, std::char_traits< char > >", "std::string")
-    
+
   # rename some types not renamed by gccxml (why ?)
   s = s.replace( "itk::SerieUIDContainer", "std::vector< std::string >")
   s = s.replace( "itk::FilenamesContainer", "std::vector< std::string >")
-    
+
   if s.startswith( "itk::") and not notWrappedRegExp.match( s ):
     warn( 4, "ITK type not wrapped, or currently not known: %s" % s, w )
-    
+
   usedTypes.add( s )
   return s + end
-    
+
 
 def load_idx(file_name):
   f = file(file_name)
@@ -289,7 +289,7 @@ def normalize(name):
 #  name = name.replace("unsigned int", "unsigned")
   # normalize spaces
   name = " ".join(name.replace(',', ', ').split())
-  return name 
+  return name
 
 
 def generate_class( typedef, indent=0 ):
@@ -303,16 +303,16 @@ def generate_class( typedef, indent=0 ):
     if super_classes:
       s = " : " + ", ".join( super_classes )
     print >> outputFile, "  "*indent, "class %s%s {" % ( typedef.name, s )
-      
+
     # iterate over access
     for access in pygccxml.declarations.ACCESS_TYPES.ALL:
-      
+
       # print the access type
       print >> outputFile, "  "*indent, "  %s:" % access
-      
+
       # warnings or no warning?
       w = access not in options.access_warnings
-  
+
       # iterate over the members
       for member in typedef.type.declaration.get_members( access=access ):
         if isinstance( member, pygccxml.declarations.typedef.typedef_t ):
@@ -352,27 +352,27 @@ def generate_class( typedef, indent=0 ):
   else:
     # vcl_complex is too difficult to wrap in some cases. Only wrap the constructor.
     print >> outputFile, "  "*indent, "class %s%s {" % ( typedef.name, s )
-      
+
     # iterate over access
     for access in pygccxml.declarations.ACCESS_TYPES.ALL:
-      
+
       # print the access type
       print >> outputFile, "  "*indent, "  %s:" % access
-      
+
       # warnings or no warning?
       w = access not in options.access_warnings
       for member in typedef.type.declaration.get_members( access=access ):
         if isinstance( member, pygccxml.declarations.calldef.constructor_t ):
           generate_constructor( typedef, member, indent, w )
         elif isinstance( member, pygccxml.declarations.calldef.destructor_t ):
-          generate_destructor( typedef, member, indent, w )  
+          generate_destructor( typedef, member, indent, w )
     # finally, close the class
     print >> outputFile, "  "*indent, "};"
     print >> outputFile
     print >> outputFile
-        
 
-def generate_constructor( typedef, constructor, indent, w ):  
+
+def generate_constructor( typedef, constructor, indent, w ):
   # iterate over the arguments
   args = []
   for arg in constructor.arguments:
@@ -383,9 +383,9 @@ def generate_constructor( typedef, constructor, indent, w ):
     # and add the string to the arg list
     args.append( s )
   print >> outputFile, "  "*indent, "    %s(%s);" % (typedef.name, ", ".join( args) )
-  
-  
-def generate_destructor( typedef, destructor, indent, w ):  
+
+
+def generate_destructor( typedef, destructor, indent, w ):
   print >> outputFile, "  "*indent, "    ~%s();" % typedef.name
 
 
@@ -401,13 +401,13 @@ def generate_enum( typedef ):
   print >> outputFile, "%}"
   content = [" %s = %i" % (key, value) for key, value in enum.values]
   print >> outputFile, "enum %s { %s };" % ( name, ", ".join( content ) )
-  
-    
+
+
 def generate_nested_enum( typedef, enum, indent, w ):
   content = [" %s = %i" % (key, value) for key, value in enum.values]
   print >> outputFile, "  "*indent, "    enum %s { %s };" % ( enum.name, ", ".join( content ) )
-  
-    
+
+
 def generate_method( typedef, method, indent, w ):
   info("Generating interface for method  '%s::%s'." % (typedef.name, method.name) )
   # avoid the apply method for the class vnl_c_vector: the signature is quite strange
@@ -415,12 +415,12 @@ def generate_method( typedef, method, indent, w ):
   if "(" in method.return_type.decl_string :
     warn( 1, "ignoring method not supported by swig '%s::%s'." % (typedef.name, method.name), w )
     return
-      
-  if ( (typedef.name.startswith('vnl_') and method.name in ["as_ref"]) 
+
+  if ( (typedef.name.startswith('vnl_') and method.name in ["as_ref"])
        or (typedef.name.startswith('itk') and method.name in ["rBegin", "rEnd", "GetSpacingCallback", "GetOriginCallback", "Begin", "End"]) ) :
     warn( 3, "ignoring black listed method '%s::%s'." % (typedef.name, method.name), w )
     return
-      
+
   # iterate over the arguments
   args = []
   for arg in method.arguments:
@@ -433,7 +433,7 @@ def generate_method( typedef, method, indent, w ):
       s += " = %s" % arg.default_value
     # and add the string to the arg list
     args.append( s )
-      
+
   # find the method decorators
   static = ""
   const = ""
@@ -445,7 +445,7 @@ def generate_method( typedef, method, indent, w ):
     static += "virtual "
   if method.virtuality == "pure virtual":
     const += " = 0"
-      
+
   print >> outputFile, "  "*indent, "    %s%s %s(%s)%s;" % (static, get_alias(method.return_type.decl_string, w), method.name, ", ".join( args), const )
 
 
@@ -535,7 +535,7 @@ for typedef in wrappers_ns.typedefs(): #allow_empty=True):
     aliases[s] = typedef.name
     # declare the typedef
     print >> headerFile, "typedef %s %s;" % (s, typedef.name)
-  
+
 print >> headerFile, "%}"
 print >> headerFile
 print >> headerFile
@@ -560,15 +560,15 @@ print >> includeFile
 # classes :: [(name, [dep_name], typedef)]
 classes = []
 for typedef in wrappers_ns.typedefs():
-  
+
   # begin a new class
   if isinstance( typedef.type.declaration, pygccxml.declarations.class_declaration.class_t ):
     classes.append( (typedef.name, [get_alias(super_class.related_class.decl_string) for super_class in typedef.type.declaration.bases], typedef) )
-    
+
   elif isinstance( typedef.type.declaration, pygccxml.declarations.enumeration.enumeration_t ):
     # warn( 6, "Enum are currently supported only nested in a class." )
     generate_enum( typedef )
-      
+
   else:
     warn( 5, "Unknown type type: %s" % str(typedef.type.declaration) )
 
@@ -602,7 +602,7 @@ for typedef in typedefs:
 
 if len(warnings) > 0 and options.warningError:
   sys.exit(1)
-  
+
 
 # search the files to import
 usedSources = set()
@@ -637,4 +637,3 @@ else:
 
 # Stop process time measurement
 info("%s seconds i-generation time." % (time.clock() - t0))
-

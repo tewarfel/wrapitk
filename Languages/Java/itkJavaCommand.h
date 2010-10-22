@@ -7,7 +7,7 @@ class itkJavaCommand : public  itk::Command
 {
 public:
   virtual void Execute(itk::Object *, const itk::EventObject&){ this->Execute();};
-  virtual void Execute(const itk::Object *, const itk::EventObject&){ this->Execute();}; 
+  virtual void Execute(const itk::Object *, const itk::EventObject&){ this->Execute();};
   virtual void Execute(){};
 };
 #endif

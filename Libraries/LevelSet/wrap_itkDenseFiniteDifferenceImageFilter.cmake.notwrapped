@@ -2,7 +2,7 @@
 # Set the wrapped module
 SET(itk_Module "itkDenseFiniteDifferenceImageFilter")
 # Set the class include
-SET(itk_Include 
+SET(itk_Include
    "DenseFiniteDifferenceImageFilter"
    "Image"
 )
@@ -29,4 +29,3 @@ WRITE_WRAP_END(${itk_File})
 
 #------------------------------------------------------------------------------
 #------------------------------------------------------------------------------
-

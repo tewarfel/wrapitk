@@ -63,7 +63,7 @@ assert itk.image(1) == 1
 # and should work with a list, a tuple, an int or an itk.Size
 for s in [2, (2, 2), [2, 2], itk.Size[2](2)] :
   st = itk.strel(dim, s)
-  
+
   (tpl, param) = itk.template(st)
   assert tpl == itk.FlatStructuringElement
   assert param[0] == dim

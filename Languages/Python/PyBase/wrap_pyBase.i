@@ -46,72 +46,72 @@
 // Reference: http://www.nabble.com/attachment/16653644/0/SwigRefCount.i
 %define DECLARE_REF_COUNT_CLASS(class_name)
 
-	// pointers and references
-	%typemap(out) class_name *, class_name & {
-		// always tell SWIG_NewPointerObj we're the owner
-		$result = SWIG_NewPointerObj((void *) $1, $1_descriptor, 1);
-		if ($1) {
-			$1->Register();
-		}
-	}
+        // pointers and references
+        %typemap(out) class_name *, class_name & {
+                // always tell SWIG_NewPointerObj we're the owner
+                $result = SWIG_NewPointerObj((void *) $1, $1_descriptor, 1);
+                if ($1) {
+                        $1->Register();
+                }
+        }
 
   // transform smart pointers in raw pointers
-	%typemap(out) class_name##_Pointer {
-	  // get the raw pointer from the smart pointer
-	  class_name * ptr = $1;
-		// always tell SWIG_NewPointerObj we're the owner
-		$result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
-		// register the object, it it exists
-		if (ptr) {
-			ptr->Register();
-		}
-	}
+        %typemap(out) class_name##_Pointer {
+          // get the raw pointer from the smart pointer
+          class_name * ptr = $1;
+                // always tell SWIG_NewPointerObj we're the owner
+                $result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
+                // register the object, it it exists
+                if (ptr) {
+                        ptr->Register();
+                }
+        }
 
   // transform smart pointers in raw pointers
-	%typemap(out) class_name##_Pointer & {
-	  // get the raw pointer from the smart pointer
-	  class_name * ptr = *$1;
-		// always tell SWIG_NewPointerObj we're the owner
-		$result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
-		// register the object, it it exists
-		if (ptr) {
-			ptr->Register();
-		}
-	}
+        %typemap(out) class_name##_Pointer & {
+          // get the raw pointer from the smart pointer
+          class_name * ptr = *$1;
+                // always tell SWIG_NewPointerObj we're the owner
+                $result = SWIG_NewPointerObj((void *) ptr, $descriptor(class_name *), 1);
+                // register the object, it it exists
+                if (ptr) {
+                        ptr->Register();
+                }
+        }
 
-	// make "deletion" in scripting language just decrement ref. count
-	%extend class_name {
-		public:
-		~class_name() {self->UnRegister();};
-	}
+        // make "deletion" in scripting language just decrement ref. count
+        %extend class_name {
+                public:
+                ~class_name() {self->UnRegister();};
+        }
 
-	%ignore class_name::~class_name;
-	
-	%ignore class_name##_Pointer;
-     
-	// a cast() static method to downcast objects
-	%extend class_name {
-		public:
-		static class_name * cast( itkLightObject * obj ) {
-		  if( obj == NULL ) {
-		    return NULL;
-		  }
-		  class_name * cast_obj = dynamic_cast<class_name *>(obj);
-		  if( cast_obj == NULL ) {
-		    throw std::bad_cast();
-		  }
-		  return cast_obj;
-		};
-	}
+        %ignore class_name::~class_name;
 
-	// a GetPointer() method for backward compatibility with older wrapitk
-	%extend class_name {
-		public:
-		class_name * GetPointer() {
-		  std::cerr << "WrapITK warning: GetPointer() is now deprecated for 'class_name'." << std::endl;
-		  return self;
-		};
-	}
+        %ignore class_name##_Pointer;
+
+        // a cast() static method to downcast objects
+        %extend class_name {
+                public:
+                static class_name * cast( itkLightObject * obj ) {
+                  if( obj == NULL ) {
+                    return NULL;
+                  }
+                  class_name * cast_obj = dynamic_cast<class_name *>(obj);
+                  if( cast_obj == NULL ) {
+                    throw std::bad_cast();
+                  }
+                  return cast_obj;
+                };
+        }
+
+        // a GetPointer() method for backward compatibility with older wrapitk
+        %extend class_name {
+                public:
+                class_name * GetPointer() {
+                  std::cerr << "WrapITK warning: GetPointer() is now deprecated for 'class_name'." << std::endl;
+                  return self;
+                };
+        }
 
   // some changes in the New() method
   %rename(__New_orig__) class_name::New;
@@ -119,21 +119,21 @@
     %pythoncode {
       def New(*args, **kargs):
           """New() -> class_name
-          
+
           Create a new object of the class class_name and set the input and the parameters if some
           named or non-named arguments are passed to that method.
-          
+
           New() tries to assign all the non named parameters to the input of the new objects - the
           first non named parameter in the first input, etc.
-          
+
           The named parameters are used by calling the method with the same name prefixed by 'Set'.
-          
+
           Ex:
-          
-            class_name.New( reader, Threshold=10 ) 
-          
+
+            class_name.New( reader, Threshold=10 )
+
           is (most of the time) equivalent to:
-          
+
             obj = class_name.New()
             obj.SetInput( 0, reader.GetOutput() )
             obj.SetThreshold( 10 )
@@ -209,4 +209,3 @@
 
 %template(vectorsetUL)   std::vector< std::set< unsigned long, std::less< unsigned long > > >;
 %template(mapsetUL)      std::map< unsigned long, std::set< unsigned long, std::less< unsigned long > > >;
-

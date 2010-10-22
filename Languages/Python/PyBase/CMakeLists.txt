@@ -52,4 +52,3 @@ WRAP_LIBRARY("ITKPyBase" Python)
   ADD_PYTHON_CONFIG_TEMPLATE("map" "std::map" "mapsetUL" "unsigned long, std::set< unsigned long >")
 
 END_WRAP_LIBRARY()
-

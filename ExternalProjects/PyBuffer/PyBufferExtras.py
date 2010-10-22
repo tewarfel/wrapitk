@@ -26,4 +26,3 @@ def hist(input, bins=256, log=True, xrange=None, yrange=None, title="WrapITK his
     g.set_range( "yrange", yrange )
   g.plot( zip( x, y ) )
   return g
-  

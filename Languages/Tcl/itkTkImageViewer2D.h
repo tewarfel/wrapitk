@@ -9,8 +9,8 @@
   Copyright (c) Insight Software Consortium. All rights reserved.
   See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 
-     This software is distributed WITHOUT ANY WARRANTY; without even 
-     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+     This software is distributed WITHOUT ANY WARRANTY; without even
+     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
      PURPOSE.  See the above copyright notices for more information.
 
 =========================================================================*/
@@ -38,7 +38,7 @@ public:
   typedef SmartPointer<Self> Pointer;
   typedef ProcessObject      Superclass;
   itkTypeMacro(TkImageViewer2D, ProcessObject);
-  
+
   /** Method for creation through the object factory.  */
   itkNewMacro(Self);
 
@@ -48,43 +48,43 @@ public:
   /** Set/Get the Tcl interpreter.  */
   void SetInterpreter(Tcl_Interp* interp);
   Tcl_Interp* GetInterpreter() const;
-  
+
   /** Set/Get the name of the Tk image.  */
   void SetImageName(const char* name);
-  const char* GetImageName() const;  
-  
+  const char* GetImageName() const;
+
   /** Set/Get the name of the Tk canvas.  */
   void SetCanvasName(const char* name);
-  const char* GetCanvasName() const;  
-  
+  const char* GetCanvasName() const;
+
   void SetInput(InputImageType* input);
   InputImageType* GetInput();
-  
+
   void Draw();
-  
+
 protected:
   TkImageViewer2D();
   ~TkImageViewer2D();
 
   // The Tcl interpreter associated with the Tk window.
   Tcl_Interp* m_Interpreter;
-  
+
   // The name of the Tk image.
   std::string m_ImageName;
-  
+
   // The name of the Tk canvas.
   std::string m_CanvasName;
 
   // The filter to flip the Y-axis.
   typedef FlipImageFilter<InputImageType> FlipFilter;
   FlipFilter::Pointer m_FlipFilter;
-  
+
   // The filter to scale the image to 256 shades of gray.
   typedef RescaleIntensityImageFilter<FlipFilter::OutputImageType,
                                       itk::Image<unsigned char, 2> >
           RescaleFilter;
   RescaleFilter::Pointer m_RescaleFilter;
-  
+
 private:
   TkImageViewer2D(const Self&);     // Not implemented.
   void operator=(const Self&); // Not implemented.
@@ -94,4 +94,3 @@ private:
 } // namespace itk
 
 #endif // _itkTkImageViewer2D_h
-

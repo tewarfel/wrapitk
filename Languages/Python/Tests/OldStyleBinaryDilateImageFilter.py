@@ -25,6 +25,3 @@ writer.SetInput(cast.GetOutput())
 writer.SetFileName( argv[2] )
 
 writer.Update()
-
-
-

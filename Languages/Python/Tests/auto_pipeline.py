@@ -19,4 +19,3 @@ p.Start()
 
 itk.ImageFileWriter.IUC2.New( FileName=argv[2] )
 p.Update()
-

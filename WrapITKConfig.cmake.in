@@ -2,7 +2,7 @@
 # Useful Variables:
 # The user should set JAVA_OUTPUT_DIR if they want generated Java classes to go
 # anywhere other than ${PROJECT_BINARY_DIR}/Java.
-# If SWIG needs to include any files in nonstandard locations, the directories 
+# If SWIG needs to include any files in nonstandard locations, the directories
 # must be added to with INCLUDE_DIRECTORIES().
 
 # Be careful setting up the paths to the ITK and CableSwig dirs that WrapITK
@@ -48,7 +48,7 @@ SET(WRAP_ITK_DIMS "@WRAP_ITK_DIMS@" CACHE STRING "dimensions available separated
 
 @CONFIG_WRAP_ITK_MORE_OPTIONS@
 
-FOREACH(var ITK_DIR CableSwig_DIR 
+FOREACH(var ITK_DIR CableSwig_DIR
     WRAP_unsigned_char WRAP_unsigned_short WRAP_unsigned_long WRAP_signed_char
     WRAP_signed_short WRAP_signed_long WRAP_float WRAP_double WRAP_vector_float
     WRAP_vector_double WRAP_covariant_vector_float WRAP_covariant_vector_double

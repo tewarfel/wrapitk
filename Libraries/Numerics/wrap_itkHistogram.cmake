@@ -8,4 +8,3 @@ WRAP_CLASS("itk::SimpleDataObjectDecorator" POINTER)
   WRAP_TEMPLATE("${ITKM_HF}"  "${ITKT_HF} *")
   WRAP_TEMPLATE("${ITKM_HD}"  "${ITKT_HD} *")
 END_WRAP_CLASS()
-		

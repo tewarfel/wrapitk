@@ -9,8 +9,8 @@
 #  Copyright (c) Insight Software Consortium. All rights reserved.
 #  See ITKCopyright.txt or http://www.itk.org/HTML/Copyright.htm for details.
 #
-#     This software is distributed WITHOUT ANY WARRANTY; without even 
-#     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR 
+#     This software is distributed WITHOUT ANY WARRANTY; without even
+#     the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR
 #     PURPOSE.  See the above copyright notices for more information.
 #
 #=========================================================================
@@ -54,7 +54,7 @@ $registration  SetFixedImageRegion  $fixedImageRegion
 $transform SetIdentity
 set initialParameters [ $transform GetParameters ]
 
-$registration  SetInitialTransformParameters  $initialParameters 
+$registration  SetInitialTransformParameters  $initialParameters
 
 
 
@@ -72,7 +72,7 @@ $optimizer AddObserver [itkIterationEvent] [$command GetPointer]
 
 
 # Here the registration is done
-$registration StartRegistration 
+$registration StartRegistration
 
 
 # Get the final parameters of the transformation
@@ -83,7 +83,7 @@ puts "Final Registration Parameters "
 puts "Translation X =  [$finalParameters GetElement 0] "
 puts "Translation Y =  [$finalParameters GetElement 1] "
 
-# Now, 
+# Now,
 # we use the final transform for resampling the
 # moving image.
 set resampler [itkResampleImageFilterF2F2_New ]
@@ -99,7 +99,7 @@ $resampler SetOutputOrigin  [ $fixedImage GetOrigin  ]
 $resampler SetDefaultPixelValue 100
 
 set outputCast  [itkRescaleIntensityImageFilterF2US2_New]
-$outputCast SetOutputMinimum  0 
+$outputCast SetOutputMinimum  0
 $outputCast SetOutputMaximum 65535
 $outputCast SetInput [$resampler GetOutput]
 

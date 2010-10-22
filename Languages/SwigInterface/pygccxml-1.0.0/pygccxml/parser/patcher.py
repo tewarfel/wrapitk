@@ -186,4 +186,3 @@ def fix_calldef_decls(decls, enums):
         default_arg_patcher( decl )
         if isinstance( decl, declarations.casting_operator_t):
             _casting_oper_patcher_( decl )
-    

@@ -30,4 +30,3 @@
   if(PYTHON_NUMARRAY_INCLUDE_DIR)
     set(PYTHON_NUMARRAY_FOUND 1 CACHE INTERNAL "Python numarray development package is available")
   endif(PYTHON_NUMARRAY_INCLUDE_DIR)
-

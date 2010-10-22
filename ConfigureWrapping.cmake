@@ -156,4 +156,3 @@ add_subdirectory("${WRAP_ITK_CMAKE_DIR}/Languages" "${CMAKE_CURRENT_BINARY_DIR}/
 # get the porperties from the languages dirs - there should be others than this one
 get_directory_property(inc DIRECTORY "${WRAP_ITK_CMAKE_DIR}/Languages" INCLUDE_DIRECTORIES)
 include_directories(${inc})
-

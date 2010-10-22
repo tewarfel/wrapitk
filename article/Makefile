@@ -30,47 +30,46 @@ eps: $(OUTPUT_EPS)
 
 
 %.eps: ../images/%.png
-	convert $< $@
+        convert $< $@
 
 %.eps: ../images/%.jpg
-	convert $< $@
+        convert $< $@
 
 %.eps: ../images/%.dia
-	dia --nosplash -e $@ $<
+        dia --nosplash -e $@ $<
 
 %.eps: ../images/%.fig
-	fig2dev -L eps $< $@
+        fig2dev -L eps $< $@
 
 
 ${NAME}.ps: ${NAME}.dvi
-	dvips -R0 -o ${NAME}.ps ${NAME}.dvi
+        dvips -R0 -o ${NAME}.ps ${NAME}.dvi
 
 
 ${PDF_NAME}.pdf: ${NAME}.ps
-	ps2pdf -dMaxSubsetPct=100 -dCompatibilityLevel=1.3 \
+        ps2pdf -dMaxSubsetPct=100 -dCompatibilityLevel=1.3 \
          -dSubsetFonts=true -dEmbedAllFonts=true \
          -dAutoFilterColorImages=false -dAutoFilterGrayImages=false \
          -dColorImageFilter=/FlateEncode -dGrayImageFilter=/FlateEncode \
-	 -dMonoImageFilter=/FlateEncode \
-	 ${NAME}.ps ${PDF_NAME}.pdf
+         -dMonoImageFilter=/FlateEncode \
+         ${NAME}.ps ${PDF_NAME}.pdf
 
 
 ${NAME}.bbl: ${BIBS} ${NAME}.aux
-	bibtex ${NAME}
+        bibtex ${NAME}
 
 
 ${NAME}.dvi: ${NAME}.tex  ${BIBS}
-	$(MAKE) eps
-	latex --interaction batchmode ${NAME}.tex
-	bibtex ${NAME}
-	latex --interaction batchmode ${NAME}.tex
-	latex --interaction batchmode ${NAME}.tex
+        $(MAKE) eps
+        latex --interaction batchmode ${NAME}.tex
+        bibtex ${NAME}
+        latex --interaction batchmode ${NAME}.tex
+        latex --interaction batchmode ${NAME}.tex
 
 
 ${NAME}.aux: ${NAME}.tex  ${BIBS}
-	latex ${NAME}.tex
+        latex ${NAME}.tex
 
 
 clean:
-	rm -f ${NAME}.dvi ${NAME}.ps ${PDF_NAME}.pdf ${NAME}.aux ${NAME}.log ${NAME}.bbl ${NAME}.blg ${NAME}.toc ${NAME}.out  ${NAME}.brf $(DIAS:dia=eps) $(PNGS:png=eps) $(FIGS:fig=eps)
-
+        rm -f ${NAME}.dvi ${NAME}.ps ${PDF_NAME}.pdf ${NAME}.aux ${NAME}.log ${NAME}.bbl ${NAME}.blg ${NAME}.toc ${NAME}.out  ${NAME}.brf $(DIAS:dia=eps) $(PNGS:png=eps) $(FIGS:fig=eps)
